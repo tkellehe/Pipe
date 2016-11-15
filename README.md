@@ -7,7 +7,7 @@ I chose the word _golf_ because it was another four letter curse word. I hope th
 
 ## Intro
 
-_Braingolf++_ follows the same memory model as _brainf*ck_. Essentially, a single "infinite" array of bytes going in either direction all initialized to zero. The following commands are the most primitive to _braingolf++_:
+_Braingolf++_ follows the same memory model as _brainf*ck_. Essentially, a single "infinite" array of bytes going in either direction all initialized to zero. Each index into the array is called a cell. There is a ptr that represents the current active cell. The following commands are the most primitive to _braingolf++_:
 
 |cmd|description|
 |:---:|:---:|
