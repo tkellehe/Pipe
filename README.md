@@ -17,3 +17,7 @@ _Braingolf++_ follows the same memory model as _brainf*ck_. Essentially, a singl
 |`-`|Decrement cell where ptr is at|
 |`.`|Print cell where ptr is at|
 |`,`|Consume byte from input and write to cell where ptr is at|
+
+These commands stem directly from _brainf*ck_ and do the exact same thing. Therein, any program written in _brainf*ck_ also works with _braingolf++_. So, here is a hello world straight from _brainf*ck_.
+
+The only difference is that _braingolf++_ does not ignore any other character like _brainf*ck_ allowing comments. While on the subject, there actually is no way to comment in _braingolf++_.
