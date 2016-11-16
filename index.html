@@ -6,11 +6,15 @@
 	<script src="src/braingolfpp-latest.js"></script>
 	<script>
 		$(function(){
-
+			$('#code').resizable({handles:"se"});
+			$('#input').resizable({handles:"se"});
+			$('#output').resizable({handles:"se"});
 		})
 	</script>
 </head>
 <body>
-
+	<textarea id="code"/>
+	<textarea id="input"/>
+	<textarea id="output"/>
 </body>
 </html>
