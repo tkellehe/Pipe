@@ -11,8 +11,8 @@ _Braingolf++_ follows the same memory model as _brainf*ck_. Essentially, a singl
 
 |cmd|description|
 |:---:|:---:|
-|`>`|Move the ptr right one byte|
-|`<`|Move the ptr left one byte|
+|`>`|Move the ptr right one cell|
+|`<`|Move the ptr left one cell|
 |`+`|Increment cell where ptr is at|
 |`-`|Decrement cell where ptr is at|
 |`.`|Print cell where ptr is at|
