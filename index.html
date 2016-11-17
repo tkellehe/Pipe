@@ -6,15 +6,14 @@
 	<script src="src/braingolfpp-latest.js"></script>
 	<script>
 		$(function(){
-			$('#code').resizable({disabled:true, maxHieght:"10em"}).prop("cols", 15).prop("rows", 10);
-			$('#input').resizable({disabled:true}).prop("cols", 15).prop("rows", 1);
-			$('#output').resizable({disabled:true}).prop("cols", 15).prop("rows", 4);
+			$("#code").resizable({handles:"s"});
 		})
 	</script>
 </head>
 <body>
-	<textarea id="code"></textarea>
-	<textarea id="input"></textarea>
-	<textarea id="output"></textarea>
+	<div id="code">
+  		<pre><span></span><br></pre>
+  		<textarea cols="10" rows="10"></textarea>
+	</div>
 </body>
 </html>
