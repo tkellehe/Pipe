@@ -6,9 +6,9 @@
 	<script src="src/braingolfpp-latest.js"></script>
 	<script>
 		$(function(){
-			$('#code').resizable("option", "disabled", true).prop("cols", 15).prop("rows", 10);
-			$('#input').resizable("option", "disabled", true).prop("cols", 15).prop("rows", 1);
-			$('#output').resizable("option", "disabled", true).prop("cols", 15).prop("rows", 4);
+			$('#code').resizable({disabled:true}).prop("cols", 15).prop("rows", 10);
+			$('#input').resizable({disabled:true}).prop("cols", 15).prop("rows", 1);
+			$('#output').resizable({disabled:true}).prop("cols", 15).prop("rows", 4);
 		})
 	</script>
 </head>
