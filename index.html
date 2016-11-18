@@ -1,26 +1,81 @@
 <html>
 <head>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="content/css/jquery.mmenu.all.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	<script src="src/braingolfpp-latest.js"></script>
+	<script src="content/js/jquery.mmenu.all.min.js"></script>
 	<script>
 		$(function(){
-			
-		})
+			$("#left-menu").mmenu({
+				// options
+				"navbar": {
+					"add": false
+				}
+			}, {
+				// configuration
+				offCanvas: {
+					pageSelector: "#my-page"
+				}
+			});
+
+			leftAPI = $("#left-menu").data("mmenu");
+
+			$(".char").each(function(){
+				$(this).click(function(e){
+					e.preventDefault();
+					$code = $("#code");
+					var txt = $(this).text();
+					if(txt === "\\s") txt = " ";
+					else if(txt === "\\n") txt = "\n";
+
+					$code.val($code.val() + txt);
+				});
+			});
+		});
 	</script>
 </head>
 <body>
-	<div id="code">
-  		<textarea cols="10" rows="10"></textarea>
+	<div id="my-page">
+		<div id="my-header"></div>
+		<div id="my-content">
+			<a href="#left-menu">LEFT</a>
+			<textarea id="code"></textarea>
+		</div>
+		<div id="my-footer"></div>
 	</div>
-	<div>
-		<nav id="right">
-		   <ul>
-		      <li><a id="right-A">A</a></li>
-		      <li><a id="right-B">B</a></li>
-		   </ul>
-		</nav>
-	</div>
+	<nav id="left-menu">
+		<ul>
+			<li><a id="left-space" class="char" href="\">\s</a></li>
+			<li><a id="left-nline" class="char" href="\">\n</a></li>
+			<li><a id="left-A" class="char" href="\">A</a></li>
+			<li><a id="left-B" class="char" href="\">B</a></li>
+			<li><a id="left-C" class="char" href="\">C</a></li>
+			<li><a id="left-D" class="char" href="\">D</a></li>
+			<li><a id="left-E" class="char" href="\">E</a></li>
+			<li><a id="left-F" class="char" href="\">F</a></li>
+			<li><a id="left-G" class="char" href="\">G</a></li>
+			<li><a id="left-H" class="char" href="\">H</a></li>
+			<li><a id="left-I" class="char" href="\">I</a></li>
+			<li><a id="left-J" class="char" href="\">J</a></li>
+			<li><a id="left-K" class="char" href="\">K</a></li>
+			<li><a id="left-L" class="char" href="\">L</a></li>
+			<li><a id="left-M" class="char" href="\">M</a></li>
+			<li><a id="left-N" class="char" href="\">N</a></li>
+			<li><a id="left-O" class="char" href="\">O</a></li>
+			<li><a id="left-P" class="char" href="\">P</a></li>
+			<li><a id="left-Q" class="char" href="\">Q</a></li>
+			<li><a id="left-R" class="char" href="\">R</a></li>
+			<li><a id="left-S" class="char" href="\">S</a></li>
+			<li><a id="left-T" class="char" href="\">T</a></li>
+			<li><a id="left-U" class="char" href="\">U</a></li>
+			<li><a id="left-V" class="char" href="\">V</a></li>
+			<li><a id="left-W" class="char" href="\">W</a></li>
+			<li><a id="left-X" class="char" href="\">X</a></li>
+			<li><a id="left-Y" class="char" href="\">Y</a></li>
+			<li><a id="left-Z" class="char" href="\">Z</a></li>
+		</ul>
+	</nav>
 </body>
 </html>
