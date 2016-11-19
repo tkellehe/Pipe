@@ -45,8 +45,7 @@
 				trigger: $("#right-trigger"),
 				position: "right",
 				width: 30,
-				push: false,
-				overlay: true
+				push: false
 			});
 
 			$(".char").each(function(){
@@ -60,7 +59,7 @@
 					$code.val($code.val() + txt);
 
 					// Makes the letter flicker.
-					$(this).animate({width:'-=50'}, 100);
+					$(this).shake("right",10,1);
 				});
 			});
 		});
