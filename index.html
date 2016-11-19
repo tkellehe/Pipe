@@ -45,7 +45,8 @@
 				trigger: $("#right-trigger"),
 				position: "right",
 				width: 30,
-				push: false
+				push: false,
+				overlay: true
 			});
 
 			$(".char").each(function(){
@@ -57,6 +58,9 @@
 					else if(txt === "\\n") txt = "\n";
 
 					$code.val($code.val() + txt);
+
+					// Makes the letter flicker.
+					$(this).animate({width:'-=50'}, 100);
 				});
 			});
 		});
@@ -64,15 +68,13 @@
 </head>
 <body>
 	<div id="my-page">
-		<div id="my-header"></div>
 		<div id="my-content">
 			<center>
 				<textarea id="code" cols="100" rows="8"></textarea>
 			</center>
 			<a id="right-trigger">RIGHT</a>
 		</div>
-		<div id="my-footer"></div>
-		<div id="div-right-menu">
+		<div>
 			<ul id="right-menu">
 				<li class="first"><a id="right-space" class="char" href="\">\s</a></li>
 				<li><a id="right-nline" class="char" href="\">\n</a></li>
