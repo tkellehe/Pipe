@@ -134,6 +134,14 @@ Program.prototype.next_token = function() {
   this.token = new Token(this.pc, this.code);
   return this.token;
 }
+Program.prototype.step = function() {
+  if(this.token.cmd) {
+    this.token.cmd.execute(this.token,this);
+    this.next_token();
+    return true;
+  }
+  return false;
+}
 
 //-----------------------------------------------------------------------------
 // The main function for processing and executing the code.
