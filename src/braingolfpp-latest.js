@@ -107,17 +107,17 @@ function Program(code) {
   this.pc = 0;
   this.code = code;
   this.pos = { x:0, y: 0 };
-  this.cur_token = new Token(this.pc, this.code);
-  this.pre_token = undefined;
+  this.token = new Token(this.pc, this.code);
+  this.past_tokens = [];
 }
 Program.prototype.current_cell = function() {
   return this.memory.access(this.pos)
 }
 Program.prototype.next_token = function() {
-  this.pre_token = this.cur_token;
-  this.pc = this.cur_token.search_next;
-  this.cur_token = new Token(this.pc, this.code);
-  return this.cur_token;
+  this.past_tokens.push(this.token);
+  this.pc = this.token.search_next;
+  this.token = new Token(this.pc, this.code);
+  return this.token;
 }
 
 //-----------------------------------------------------------------------------
