@@ -78,11 +78,11 @@ Cell.prototype.decrement = function(tkn,prgm) {
 Cell.types.BYTE = function() { this.value = 0; this.type = "BYTE" }
 Cell.types.BYTE.MAX = 255;
 Cell.types.BYTE.MIN = 0;
-Cell.types.BYTE.increment = function(cell,tkn,prgm) {
+Cell.types.BYTE.prototype.increment = function(cell,tkn,prgm) {
   if(this.value >= Cell.types.BYTE.MAX) this.value = Cell.types.BYTE.MIN;
   else ++this.value;
 }
-Cell.types.BYTE.decrement = function(cell,tkn,prgm) {
+Cell.types.BYTE.prototype.decrement = function(cell,tkn,prgm) {
   if(this.value <= Cell.types.BYTE.MIN) this.value = Cell.types.BYTE.MAX;
   else --this.value;
 }
