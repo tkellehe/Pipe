@@ -102,22 +102,18 @@ Cell.types = {}
 Cell.prototype.increment = function(tkn,prgm) {
   if(this.value === undefined) this.value = new Cell.types.BYTE();
   this.value.increment(this,tkn,prgm);
-  return this;
 }
 Cell.prototype.decrement = function(tkn,prgm) {
   if(this.value === undefined) this.value = new Cell.types.BYTE();
   this.value.decrement(this,tkn,prgm);
-  return this;
 }
 Cell.prototype.is_non_zero = function(tkn,prgm) {
   if(this.value === undefined) this.value = new Cell.types.BYTE();
-  this.value.is_non_zero(this,tkn,prgm);
-  return this;
+  return this.value.is_non_zero(this,tkn,prgm);
 }
 Cell.prototype.printify = function(tkn,prgm) {
   if(this.value === undefined) this.value = new Cell.types.BYTE();
-  this.value.printify(this,tkn,prgm);
-  return this;
+  return this.value.printify(this,tkn,prgm);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.BYTE = function() { this.value = 0; this.type = "BYTE" }
