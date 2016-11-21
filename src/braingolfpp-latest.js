@@ -31,17 +31,30 @@ Command.execute = function(prgm) {
 }
 
 Command.base = {
-  "+": function(tkn,prgm) { prgm.current_cell().increment(tkn,prgm); return new Token(tkn.start+1,tkn.code) },
-  "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm); return new Token(tkn.start+1,tkn.code) }
+  "+": function(tkn,prgm) { prgm.current_cell().increment(tkn,prgm); return new Token(tkn.search_next,tkn.code) },
+  "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm); return new Token(tkn.search_next,tkn.code) }
 }
 
-Symbols["+"].push(new Command(Command.base["+"]));
-Symbols["-"].push(new Command(Command.base["-"]))
+Symbols["+"].unshift(new Command(Command.base["+"]));
+Symbols["-"].unshift(new Command(Command.base["-"]));
   
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
 function Token(start, code) {
   // Come back and add look ahead for '=' for assigmnent operator.
+  this.search_start = start;
+  this.code = code;
+  var cmd = "";
+  for(var i = start; i < code.length; ++i) {
+    cmd += code[i];
+    if(Symbols[cmd] !== undefined && Symbols[cmd][0]) {
+      // Do the look ahead...
+      this.cmd = Symbols[cmd][0];
+      break;
+    }
+  }
+  this.search_end = i;
+  this.search_next = this.search_end+1;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,9 +107,17 @@ function Program(code) {
   this.pc = 0;
   this.code = code;
   this.pos = { x:0, y: 0 };
+  this.cur_token = new Token(this.pc, this.code);
+  this.pre_token = undefined;
 }
 Program.prototype.current_cell = function() {
   return this.memory.access(this.pos)
+}
+Program.prototype.next_token = function() {
+  this.pre_token = this.cur_token;
+  this.pc = this.cur_token.search_next;
+  this.cur_token = new Token(this.pc, this.code);
+  return this.cur_token;
 }
 
 //-----------------------------------------------------------------------------
