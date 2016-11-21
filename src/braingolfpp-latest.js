@@ -59,6 +59,7 @@ Symbols["<"].unshift(new Command(Command.base["<"]));
   Symbols["["].unshift(temp);
 })()
 Symbols["]"].unshift(new Command(Command.base["]"]));
+Symbols["."].unshift(new Command(Command.base["."]));
 
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
