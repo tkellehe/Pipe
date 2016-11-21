@@ -49,6 +49,7 @@ function Token(start, code) {
     cmd += code[i];
     if(Symbols[cmd] !== undefined && Symbols[cmd][0]) {
       // Do the look ahead...
+      this.literal = cmd;
       this.cmd = Symbols[cmd][0];
       break;
     }
