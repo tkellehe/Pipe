@@ -22,8 +22,10 @@ function Command(f) {
   if(typeof f === 'function') {
     this.execute = f;
   } else if(typeof f === 'string') {
-    this.start_token = new Token(0, f);
-    //this.execute = 
+    this.execute = function(tkn,prgm) {
+      // Replace the 'tkn' literal (essential from start to end)
+      // with 'f' in the 'prgm.code'.
+    }
   }
   this.search = function(tkn) {
     return tkn.search_start;
