@@ -39,7 +39,8 @@ Command.base = {
   ">": function(tkn,prgm) { ++prgm.pos.y },
   "<": function(tkn,prgm) { --prgm.pos.y },
   "[": function(tkn,prgm) { tkn.search_next = (prgm.current_cell().is_non_zero() ? tkn.search_start : tkn.search_end)+1 },
-  "]": function(tkn,prgm) { }
+  "]": function(tkn,prgm) { },
+  ".": function(tkn,prgm) { prgm.output.push(prgm.current_cell().printify()) }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
@@ -112,6 +113,11 @@ Cell.prototype.is_non_zero = function(tkn,prgm) {
   this.value.is_non_zero(this,tkn,prgm);
   return this;
 }
+Cell.prototype.printify = function(tkn,prgm) {
+  if(this.value === undefined) this.value = new Cell.types.BYTE();
+  this.value.printify(this,tkn,prgm);
+  return this;
+}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.BYTE = function() { this.value = 0; this.type = "BYTE" }
 Cell.types.BYTE.MAX = 255;
@@ -126,6 +132,9 @@ Cell.types.BYTE.prototype.decrement = function(cell,tkn,prgm) {
 }
 Cell.types.BYTE.prototype.is_non_zero = function(cell,tkn,prgm) {
   return this.value !== Cell.types.BYTE.MIN;
+}
+Cell.types.BYTE.prototype.printify = function(cell,tkn,prgm) {
+  return "" + this.value;
 }
 //-----------------------------------------------------------------------------
 function Memory() {
