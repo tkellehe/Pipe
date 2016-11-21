@@ -32,12 +32,16 @@ Command.execute = function(prgm) {
 
 Command.base = {
   "+": function(tkn,prgm) { prgm.current_cell().increment(tkn,prgm) },
-  "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm) }
+  "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm) },
+  ">": function(tkn,prgm) { ++prgm.pos.y },
+  "<": function(tkn,prgm) { --prgm.pos.y }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
 Symbols["-"].unshift(new Command(Command.base["-"]));
-  
+Symbols[">"].unshift(new Command(Command.base[">"]));
+Symbols["<"].unshift(new Command(Command.base["<"]));
+
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
 function Token(start, code) {
@@ -48,7 +52,15 @@ function Token(start, code) {
   for(var i = start; i < code.length; ++i) {
     cmd += code[i];
     if(Symbols[cmd] !== undefined && Symbols[cmd][0]) {
-      // Do the look ahead...
+      // Look ahead for possible longer command.
+      if(code[i+1] !== undefined) {
+        var temp = cmd + code[i+1];
+        // Will need to check to see if code[i+1] is '='.
+        if(Symbols[temp] !== undefined && Symbols[temp][0]) {
+          continue;
+        }
+      }
+      
       this.literal = cmd;
       this.cmd = Symbols[cmd][0];
       break;
@@ -110,6 +122,8 @@ function Program(code) {
   this.pos = { x:0, y: 0 };
   this.token = new Token(this.pc, this.code);
   this.past_tokens = [];
+  this.output = [];
+  this.input = [];
 }
 Program.prototype.current_cell = function() {
   return this.memory.access(this.pos)
