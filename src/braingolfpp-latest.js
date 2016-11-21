@@ -25,6 +25,9 @@ function Command(f) {
     this.start_token = new Token(0, f);
     //this.execute = 
   }
+  this.search = function(tkn) {
+    return tkn.search_start;
+  }
 }
 Command.execute = function(prgm) {
   // Use start_token and prgm to figure out the command string excution.
@@ -34,13 +37,27 @@ Command.base = {
   "+": function(tkn,prgm) { prgm.current_cell().increment(tkn,prgm) },
   "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm) },
   ">": function(tkn,prgm) { ++prgm.pos.y },
-  "<": function(tkn,prgm) { --prgm.pos.y }
+  "<": function(tkn,prgm) { --prgm.pos.y },
+  "[": function(tkn,prgm) { tkn.search_next = (prgm.current_cell().is_non_zero() ? tkn.search_start : tkn.search_end)+1 },
+  "]": function(tkn,prgm) { }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
 Symbols["-"].unshift(new Command(Command.base["-"]));
 Symbols[">"].unshift(new Command(Command.base[">"]));
 Symbols["<"].unshift(new Command(Command.base["<"]));
+(function() {
+  var temp = new Command(Command.base["["]);
+  temp.search = function(tkn) {
+    var n = tkn;
+    while(n.literal !== "]") {
+      n = new Token(tkn.search_next, tkn.code);
+    }
+    return n.search_start;
+  }
+  Symbols["["].unshift(temp);
+})()
+Symbols["]"].unshift(new Command(Command.base["]"]));
 
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
@@ -66,7 +83,10 @@ function Token(start, code) {
       break;
     }
   }
-  this.search_end = i;
+  this.search_end = start;
+  this.search_next = this.search_end+1;
+  // Actually go and get the correct end.
+  this.search_end = (this.cmd !== undefined) ? this.cmd.search(this) : start;
   this.search_next = this.search_end+1;
 }
 
@@ -87,6 +107,11 @@ Cell.prototype.decrement = function(tkn,prgm) {
   this.value.decrement(this,tkn,prgm);
   return this;
 }
+Cell.prototype.is_non_zero = function(tkn,prgm) {
+  if(this.value === undefined) this.value = new Cell.types.BYTE();
+  this.value.is_non_zero(this,tkn,prgm);
+  return this;
+}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.BYTE = function() { this.value = 0; this.type = "BYTE" }
 Cell.types.BYTE.MAX = 255;
@@ -98,6 +123,9 @@ Cell.types.BYTE.prototype.increment = function(cell,tkn,prgm) {
 Cell.types.BYTE.prototype.decrement = function(cell,tkn,prgm) {
   if(this.value <= Cell.types.BYTE.MIN) this.value = Cell.types.BYTE.MAX;
   else --this.value;
+}
+Cell.types.BYTE.prototype.is_non_zero = function(cell,tkn,prgm) {
+  return this.value !== Cell.types.BYTE.MIN;
 }
 //-----------------------------------------------------------------------------
 function Memory() {
@@ -145,12 +173,18 @@ Program.prototype.step = function() {
 
 //-----------------------------------------------------------------------------
 // The main function for processing and executing the code.
-braingolfpp = function(code) {
+var braingolfpp = function(code) {
   return new Program(code);
 }
 
 //-----------------------------------------------------------------------------
 // Sets all of the global variables defined earlier.
+braingolfpp.Program = Program;
+braingolfpp.Command = Command;
+braingolfpp.Memory = Memory;
+braingolfpp.Token = Token;
+braingolfpp.Cell = Cell;
+braingolfpp.Symbols = Symbols;
 braingolfpp.version = version;
 global.braingolfpp = braingolfpp;
 
