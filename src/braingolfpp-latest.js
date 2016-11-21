@@ -31,8 +31,8 @@ Command.execute = function(prgm) {
 }
 
 Command.base = {
-  "+": function(tkn,prgm) { prgm.current_cell().increment(tkn,prgm); return new Token(tkn.search_next,tkn.code) },
-  "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm); return new Token(tkn.search_next,tkn.code) }
+  "+": function(tkn,prgm) { prgm.current_cell().increment(tkn,prgm) },
+  "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm) }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
