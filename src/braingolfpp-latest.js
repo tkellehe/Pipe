@@ -35,8 +35,8 @@ function Command(f) {
 }
 
 Command.base = {
-  "+": function(tkn,prgm) { prgm.current_cell().value = prgm.current_cell().increment(tkn,prgm) },
-  "-": function(tkn,prgm) { prgm.current_cell().value = prgm.current_cell().decrement(tkn,prgm) },
+  "+": function(tkn,prgm) { var v = prgm.current_cell().increment(tkn,prgm); prgm.current_cell().value = v; },
+  "-": function(tkn,prgm) { var v = prgm.current_cell().decrement(tkn,prgm); prgm.current_cell().value = v; },
   ">": function(tkn,prgm) { prgm.move_right() },
   "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
