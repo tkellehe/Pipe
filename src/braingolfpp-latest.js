@@ -194,14 +194,14 @@ Cell.types.BYTE.prototype.stringify = function(cell,tkn,prgm) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
-  var obj = tkn.outputs.shift();
+  var obj = prgm.inputs.shift();
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
     this.value += obj.value;
   }
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
-  tkn.outputs.unshift(new Cell.types.STRING(this.value[this.value.length-1]));
+  prgm.inputs.unshift(new Cell.types.STRING(this.value[this.value.length-1]));
   this.value = this.value.slice(0,this.value.length-1);
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
