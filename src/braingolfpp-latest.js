@@ -175,13 +175,13 @@ Cell.types.BYTE = function(v) { this.value = v || 0; this.type = "BYTE" }
 Cell.types.BYTE.MAX = 255;
 Cell.types.BYTE.MIN = 0;
 Cell.types.BYTE.prototype.increment = function(cell,tkn,prgm) {
-  var value;
+  var value = this.value;
   if(this.value >= Cell.types.BYTE.MAX) value = Cell.types.BYTE.MIN;
   else ++value;
   return new Cell.types.BYTE(value);
 }
 Cell.types.BYTE.prototype.decrement = function(cell,tkn,prgm) {
-  var value;
+  var value = this.value;
   if(this.value <= Cell.types.BYTE.MIN) value = Cell.types.BYTE.MAX;
   else --value;
   return new Cell.types.BYTE(value);
