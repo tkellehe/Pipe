@@ -46,7 +46,7 @@ Command.base = {
   ".": function(tkn,prgm) {
     var a = prgm.current_cell().printify();
     for(var i = 0, l = a.length; i < l; ++i) {
-      prgm.output.push(a[i]);
+      prgm.outputs.push(a[i]);
     }
   }
 }
