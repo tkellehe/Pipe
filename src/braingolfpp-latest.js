@@ -117,24 +117,7 @@ function Cell(x,y) {
   this.y = y;
   this.value = undefined;
 }
-Cell.prototype.content = function() {
-  if(this.value === undefined) this.value = new Cell.types.BYTE();
-  return this.value;
-}
 Cell.types = {}
-Cell.prototype.increment = function(tkn,prgm) {
-  this.content().increment(this,tkn,prgm);
-}
-Cell.prototype.decrement = function(tkn,prgm) {
-  this.content().decrement(this,tkn,prgm);
-}
-Cell.prototype.is_non_zero = function(tkn,prgm) {
-  return this.content().is_non_zero(this,tkn,prgm);
-}
-Cell.prototype.printify = function(tkn,prgm) {
-  return this.content().printify(this,tkn,prgm);
-}
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.characters = [
 '¡','¢','£','¤','¥','¦','©','¬','®','µ','\n','¿','€','Æ','Ç','Ð',
 'Ñ','×','Ø','Œ','Þ','ß','æ','ç','ð','ı','ȷ','ñ','÷','ø','œ','þ',
@@ -153,6 +136,26 @@ Cell.characters = [
 'ṭ','ụ','ṿ','ẉ','ỵ','ẓ','ȧ','ḃ','ċ','ḋ','ė','ḟ','ġ','ḣ','ŀ','ṁ',
 'ṅ','ȯ','ṗ','ṙ','ṡ','ṫ','ẇ','ẋ','ẏ','ż','«','»','‘','’','“','”'
 ]
+Cell.prototype.content = function() {
+  if(this.value === undefined) this.value = new Cell.types.BYTE();
+  return this.value;
+}
+Cell.prototype.increment = function(tkn,prgm) {
+  this.content().increment(this,tkn,prgm);
+}
+Cell.prototype.decrement = function(tkn,prgm) {
+  this.content().decrement(this,tkn,prgm);
+}
+Cell.prototype.is_non_zero = function(tkn,prgm) {
+  return this.content().is_non_zero(this,tkn,prgm);
+}
+Cell.prototype.printify = function(tkn,prgm) {
+  return this.content().printify(this,tkn,prgm);
+}
+Cell.prototype.stringify = function(tkn,prgm) {
+  return this.content().stringify(this,tkn,prgm);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.BYTE = function() { this.value = 0; this.type = "BYTE" }
 Cell.types.BYTE.MAX = 255;
 Cell.types.BYTE.MIN = 0;
@@ -168,8 +171,32 @@ Cell.types.BYTE.prototype.is_non_zero = function(cell,tkn,prgm) {
   return this.value !== Cell.types.BYTE.MIN;
 }
 Cell.types.BYTE.prototype.printify = function(cell,tkn,prgm) {
-  // Come back and make this return a string class object in the array.
-  return [Cell.characters[this.value]];
+  return [Cell.types.STRING(Cell.characters[this.value])];
+}
+Cell.types.BYTE.prototype.stringify = function(cell,tkn,prgm) {
+  return Cell.types.STRING(Cell.characters[this.value]);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
+Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
+  var obj = tkn.outputs.shift();
+  if(obj) {
+    obj = obj.stringify(cell,tkn,prgm);
+    this.value += obj.value;
+  }
+}
+Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
+  tkn.outputs.unshift(Cell.types.STRING(this.value[this.value.length-1]));
+  this.value = this.value.slice(0,this.value.length-1);
+}
+Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
+  return !!this.value.length;
+}
+Cell.types.STRING.prototype.printify = function(cell,tkn,prgm) {
+  return [Cell.types.STRING(this.value)];
+}
+Cell.types.STRING.prototype.stringify = function(cell,tkn,prgm) {
+  return Cell.types.STRING(this.value);
 }
 //-----------------------------------------------------------------------------
 function Memory() {
