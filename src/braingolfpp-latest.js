@@ -41,11 +41,11 @@ Command.base = {
   "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
     tkn.next =
-    prgm.current_cell().is_non_zero() ? tkn.branches[0] : tkn.branches[1].branches[1]
+    prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches[0] : tkn.branches[1].branches[1]
   },
   "]": function(tkn,prgm) { },
   ".": function(tkn,prgm) {
-    var a = prgm.current_cell().printify();
+    var a = prgm.current_cell().printify(tkn,prgm);
     for(var i = 0, l = a.length; i < l; ++i) {
       prgm.outputs.push(a[i]);
     }
@@ -54,7 +54,7 @@ Command.base = {
   "'": function(tkn,prgm) {
     var cell = prgm.current_cell();
     if(cell.has()) {
-      cell.value = cell.value.stringify();
+      cell.value = cell.stringify(tkn,prgm);
     } else {
       cell.value = new Cell.types.STRING();
     }
