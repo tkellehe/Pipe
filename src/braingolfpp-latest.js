@@ -14,7 +14,8 @@ Symbols = {
   "]": [],
   ".": [],
   ",": [],
-  "ƒ": []
+  "ƒ": [],
+  "'": []
 }
 
 //-----------------------------------------------------------------------------
@@ -24,8 +25,7 @@ function Command(f) {
     this.execute = f;
   } else if(typeof f === 'string') {
     this.execute = function(tkn,prgm) {
-      // Replace the 'tkn' literal (essential from start to end)
-      // with 'f' in the 'prgm.code'.
+      // Insert tokenized f.
     }
   }
   this.tokenize = function(tkn) {
@@ -50,7 +50,14 @@ Command.base = {
       prgm.outputs.push(a[i]);
     }
   },
-  "ƒ": function(tkn,prgm) { prgm.flip_dim(); }
+  "ƒ": function(tkn,prgm) { prgm.flip_dim(); },
+  "'": function(tkn,prgm) {
+    var cell = prgm.current_cell();
+    if(cell.has()) {
+      cell.value = cell.value.stringify();
+    } else {
+      cell.value = new Cell.types.STRING();
+    }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
@@ -74,6 +81,7 @@ Symbols["["].unshift(new Command(Command.base["["]));
 })()
 Symbols["."].unshift(new Command(Command.base["."]));
 Symbols["ƒ"].unshift(new Command(Command.base["ƒ"]));
+Symbols["'"].unshift(new Command(Command.base["'"]));
 
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
