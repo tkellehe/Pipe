@@ -27,12 +27,10 @@ function Command(f) {
       // with 'f' in the 'prgm.code'.
     }
   }
-  this.search = function(tkn) {
-    return tkn.search_start;
+  this.tokenize = function(tkn) {
+    tkn.branches.push(new Token(tkn.end+1,tkn.code,tkn));
+    tkn.branches[0].tokenize();
   }
-}
-Command.execute = function(prgm) {
-  // Use start_token and prgm to figure out the command string excution.
 }
 
 Command.base = {
@@ -40,7 +38,10 @@ Command.base = {
   "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm) },
   ">": function(tkn,prgm) { ++prgm.pos.y },
   "<": function(tkn,prgm) { --prgm.pos.y },
-  "[": function(tkn,prgm) { tkn.search_next = (prgm.current_cell().is_non_zero() ? tkn.search_start : tkn.search_end)+1 },
+  "[": function(tkn,prgm) {
+    tkn.next =
+    prgm.current_cell().is_non_zero() ? tkn.branches[0] : tkn.branches[1].branches[1]
+  },
   "]": function(tkn,prgm) { },
   ".": function(tkn,prgm) { prgm.output.push(prgm.current_cell().printify()) }
 }
@@ -49,27 +50,32 @@ Symbols["+"].unshift(new Command(Command.base["+"]));
 Symbols["-"].unshift(new Command(Command.base["-"]));
 Symbols[">"].unshift(new Command(Command.base[">"]));
 Symbols["<"].unshift(new Command(Command.base["<"]));
+Symbols["["].unshift(new Command(Command.base["["]));
 (function() {
-  var temp = new Command(Command.base["["]);
-  temp.search = function(tkn) {
-    var n = tkn;
-    while(n.literal !== "]") {
-      n = new Token(tkn.search_next, tkn.code);
+  var temp = new Command(Command.base["]"]);
+  temp.tokenize = function(tkn) {
+    var p = tkn.parent;
+    while(!(p.literal === "[" && p.branches.length === 1)) {
+      p = p.parent;
     }
-    return n.search_start;
+    p.branches.push(tkn);
+    tkn.branches.push(p);
+    tkn.branches.push(new Token(tkn.end+1,tkn.code,tkn));
+    tkn.branches[1].tokenize();
   }
-  Symbols["["].unshift(temp);
+  Symbols["]"].unshift(temp);
 })()
-Symbols["]"].unshift(new Command(Command.base["]"]));
 Symbols["."].unshift(new Command(Command.base["."]));
 
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
-function Token(start, code) {
+function Token(start, code, parent) {
+  this.parent = parent;
   // Come back and add look ahead for '=' for assigmnent operator.
-  this.search_start = start;
+  this.start = start;
   this.code = code;
   var cmd = "";
+  this.literal = "";
   for(var i = start; i < code.length; ++i) {
     cmd += code[i];
     if(Symbols[cmd] !== undefined && Symbols[cmd][0]) {
@@ -87,11 +93,15 @@ function Token(start, code) {
       break;
     }
   }
-  this.search_end = start;
-  this.search_next = this.search_end+1;
-  // Actually go and get the correct end.
-  this.search_end = (this.cmd !== undefined) ? this.cmd.search(this) : start;
-  this.search_next = this.search_end+1;
+  this.end = start + this.literal.length - 1;
+  // Collect all of the different branches.
+  this.branches = [];
+}
+Token.prototype.tokenize = function() {
+  if(this.cmd !== undefined) {
+    this.cmd.tokenize(this);
+  }
+  this.next = this.branches[0];
 }
 
 //-----------------------------------------------------------------------------
@@ -153,11 +163,10 @@ Memory.prototype.access = function(pos) {
 // The main clas for starting the program.
 function Program(code) {
   this.memory = new Memory();
-  this.pc = 0;
   this.code = code;
   this.pos = { x:0, y: 0 };
-  this.token = new Token(this.pc, this.code);
-  this.past_tokens = [];
+  this.token = new Token(0, this.code);
+  this.token.tokenize();
   this.output = [];
   this.input = [];
 }
@@ -165,10 +174,7 @@ Program.prototype.current_cell = function() {
   return this.memory.access(this.pos)
 }
 Program.prototype.next_token = function() {
-  this.past_tokens.push(this.token);
-  this.pc = this.token.search_next;
-  this.token = new Token(this.pc, this.code);
-  return this.token;
+  this.token = this.token.next;
 }
 Program.prototype.step = function() {
   if(this.token.cmd) {
