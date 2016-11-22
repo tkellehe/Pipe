@@ -58,6 +58,7 @@ Command.base = {
     } else {
       cell.value = new Cell.types.STRING();
     }
+  }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
