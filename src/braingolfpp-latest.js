@@ -43,7 +43,12 @@ Command.base = {
     prgm.current_cell().is_non_zero() ? tkn.branches[0] : tkn.branches[1].branches[1]
   },
   "]": function(tkn,prgm) { },
-  ".": function(tkn,prgm) { prgm.output.push(prgm.current_cell().printify()) }
+  ".": function(tkn,prgm) {
+    var a = prgm.current_cell().printify();
+    for(var i = 0, l = a.length; i < l; ++i) {
+      prgm.output.push(a[i]);
+    }
+  }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
@@ -76,6 +81,8 @@ function Token(start, code, parent) {
   this.code = code;
   var cmd = "";
   this.literal = "";
+  this.inputs = [];
+  this.outputs = [];
   for(var i = start; i < code.length; ++i) {
     cmd += code[i];
     if(Symbols[cmd] !== undefined && Symbols[cmd][0]) {
@@ -110,24 +117,42 @@ function Cell(x,y) {
   this.y = y;
   this.value = undefined;
 }
+Cell.prototype.content = function() {
+  if(this.value === undefined) this.value = new Cell.types.BYTE();
+  return this.value;
+}
 Cell.types = {}
 Cell.prototype.increment = function(tkn,prgm) {
-  if(this.value === undefined) this.value = new Cell.types.BYTE();
-  this.value.increment(this,tkn,prgm);
+  this.content().increment(this,tkn,prgm);
 }
 Cell.prototype.decrement = function(tkn,prgm) {
-  if(this.value === undefined) this.value = new Cell.types.BYTE();
-  this.value.decrement(this,tkn,prgm);
+  this.content().decrement(this,tkn,prgm);
 }
 Cell.prototype.is_non_zero = function(tkn,prgm) {
-  if(this.value === undefined) this.value = new Cell.types.BYTE();
-  return this.value.is_non_zero(this,tkn,prgm);
+  return this.content().is_non_zero(this,tkn,prgm);
 }
 Cell.prototype.printify = function(tkn,prgm) {
-  if(this.value === undefined) this.value = new Cell.types.BYTE();
-  return this.value.printify(this,tkn,prgm);
+  return this.content().printify(this,tkn,prgm);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Cell.characters = [
+'¡','¢','£','¤','¥','¦','©','¬','®','µ','½','¿','€','Æ','Ç','Ð',
+'Ñ','×','Ø','Œ','Þ','ß','æ','ç','ð','ı','ȷ','ñ','÷','ø','œ','þ',
+' ','!','"','#','$','%','&',"'",'(',')','*','+',',','-','.','/',
+'0','1','2','3','4','5','6','7','8','9',':',';','<','=','>','?',
+'@','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O',
+'P','Q','R','S','T','U','V','W','X','Y','Z','[','\\',']','^','_',
+'`','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+'p','q','r','s','t','u','v','w','x','y','z','{','|','}','~','¶',
+'°','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹','⁺','⁻','⁼','⁽','⁾','Ɓ',
+'Ƈ','Ɗ','Ƒ','Ɠ','Ƙ','Ɱ','Ɲ','Ƥ','Ƭ','Ʋ','Ȥ','ɓ','ƈ','ɗ','ƒ','ɠ',
+'ɦ','ƙ','ɱ','ɲ','ƥ','ʠ','ɼ','ʂ','ƭ','ʋ','ȥ','Ạ','Ḅ','Ḍ','Ẹ','Ḥ',
+'Ị','Ḳ','Ḷ','Ṃ','Ṇ','Ọ','Ṛ','Ṣ','Ṭ','Ụ','Ṿ','Ẉ','Ỵ','Ẓ','Ȧ','Ḃ',
+'Ċ','Ḋ','Ė','Ḟ','Ġ','Ḣ','İ','Ŀ','Ṁ','Ṅ','Ȯ','Ṗ','Ṙ','Ṡ','Ṫ','Ẇ',
+'Ẋ','Ẏ','Ż','ạ','ḅ','ḍ','ẹ','ḥ','ị','ḳ','ḷ','ṃ','ṇ','ọ','ṛ','ṣ',
+'ṭ','ụ','ṿ','ẉ','ỵ','ẓ','ȧ','ḃ','ċ','ḋ','ė','ḟ','ġ','ḣ','ŀ','ṁ',
+'ṅ','ȯ','ṗ','ṙ','ṡ','ṫ','ẇ','ẋ','ẏ','ż','«','»','‘','’','“','”'
+]
 Cell.types.BYTE = function() { this.value = 0; this.type = "BYTE" }
 Cell.types.BYTE.MAX = 255;
 Cell.types.BYTE.MIN = 0;
@@ -143,7 +168,8 @@ Cell.types.BYTE.prototype.is_non_zero = function(cell,tkn,prgm) {
   return this.value !== Cell.types.BYTE.MIN;
 }
 Cell.types.BYTE.prototype.printify = function(cell,tkn,prgm) {
-  return "" + this.value;
+  // Come back and make this return a string class object in the array.
+  return [Cell.characters[this.value]];
 }
 //-----------------------------------------------------------------------------
 function Memory() {
@@ -167,8 +193,8 @@ function Program(code) {
   this.pos = { x:0, y: 0 };
   this.token = new Token(0, this.code);
   this.token.tokenize();
-  this.output = [];
-  this.input = [];
+  this.outputs = [];
+  this.inputs = [];
 }
 Program.prototype.current_cell = function() {
   return this.memory.access(this.pos)
