@@ -171,10 +171,10 @@ Cell.types.BYTE.prototype.is_non_zero = function(cell,tkn,prgm) {
   return this.value !== Cell.types.BYTE.MIN;
 }
 Cell.types.BYTE.prototype.printify = function(cell,tkn,prgm) {
-  return [Cell.types.STRING(Cell.characters[this.value])];
+  return [new Cell.types.STRING(Cell.characters[this.value])];
 }
 Cell.types.BYTE.prototype.stringify = function(cell,tkn,prgm) {
-  return Cell.types.STRING(Cell.characters[this.value]);
+  return new Cell.types.STRING(Cell.characters[this.value]);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
@@ -186,17 +186,17 @@ Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   }
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
-  tkn.outputs.unshift(Cell.types.STRING(this.value[this.value.length-1]));
+  tkn.outputs.unshift(new Cell.types.STRING(this.value[this.value.length-1]));
   this.value = this.value.slice(0,this.value.length-1);
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
   return !!this.value.length;
 }
 Cell.types.STRING.prototype.printify = function(cell,tkn,prgm) {
-  return [Cell.types.STRING(this.value)];
+  return [new Cell.types.STRING(this.value)];
 }
 Cell.types.STRING.prototype.stringify = function(cell,tkn,prgm) {
-  return Cell.types.STRING(this.value);
+  return new Cell.types.STRING(this.value);
 }
 //-----------------------------------------------------------------------------
 function Memory() {
