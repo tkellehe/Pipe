@@ -171,20 +171,20 @@ Cell.prototype.stringify = function(tkn,prgm) {
   return this.content().stringify(this,tkn,prgm);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Cell.types.BYTE = function() { this.value = 0; this.type = "BYTE" }
+Cell.types.BYTE = function(v) { this.value = v || 0; this.type = "BYTE" }
 Cell.types.BYTE.MAX = 255;
 Cell.types.BYTE.MIN = 0;
 Cell.types.BYTE.prototype.increment = function(cell,tkn,prgm) {
   var value;
   if(this.value >= Cell.types.BYTE.MAX) value = Cell.types.BYTE.MIN;
   else ++value;
-  return value;
+  return new Cell.types.BYTE(value);
 }
 Cell.types.BYTE.prototype.decrement = function(cell,tkn,prgm) {
   var value;
   if(this.value <= Cell.types.BYTE.MIN) value = Cell.types.BYTE.MAX;
   else --value;
-  return value;
+  return new Cell.types.BYTE(value);
 }
 Cell.types.BYTE.prototype.is_non_zero = function(cell,tkn,prgm) {
   return this.value !== Cell.types.BYTE.MIN;
@@ -204,11 +204,11 @@ Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
     obj = obj.stringify(cell,tkn,prgm);
     value += obj.value;
   }
-  return value;
+  return new Cell.types.STRING(value);
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
   prgm.inputs.unshift(new Cell.types.STRING(this.value[this.value.length-1]));
-  return this.value.slice(0,this.value.length-1);
+  return new Cell.types.STRING(this.value.slice(0,this.value.length-1));
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
   return !!this.value.length;
