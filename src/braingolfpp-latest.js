@@ -156,10 +156,10 @@ Cell.prototype.content = function() {
   return this.value;
 }
 Cell.prototype.increment = function(tkn,prgm) {
-  this.content().increment(this,tkn,prgm);
+  return this.content().increment(this,tkn,prgm);
 }
 Cell.prototype.decrement = function(tkn,prgm) {
-  this.content().decrement(this,tkn,prgm);
+  return this.content().decrement(this,tkn,prgm);
 }
 Cell.prototype.is_non_zero = function(tkn,prgm) {
   return this.content().is_non_zero(this,tkn,prgm);
