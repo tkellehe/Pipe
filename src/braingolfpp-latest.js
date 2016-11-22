@@ -35,8 +35,8 @@ function Command(f) {
 }
 
 Command.base = {
-  "+": function(tkn,prgm) { prgm.current_cell().increment(tkn,prgm) },
-  "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm) },
+  "+": function(tkn,prgm) { prgm.current_cell().value = prgm.current_cell().increment(tkn,prgm) },
+  "-": function(tkn,prgm) { prgm.current_cell().value = prgm.current_cell().decrement(tkn,prgm) },
   ">": function(tkn,prgm) { prgm.move_right() },
   "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
@@ -175,12 +175,16 @@ Cell.types.BYTE = function() { this.value = 0; this.type = "BYTE" }
 Cell.types.BYTE.MAX = 255;
 Cell.types.BYTE.MIN = 0;
 Cell.types.BYTE.prototype.increment = function(cell,tkn,prgm) {
-  if(this.value >= Cell.types.BYTE.MAX) this.value = Cell.types.BYTE.MIN;
-  else ++this.value;
+  var value;
+  if(this.value >= Cell.types.BYTE.MAX) value = Cell.types.BYTE.MIN;
+  else ++value;
+  return value;
 }
 Cell.types.BYTE.prototype.decrement = function(cell,tkn,prgm) {
-  if(this.value <= Cell.types.BYTE.MIN) this.value = Cell.types.BYTE.MAX;
-  else --this.value;
+  var value;
+  if(this.value <= Cell.types.BYTE.MIN) value = Cell.types.BYTE.MAX;
+  else --value;
+  return value;
 }
 Cell.types.BYTE.prototype.is_non_zero = function(cell,tkn,prgm) {
   return this.value !== Cell.types.BYTE.MIN;
@@ -195,14 +199,16 @@ Cell.types.BYTE.prototype.stringify = function(cell,tkn,prgm) {
 Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   var obj = prgm.inputs.shift();
+  var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
-    this.value += obj.value;
+    value += obj.value;
   }
+  return value;
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
   prgm.inputs.unshift(new Cell.types.STRING(this.value[this.value.length-1]));
-  this.value = this.value.slice(0,this.value.length-1);
+  return this.value.slice(0,this.value.length-1);
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
   return !!this.value.length;
