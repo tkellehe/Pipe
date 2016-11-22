@@ -241,10 +241,12 @@ function Program(code) {
   this.dimlr = "y";
   this.dimud = "x";
   this.pos = { x:0, y: 0 };
-  this.token = new Token(0, this.code);
+  this.first = new Token(0, this.code)
+  this.token = this.first;
   this.token.tokenize();
   this.outputs = [];
   this.inputs = [];
+  this.num_steps = 0;
 }
 Program.prototype.move_left = function() {
   --this.pos[this.dimlr];
@@ -272,10 +274,14 @@ Program.prototype.next_token = function() {
 Program.prototype.step = function() {
   if(this.token.cmd) {
     this.token.cmd.execute(this.token,this);
+    ++this.num_steps;
     this.next_token();
     return true;
   }
   return false;
+}
+Program.prototype.exec = function() {
+  while(this.step());
 }
 
 //-----------------------------------------------------------------------------
