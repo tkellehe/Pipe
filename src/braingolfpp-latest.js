@@ -36,8 +36,8 @@ function Command(f) {
 Command.base = {
   "+": function(tkn,prgm) { prgm.current_cell().increment(tkn,prgm) },
   "-": function(tkn,prgm) { prgm.current_cell().decrement(tkn,prgm) },
-  ">": function(tkn,prgm) { ++prgm.pos.y },
-  "<": function(tkn,prgm) { --prgm.pos.y },
+  ">": function(tkn,prgm) { prgm.move_right() },
+  "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
     tkn.next =
     prgm.current_cell().is_non_zero() ? tkn.branches[0] : tkn.branches[1].branches[1]
@@ -48,7 +48,8 @@ Command.base = {
     for(var i = 0, l = a.length; i < l; ++i) {
       prgm.outputs.push(a[i]);
     }
-  }
+  },
+  "@": function(tkn,prgm) { prgm.flip_dim(); }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
@@ -71,6 +72,7 @@ Symbols["["].unshift(new Command(Command.base["["]));
   Symbols["]"].unshift(temp);
 })()
 Symbols["."].unshift(new Command(Command.base["."]));
+Symbols["@"].unshift(new Command(Command.base["@"]));
 
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
@@ -217,11 +219,30 @@ Memory.prototype.access = function(pos) {
 function Program(code) {
   this.memory = new Memory();
   this.code = code;
+  this.dimlr = "y";
+  this.dimud = "x";
   this.pos = { x:0, y: 0 };
   this.token = new Token(0, this.code);
   this.token.tokenize();
   this.outputs = [];
   this.inputs = [];
+}
+Program.prototype.move_left = function() {
+  --this.pos[this.dimlr];
+}
+Program.prototype.move_right = function() {
+  ++this.pos[this.dimlr];
+}
+Program.prototype.move_up = function() {
+  ++this.pos[this.dimud];
+}
+Program.prototype.move_down = function() {
+  --this.pos[this.dimud];
+}
+Program.prototype.flip_dim = function() {
+  var temp = this.dimud;
+  this.dimud = this.dimlr;
+  this.dimlr = temp
 }
 Program.prototype.current_cell = function() {
   return this.memory.access(this.pos)
