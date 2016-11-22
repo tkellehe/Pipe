@@ -14,7 +14,7 @@ Symbols = {
   "]": [],
   ".": [],
   ",": [],
-  "@": []
+  "ƒ": []
 }
 
 //-----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ Command.base = {
       prgm.outputs.push(a[i]);
     }
   },
-  "@": function(tkn,prgm) { prgm.flip_dim(); }
+  "ƒ": function(tkn,prgm) { prgm.flip_dim(); }
 }
 
 Symbols["+"].unshift(new Command(Command.base["+"]));
@@ -73,7 +73,7 @@ Symbols["["].unshift(new Command(Command.base["["]));
   Symbols["]"].unshift(temp);
 })()
 Symbols["."].unshift(new Command(Command.base["."]));
-Symbols["@"].unshift(new Command(Command.base["@"]));
+Symbols["ƒ"].unshift(new Command(Command.base["ƒ"]));
 
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
@@ -139,8 +139,11 @@ Cell.characters = [
 'ṭ','ụ','ṿ','ẉ','ỵ','ẓ','ȧ','ḃ','ċ','ḋ','ė','ḟ','ġ','ḣ','ŀ','ṁ',
 'ṅ','ȯ','ṗ','ṙ','ṡ','ṫ','ẇ','ẋ','ẏ','ż','«','»','‘','’','“','”'
 ]
+Cell.prototype.has = function() {
+  return this.value !== undefined;
+}
 Cell.prototype.content = function() {
-  if(this.value === undefined) this.value = new Cell.types.BYTE();
+  if(!this.has()) this.value = new Cell.types.BYTE();
   return this.value;
 }
 Cell.prototype.increment = function(tkn,prgm) {
