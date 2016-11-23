@@ -170,6 +170,7 @@ function Cell(x,y) {
   this.y = y;
   this.value = undefined;
 }
+Cell.defaults = new Pipe();
 Cell.types = {}
 Cell.characters = [
 '¡','¢','£','¤','¥','¦','©','¬','®','µ','\n','¿','€','Æ','Ç','Ð',
@@ -193,7 +194,7 @@ Cell.prototype.has = function() {
   return this.value !== undefined;
 }
 Cell.prototype.content = function() {
-  if(!this.has()) this.value = new Cell.types.BYTE();
+  if(!this.has()) this.value = new Cell.defaults.at(0);
   return this.value;
 }
 Cell.prototype.increment = function(tkn,prgm) {
@@ -213,6 +214,7 @@ Cell.prototype.stringify = function(tkn,prgm) {
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.BYTE = function(v) { this.value = v || 0; this.type = "BYTE" }
+Cell.defaults.front(Cell.types.BYTE);
 Cell.types.BYTE.MAX = 255;
 Cell.types.BYTE.MIN = 0;
 Cell.types.BYTE.prototype.increment = function(cell,tkn,prgm) {
