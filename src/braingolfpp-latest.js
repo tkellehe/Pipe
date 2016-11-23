@@ -383,6 +383,7 @@ braingolfpp.Memory = Memory;
 braingolfpp.Token = Token;
 braingolfpp.Cell = Cell;
 braingolfpp.Symbols = Symbols;
+braingolfpp.Pipe = Pipe;
 braingolfpp.version = version;
 global.braingolfpp = braingolfpp;
 
