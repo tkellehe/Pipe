@@ -6,16 +6,59 @@ var version = "1.00.00.00",
 //-----------------------------------------------------------------------------
 // Symbol look up.
 Symbols = {
-  "+": [],
-  "-": [],
-  ">": [],
-  "<": [],
-  "[": [],
-  "]": [],
-  ".": [],
-  ",": [],
-  "ƒ": [],
-  "'": []
+  "+": new Pipe(),
+  "-": new Pipe(),
+  ">": new Pipe(),
+  "<": new Pipe(),
+  "[": new Pipe(),
+  "]": new Pipe(),
+  ".": new Pipe(),
+  ",": new Pipe(),
+  "ƒ": new Pipe(),
+  "'": new Pipe()
+}
+
+//-----------------------------------------------------------------------------
+// Pipe type.
+function Pipe() {
+  this.array = [];
+  var self = this;
+  self.front = function(v) {
+    if(v !== undefined) this.front.add(v)
+    else return this.front.remove()
+  }
+  self.back = function(v) {
+    if(v !== undefined) this.back.add(v)
+    else return this.back.remove()
+  }
+  self.front.remove = function() {
+    return self.array.shift();
+  };
+  self.front.add = function(v) {
+    self.array.unshift(v);
+  };
+  self.back.remove = function() {
+    return self.array.pop();
+  };
+  self.back.add = function(v) {
+    self.array.push(v);
+  };
+}
+Pipe.prototype.length = function() {
+  return this.array.length
+}
+Pipe.prototype.end = function() {
+  return this.length() - 1
+}
+Pipe.prototype.at = function(i) {
+  return this.array[i];
+}
+Pipe.prototype.toString = function() {
+  var s = "";
+  for(var i = 0; i < this.length(); ++i) {
+    s += this.at(i).stringify().value;
+  }
+  return s;
 }
 
 //-----------------------------------------------------------------------------
@@ -29,8 +72,8 @@ function Command(f) {
     }
   }
   this.tokenize = function(tkn) {
-    tkn.branches.push(new Token(tkn.end+1,tkn.code,tkn));
-    tkn.branches[0].tokenize();
+    tkn.branches.back(new Token(tkn.end+1,tkn.code,tkn));
+    tkn.branches.at(0).tokenize();
   }
 }
 
@@ -41,13 +84,13 @@ Command.base = {
   "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
     tkn.next =
-    prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches[0] : tkn.branches[1].branches[1]
+    prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches.at(0): tkn.branches.at(1).branches.at(1)
   },
   "]": function(tkn,prgm) { },
   ".": function(tkn,prgm) {
     var a = prgm.current_cell().printify(tkn,prgm);
     for(var i = 0, l = a.length; i < l; ++i) {
-      prgm.outputs.push(a[i]);
+      prgm.outputs.back(a[i]);
     }
   },
   "ƒ": function(tkn,prgm) { prgm.flip_dim(); },
@@ -61,28 +104,28 @@ Command.base = {
   }
 }
 
-Symbols["+"].unshift(new Command(Command.base["+"]));
-Symbols["-"].unshift(new Command(Command.base["-"]));
-Symbols[">"].unshift(new Command(Command.base[">"]));
-Symbols["<"].unshift(new Command(Command.base["<"]));
-Symbols["["].unshift(new Command(Command.base["["]));
+Symbols["+"].front(new Command(Command.base["+"]));
+Symbols["-"].front(new Command(Command.base["-"]));
+Symbols[">"].front(new Command(Command.base[">"]));
+Symbols["<"].front(new Command(Command.base["<"]));
+Symbols["["].front(new Command(Command.base["["]));
 (function() {
   var temp = new Command(Command.base["]"]);
   temp.tokenize = function(tkn) {
     var p = tkn.parent;
-    while(!(p.literal === "[" && p.branches.length === 1)) {
+    while(!(p.literal === "[" && p.branches.length() === 1)) {
       p = p.parent;
     }
-    p.branches.push(tkn);
-    tkn.branches.push(p);
-    tkn.branches.push(new Token(tkn.end+1,tkn.code,tkn));
-    tkn.branches[1].tokenize();
+    p.branches.back(tkn);
+    tkn.branches.back(p);
+    tkn.branches.back(new Token(tkn.end+1,tkn.code,tkn));
+    tkn.branches.at(1).tokenize();
   }
-  Symbols["]"].unshift(temp);
+  Symbols["]"].front(temp);
 })()
-Symbols["."].unshift(new Command(Command.base["."]));
-Symbols["ƒ"].unshift(new Command(Command.base["ƒ"]));
-Symbols["'"].unshift(new Command(Command.base["'"]));
+Symbols["."].front(new Command(Command.base["."]));
+Symbols["ƒ"].front(new Command(Command.base["ƒ"]));
+Symbols["'"].front(new Command(Command.base["'"]));
 
 //-----------------------------------------------------------------------------
 // The lexical analyzer.
@@ -93,34 +136,32 @@ function Token(start, code, parent) {
   this.code = code;
   var cmd = "";
   this.literal = "";
-  this.inputs = [];
-  this.outputs = [];
   for(var i = start; i < code.length; ++i) {
     cmd += code[i];
-    if(Symbols[cmd] !== undefined && Symbols[cmd][0]) {
+    if(Symbols[cmd] !== undefined && Symbols[cmd].at(0)) {
       // Look ahead for possible longer command.
       if(code[i+1] !== undefined) {
         var temp = cmd + code[i+1];
         // Will need to check to see if code[i+1] is '='.
-        if(Symbols[temp] !== undefined && Symbols[temp][0]) {
+        if(Symbols[temp] !== undefined && Symbols[temp].at(0)) {
           continue;
         }
       }
       
       this.literal = cmd;
-      this.cmd = Symbols[cmd][0];
+      this.cmd = Symbols[cmd].at(0);
       break;
     }
   }
   this.end = start + this.literal.length - 1;
   // Collect all of the different branches.
-  this.branches = [];
+  this.branches = new Pipe();
 }
 Token.prototype.tokenize = function() {
   if(this.cmd !== undefined) {
     this.cmd.tokenize(this);
   }
-  this.next = this.branches[0];
+  this.next = this.branches.at(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -198,7 +239,7 @@ Cell.types.BYTE.prototype.stringify = function(cell,tkn,prgm) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
-  var obj = prgm.inputs.shift();
+  var obj = prgm.inputs.front();
   var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
@@ -207,7 +248,7 @@ Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   return new Cell.types.STRING(value);
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
-  prgm.inputs.unshift(new Cell.types.STRING(this.value[this.value.length-1]));
+  prgm.inputs.front(new Cell.types.STRING(this.value[this.value.length-1]));
   return new Cell.types.STRING(this.value.slice(0,this.value.length-1));
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
@@ -244,8 +285,8 @@ function Program(code) {
   this.first = new Token(0, this.code)
   this.token = this.first;
   this.token.tokenize();
-  this.outputs = [];
-  this.inputs = [];
+  this.outputs = new Pipe();
+  this.inputs = new Pipe();
   this.num_steps = 0;
 }
 Program.prototype.move_left = function() {
