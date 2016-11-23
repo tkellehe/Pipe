@@ -66,13 +66,17 @@ function Command(f) {
     this.token = new Token(0,f);
     this.execute = function(tkn,prgm) {}
     this.tokenize = function(tkn) {
-      for(var i = tkn.parent.branches.length(); i--;) {
-        if(tkn.parent.branches.at(i) === tkn) {
-          break;
+      if(tkn.parent === undefined) {
+        tkn.branches.front(this.token);
+      } else {
+        for(var i = tkn.parent.branches.length(); i--;) {
+          if(tkn.parent.branches.at(i) === tkn) {
+            break;
+          }
         }
+        // Replaces with cmd tkn.
+        tkn.parent.branches.at(i,this.token);
       }
-      // Replaces with cmd tkn.
-      tkn.parent.branches.at(i,this.token);
       this.token.tokenize();
     }
   }
