@@ -39,7 +39,8 @@ Pipe.prototype.length = function() {
 Pipe.prototype.end = function() {
   return this.length() - 1
 }
-Pipe.prototype.at = function(i) {
+Pipe.prototype.at = function(i,v) {
+  if(v !== undefined) this.array[i] = v;
   return this.array[i];
 }
 Pipe.prototype.toString = function() {
@@ -55,15 +56,27 @@ Pipe.prototype.toString = function() {
 function Command(f) {
   if(typeof f === 'function') {
     this.execute = f;
+    this.tokenize = function(tkn) {
+      var temp = new Token(tkn.end+1,tkn.code,tkn);
+      tkn.branches.back(temp);
+      temp.tokenize();
+    }
   } else if(typeof f === 'string') {
-    this.execute = function(tkn,prgm) {
-      // Insert tokenized f.
+    // Does a no-op and inserts the string tokenized.
+    this.token = new Token(0,f);
+    this.execute = function(tkn,prgm) {}
+    this.tokenize = function(tkn) {
+      for(var i = tkn.parent.branches.length(); i--;) {
+        if(tkn.parent.branches.at(i) === tkn) {
+          break;
+        }
+      }
+      // Replaces with cmd tkn.
+      tkn.parent.branches.at(i,this.token);
+      this.token.tokenize();
     }
   }
-  this.tokenize = function(tkn) {
-    tkn.branches.back(new Token(tkn.end+1,tkn.code,tkn));
-    tkn.branches.at(0).tokenize();
-  }
+  
 }
 
 Command.base = {
@@ -118,8 +131,9 @@ Symbols["["].front(new Command(Command.base["["]));
     }
     p.branches.back(tkn);
     tkn.branches.back(p);
-    tkn.branches.back(new Token(tkn.end+1,tkn.code,tkn));
-    tkn.branches.at(1).tokenize();
+    var temp = new Token(tkn.end+1,tkn.code,tkn);
+    tkn.branches.back(temp);
+    temp.tokenize();
   }
   Symbols["]"].front(temp);
 })()
@@ -144,7 +158,6 @@ function Token(start, code, parent) {
       // Look ahead for possible longer command.
       if(code[i+1] !== undefined) {
         var temp = cmd + code[i+1];
-        // Will need to check to see if code[i+1] is '='.
         if(Symbols[temp] !== undefined && Symbols[temp].at(0)) {
           continue;
         }
@@ -159,6 +172,12 @@ function Token(start, code, parent) {
   // Collect all of the different branches.
   this.branches = new Pipe();
 }
+/*Token.end = function(tkn) {
+  var n = tkn;
+  while(1) {
+    
+  }
+}*/
 Token.prototype.tokenize = function() {
   if(this.cmd !== undefined) {
     this.cmd.tokenize(this);
