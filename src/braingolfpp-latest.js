@@ -220,6 +220,9 @@ Cell.prototype.printify = function(tkn,prgm) {
 Cell.prototype.stringify = function(tkn,prgm) {
   return this.content().stringify(this,tkn,prgm);
 }
+Cell.prototype.byteify = function(tkn,prgm) {
+  return this.content().byteify(this,tkn,prgm);
+}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.BYTE = function(v) { this.value = v || 0; this.type = "BYTE" }
 Cell.defaults.front(Cell.types.BYTE);
