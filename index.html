@@ -43,9 +43,9 @@
 		$(function(){
 			$("#right-menu").slideReveal({
 				trigger: $("#right-trigger"),
-				position: "right",
+				position: "bottom",
 				width: 30,
-				push: false
+				push: true
 			});
 
 			$(".char").each(function(){
@@ -61,6 +61,7 @@
 					// Makes the letter flicker.
 					$(this).effect("shake", {direction:"right",distance:5,times:1}, 100);
 				});
+$(this).effect("shake", {direction:"right",distance:5,times:1}, 100);
 			});
 		});
 	</script>
