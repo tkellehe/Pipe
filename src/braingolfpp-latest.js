@@ -134,6 +134,8 @@ function Token(start, code, parent) {
   // Come back and add look ahead for '=' for assigmnent operator.
   this.start = start;
   this.code = code;
+  this.inputs = new Pipe();
+  this.outputs = new Pipe();
   var cmd = "";
   this.literal = "";
   for(var i = start; i < code.length; ++i) {
