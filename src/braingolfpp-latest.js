@@ -191,7 +191,13 @@ Cell.characters = [
 'Ẋ','Ẏ','Ż','ạ','ḅ','ḍ','ẹ','ḥ','ị','ḳ','ḷ','ṃ','ṇ','ọ','ṛ','ṣ',
 'ṭ','ụ','ṿ','ẉ','ỵ','ẓ','ȧ','ḃ','ċ','ḋ','ė','ḟ','ġ','ḣ','ŀ','ṁ',
 'ṅ','ȯ','ṗ','ṙ','ṡ','ṫ','ẇ','ẋ','ẏ','ż','«','»','‘','’','“','”'
-]
+];
+(function() {
+  Cell.values = {length:Cell.characters.length};
+  for(var i = Cell.characters.length; i--;) {
+    Cell.values[Cell.characters[i]] = i;
+  }
+})()
 Cell.prototype.has = function() {
   return this.value !== undefined;
 }
@@ -240,6 +246,9 @@ Cell.types.BYTE.prototype.printify = function(cell,tkn,prgm) {
 Cell.types.BYTE.prototype.stringify = function(cell,tkn,prgm) {
   return new Cell.types.STRING(Cell.characters[this.value]);
 }
+Cell.types.BYTE.prototype.byteify = function(cell,tkn,prgm) {
+  return [new Cell.types.BYTE(this.value)];
+}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
@@ -263,6 +272,15 @@ Cell.types.STRING.prototype.printify = function(cell,tkn,prgm) {
 }
 Cell.types.STRING.prototype.stringify = function(cell,tkn,prgm) {
   return new Cell.types.STRING(this.value);
+}
+Cell.types.STRING.prototype.byteify = function(cell,tkn,prgm) {
+  var a = [];
+  for(var i = this.value.length; i--;) {
+    var b = Cell.values[this.value[i]];
+    if(b === undefined) b = 0;
+    a.unshift(new Cell.types.BYTE(b));
+  }
+  return a;
 }
 //-----------------------------------------------------------------------------
 function Memory() {
