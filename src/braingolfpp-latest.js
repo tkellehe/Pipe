@@ -194,7 +194,7 @@ Cell.prototype.has = function() {
   return this.value !== undefined;
 }
 Cell.prototype.content = function() {
-  if(!this.has()) this.value = new Cell.defaults.at(0);
+  if(!this.has()) this.value = new (Cell.defaults.at(0));
   return this.value;
 }
 Cell.prototype.increment = function(tkn,prgm) {
