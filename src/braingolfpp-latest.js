@@ -50,6 +50,12 @@ Pipe.prototype.toString = function() {
   }
   return s;
 }
+Pipe.prototype.has = function(v) {
+  for(var i = this.length(); i--;) {
+    if(this.at(i) === v) return true;
+  }
+  return false;
+}
 
 //-----------------------------------------------------------------------------
 // Commands.
@@ -78,6 +84,10 @@ function Command(f) {
         tkn.parent.branches.at(i,this.token);
       }
       this.token.tokenize();
+      var last = Token.end(this.token);
+      var cont = new Token(tkn.end+1,tkn.code,last);
+      last.branches.front(cont);
+      cont.tokenize();
     }
   }
   
@@ -176,12 +186,18 @@ function Token(start, code, parent) {
   // Collect all of the different branches.
   this.branches = new Pipe();
 }
-/*Token.end = function(tkn) {
+Token.end = function(tkn,pipe) {
+  if(pipe === undefined) pipe = new Pipe();
   var n = tkn;
-  while(1) {
-    
+  if(pipe.has(n)) return undefined;
+  pipe.back(n);
+  if(n.branches.length() === 0) return n;
+  for(var i = tkn.branches.length(); i--;) {
+    n = Token.end(tkn.branches.at(i),pipe);
+    if(n !== undefined) return n;
   }
-}*/
+  return undefined;
+}
 Token.prototype.tokenize = function() {
   if(this.cmd !== undefined) {
     this.cmd.tokenize(this);
