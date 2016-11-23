@@ -5,18 +5,7 @@ var version = "1.00.00.00",
 
 //-----------------------------------------------------------------------------
 // Symbol look up.
-Symbols = {
-  "+": new Pipe(),
-  "-": new Pipe(),
-  ">": new Pipe(),
-  "<": new Pipe(),
-  "[": new Pipe(),
-  "]": new Pipe(),
-  ".": new Pipe(),
-  ",": new Pipe(),
-  "ƒ": new Pipe(),
-  "'": new Pipe()
-}
+Symbols = {}
 
 //-----------------------------------------------------------------------------
 // Pipe type.
@@ -103,6 +92,17 @@ Command.base = {
     }
   }
 }
+
+Symbols["+"] = new Pipe();
+Symbols["-"] = new Pipe();
+Symbols[">"] = new Pipe();
+Symbols["<"] = new Pipe();
+Symbols["["] = new Pipe();
+Symbols["]"] = new Pipe();
+Symbols["."] = new Pipe();
+Symbols[","] = new Pipe();
+Symbols["ƒ"] = new Pipe();
+Symbols["'"] = new Pipe();
 
 Symbols["+"].front(new Command(Command.base["+"]));
 Symbols["-"].front(new Command(Command.base["-"]));
