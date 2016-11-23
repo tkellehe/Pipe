@@ -234,7 +234,7 @@ Cell.types.BYTE.prototype.printify = function(cell,tkn,prgm) {
   return [new Cell.types.STRING(Cell.characters[this.value])];
 }
 Cell.types.BYTE.prototype.stringify = function(cell,tkn,prgm) {
-  return new Cell.types.STRING(Cell.characters[this.value]);
+  return new Cell.types.BYTE(this.value);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
