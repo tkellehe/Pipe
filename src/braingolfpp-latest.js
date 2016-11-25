@@ -72,25 +72,15 @@ function Command(f) {
     this.token = new Token(0,f);
     this.execute = function(tkn,prgm) {}
     this.tokenize = function(tkn) {
-      if(tkn.parent === undefined) {
-        tkn.branches.front(this.token);
-      } else {
-        for(var i = tkn.parent.branches.length(); i--;) {
-          if(tkn.parent.branches.at(i) === tkn) {
-            break;
-          }
-        }
-        // Replaces with cmd tkn.
-        tkn.parent.branches.at(i,this.token);
-      }
+      tkn.branches.front(this.token);
+      this.token.parent = tkn;
       this.token.tokenize();
-      var last = Token.end(this.token);
+      var last = Token.last(this.token);
       var cont = new Token(tkn.end+1,tkn.code,last);
       last.branches.front(cont);
       cont.tokenize();
     }
   }
-  
 }
 
 Command.base = {
@@ -186,14 +176,17 @@ function Token(start, code, parent) {
   // Collect all of the different branches.
   this.branches = new Pipe();
 }
-Token.end = function(tkn,pipe) {
+Token.last = function(tkn,pipe) {
   if(pipe === undefined) pipe = new Pipe();
+
   var n = tkn;
   if(pipe.has(n)) return undefined;
+
   pipe.back(n);
   if(n.branches.length() === 0) return n;
+
   for(var i = tkn.branches.length(); i--;) {
-    n = Token.end(tkn.branches.at(i),pipe);
+    n = Token.last(tkn.branches.at(i),pipe);
     if(n !== undefined) return n;
   }
   return undefined;
