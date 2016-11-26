@@ -199,9 +199,10 @@ function Path(code) {
 }
 
 //-----------------------------------------------------------------------------
-Path.prototype.step = function() {
+Path.prototype.step = function(f) {
   if(this.current !== undefined) {
     this.current.execute(this);
+    if(f) f.call(this);
     ++this.num_steps;
     this.current = this.current.next(this);
     return true;
@@ -210,10 +211,12 @@ Path.prototype.step = function() {
 }
 
 //-----------------------------------------------------------------------------
-Path.prototype.exec = function(rate) {
+Path.prototype.exec = function(c,f,r) {
   var self = this;
-  if(this.step()) {
-    setTimeout(function() {self.exec()}, rate === undefined ? 100: rate);
+  if(this.step(f)) {
+    setTimeout(function() {self.exec(c,f,r)}, r === undefined ? 100: r);
+  } else if(c) {
+    c.call(this);
   }
 }
 
