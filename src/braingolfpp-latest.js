@@ -1,95 +1,15 @@
-(function(global){
+(function(global, parser){
 
 // The current verion of braingolfpp.
-var version = "1.00.00.00",
+var version = "1.00.00.00";
 
-//-----------------------------------------------------------------------------
-// Symbol look up.
-Symbols = {}
-
-//-----------------------------------------------------------------------------
-// Pipe type.
-function Pipe() {
-  this.array = [];
-  var self = this;
-  self.front = function(v) {
-    if(v !== undefined) this.front.add(v)
-    else return this.front.remove()
-  }
-  self.back = function(v) {
-    if(v !== undefined) this.back.add(v)
-    else return this.back.remove()
-  }
-  self.front.remove = function() {
-    return self.array.shift();
-  };
-  self.front.add = function(v) {
-    self.array.unshift(v);
-  };
-  self.back.remove = function() {
-    return self.array.pop();
-  };
-  self.back.add = function(v) {
-    self.array.push(v);
-  };
-}
-Pipe.prototype.length = function() {
-  return this.array.length
-}
-Pipe.prototype.end = function() {
-  return this.length() - 1
-}
-Pipe.prototype.at = function(i,v) {
-  if(v !== undefined) this.array[i] = v;
-  return this.array[i];
-}
-Pipe.prototype.toString = function() {
-  var s = "";
-  for(var i = 0; i < this.length(); ++i) {
-    s += this.at(i).stringify().value;
-  }
-  return s;
-}
-Pipe.prototype.has = function(v) {
-  for(var i = this.length(); i--;) {
-    if(this.at(i) === v) return true;
-  }
-  return false;
-}
-
-//-----------------------------------------------------------------------------
-// Commands.
-function Command(f) {
-  if(typeof f === 'function') {
-    this.execute = f;
-    this.tokenize = function(tkn) {
-      var temp = new Token(tkn.end+1,tkn.code,tkn);
-      tkn.branches.back(temp);
-      temp.tokenize();
-    }
-  } else if(typeof f === 'string') {
-    // Does a no-op and inserts the string tokenized.
-    this.token = new Token(0,f);
-    this.execute = function(tkn,prgm) {}
-    this.tokenize = function(tkn) {
-      tkn.branches.front(this.token);
-      this.token.parent = tkn;
-      this.token.tokenize();
-      var last = Token.last(this.token);
-      var cont = new Token(tkn.end+1,tkn.code,last);
-      last.branches.front(cont);
-      cont.tokenize();
-    }
-  }
-}
-
-Command.base = {
+parser.Command.base = {
   "+": function(tkn,prgm) { var v = prgm.current_cell().increment(tkn,prgm); prgm.current_cell().value = v; },
   "-": function(tkn,prgm) { var v = prgm.current_cell().decrement(tkn,prgm); prgm.current_cell().value = v; },
   ">": function(tkn,prgm) { prgm.move_right() },
   "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
-    tkn.next =
+    tkn.next_token =
     prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches.at(0): tkn.branches.at(1).branches.at(1)
   },
   "]": function(tkn,prgm) { },
@@ -99,6 +19,7 @@ Command.base = {
       prgm.outputs.back(a[i]);
     }
   },
+  ",": function(tkn,prgm) { },
   "ƒ": function(tkn,prgm) { prgm.flip_dim(); },
   "'": function(tkn,prgm) {
     var cell = prgm.current_cell();
@@ -110,93 +31,64 @@ Command.base = {
   }
 }
 
-Symbols["+"] = new Pipe();
-Symbols["-"] = new Pipe();
-Symbols[">"] = new Pipe();
-Symbols["<"] = new Pipe();
-Symbols["["] = new Pipe();
-Symbols["]"] = new Pipe();
-Symbols["."] = new Pipe();
-Symbols[","] = new Pipe();
-Symbols["ƒ"] = new Pipe();
-Symbols["'"] = new Pipe();
+parser.Symbols["+"] = new parser.Pipe();
+parser.Symbols["-"] = new parser.Pipe();
+parser.Symbols[">"] = new parser.Pipe();
+parser.Symbols["<"] = new parser.Pipe();
+parser.Symbols["["] = new parser.Pipe();
+parser.Symbols["]"] = new parser.Pipe();
+parser.Symbols["."] = new parser.Pipe();
+parser.Symbols[","] = new parser.Pipe();
+parser.Symbols["ƒ"] = new parser.Pipe();
+parser.Symbols["'"] = new parser.Pipe();
 
-Symbols["+"].front(new Command(Command.base["+"]));
-Symbols["-"].front(new Command(Command.base["-"]));
-Symbols[">"].front(new Command(Command.base[">"]));
-Symbols["<"].front(new Command(Command.base["<"]));
-Symbols["["].front(new Command(Command.base["["]));
-(function() {
-  var temp = new Command(Command.base["]"]);
-  temp.tokenize = function(tkn) {
+parser.Symbols["+"].front(function(cmd) {
+  cmd.execute = parser.Command.base["+"];
+});
+parser.Symbols["-"].front(function(cmd) {
+  cmd.execute = parser.Command.base["-"];
+});
+parser.Symbols[">"].front(function(cmd) {
+  cmd.execute = parser.Command.base[">"];
+});
+parser.Symbols["<"].front(function(cmd) {
+  cmd.execute = parser.Command.base["<"];
+});
+parser.Symbols["["].front(function(cmd) {
+  cmd.execute = parser.Command.base["["];
+  // Need to save to call the base tokenize.
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn) {
+    tkn.next_token = tkn.branches.at(0);
+    tkn.next = function() { return tkn.next_token; }
+    return temp(tkn);
+  }
+});
+parser.Symbols["]"].front(function(cmd) {
+  cmd.execute = parser.Command.base["]"];
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn) {
     var p = tkn.parent;
-    while(!(p.literal === "[" && p.branches.length() === 1)) {
+    while(p.literal !== "[" || p.branches.length() !== 1) {
       p = p.parent;
     }
     p.branches.back(tkn);
     tkn.branches.back(p);
-    var temp = new Token(tkn.end+1,tkn.code,tkn);
-    tkn.branches.back(temp);
-    temp.tokenize();
+    return temp(tkn);
   }
-  Symbols["]"].front(temp);
-})()
-Symbols["."].front(new Command(Command.base["."]));
-Symbols["ƒ"].front(new Command(Command.base["ƒ"]));
-Symbols["'"].front(new Command(Command.base["'"]));
-
-//-----------------------------------------------------------------------------
-// The lexical analyzer.
-function Token(start, code, parent) {
-  this.parent = parent;
-  // Come back and add look ahead for '=' for assigmnent operator.
-  this.start = start;
-  this.code = code;
-  this.inputs = new Pipe();
-  this.outputs = new Pipe();
-  var cmd = "";
-  this.literal = "";
-  for(var i = start; i < code.length; ++i) {
-    cmd += code[i];
-    if(Symbols[cmd] !== undefined && Symbols[cmd].at(0)) {
-      // Look ahead for possible longer command.
-      if(code[i+1] !== undefined) {
-        var temp = cmd + code[i+1];
-        if(Symbols[temp] !== undefined && Symbols[temp].at(0)) {
-          continue;
-        }
-      }
-      
-      this.literal = cmd;
-      this.cmd = Symbols[cmd].at(0);
-      break;
-    }
-  }
-  this.end = start + this.literal.length - 1;
-  // Collect all of the different branches.
-  this.branches = new Pipe();
-}
-Token.last = function(tkn,pipe) {
-  if(pipe === undefined) pipe = new Pipe();
-
-  var n = tkn;
-  if(pipe.has(n)) return undefined;
-
-  pipe.back(n);
-  if(n.branches.length() === 0) return n;
-
-  for(var i = tkn.branches.length(); i--;) {
-    n = Token.last(tkn.branches.at(i),pipe);
-    if(n !== undefined) return n;
-  }
-  return undefined;
-}
-Token.prototype.tokenize = function() {
-  if(this.cmd !== undefined) {
-    this.cmd.tokenize(this);
-  }
-  this.next = this.branches.at(0);
-}
+});
+parser.Symbols["."].front(function(cmd) {
+  cmd.execute = parser.Command.base["."];
+});
+parser.Symbols[","].front(function(cmd) {
+  cmd.execute = parser.Command.base[","];
+});
+parser.Symbols["ƒ"].front(function(cmd) {
+  cmd.execute = parser.Command.base["ƒ"];
+});
+parser.Symbols["'"].front(function(cmd) {
+  cmd.execute = parser.Command.base["'"];
+});
 
 //-----------------------------------------------------------------------------
 function Cell(x,y) {
@@ -204,7 +96,7 @@ function Cell(x,y) {
   this.y = y;
   this.value = undefined;
 }
-Cell.defaults = new Pipe();
+Cell.defaults = new parser.Pipe();
 Cell.types = {}
 Cell.characters = [
 '¡','¢','£','¤','¥','¦','©','¬','®','µ','\n','¿','€','Æ','Ç','Ð',
@@ -227,6 +119,11 @@ Cell.characters = [
 (function() {
   Cell.values = {length:Cell.characters.length};
   for(var i = Cell.characters.length; i--;) {
+    // Added to fix strange browser bug where adds a character
+    // at the beginning of some of the special characters.
+    if(Cell.characters[i].length !== 1) {
+      Cell.characters[i] = Cell.characters[i].substr(1,1);
+    }
     Cell.values[Cell.characters[i]] = i;
   }
 })()
@@ -260,6 +157,9 @@ Cell.types.BYTE = function(v) { this.value = v || 0; this.type = "BYTE" }
 Cell.defaults.front(Cell.types.BYTE);
 Cell.types.BYTE.MAX = 255;
 Cell.types.BYTE.MIN = 0;
+Cell.types.BYTE.prototype.toString = function() {
+  return this.stringify().value;
+}
 Cell.types.BYTE.prototype.increment = function(cell,tkn,prgm) {
   var value = this.value;
   if(this.value >= Cell.types.BYTE.MAX) value = Cell.types.BYTE.MIN;
@@ -286,6 +186,9 @@ Cell.types.BYTE.prototype.byteify = function(cell,tkn,prgm) {
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
+Cell.types.STRING.prototype.toString = function() {
+  return this.stringify().value;
+}
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   var obj = prgm.inputs.front();
   var value = this.value;
@@ -335,17 +238,14 @@ Memory.prototype.access = function(pos) {
 // The main clas for starting the program.
 function Program(code) {
   this.memory = new Memory();
-  this.code = code;
   this.dimlr = "y";
   this.dimud = "x";
   this.pos = { x:0, y: 0 };
-  this.first = new Token(0, this.code)
-  this.token = this.first;
-  this.token.tokenize();
-  this.outputs = new Pipe();
-  this.inputs = new Pipe();
-  this.num_steps = 0;
+  // Does the path instantiation onto the Program object.
+  parser.Path.apply(this, [code]);
 }
+// Makes them appear to be the same class.
+Program.prototype = parser.Path.prototype;
 Program.prototype.move_left = function() {
   --this.pos[this.dimlr];
 }
@@ -366,21 +266,6 @@ Program.prototype.flip_dim = function() {
 Program.prototype.current_cell = function() {
   return this.memory.access(this.pos)
 }
-Program.prototype.next_token = function() {
-  this.token = this.token.next;
-}
-Program.prototype.step = function() {
-  if(this.token.cmd) {
-    this.token.cmd.execute(this.token,this);
-    ++this.num_steps;
-    this.next_token();
-    return true;
-  }
-  return false;
-}
-Program.prototype.exec = function() {
-  while(this.step());
-}
 
 //-----------------------------------------------------------------------------
 // The main function for processing and executing the code.
@@ -390,14 +275,9 @@ var braingolfpp = function(code) {
 
 //-----------------------------------------------------------------------------
 // Sets all of the global variables defined earlier.
-braingolfpp.Program = Program;
-braingolfpp.Command = Command;
 braingolfpp.Memory = Memory;
-braingolfpp.Token = Token;
 braingolfpp.Cell = Cell;
-braingolfpp.Symbols = Symbols;
-braingolfpp.Pipe = Pipe;
 braingolfpp.version = version;
 global.braingolfpp = braingolfpp;
 
-})(this)
+})(this, this.parser)
