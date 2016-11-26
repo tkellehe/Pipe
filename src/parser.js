@@ -95,6 +95,11 @@ Pipe.prototype.toString = function() {
 //-----------------------------------------------------------------------------
 function Token(start, code, parent) {
   this.parent = parent;
+
+  this.branches = new Pipe();
+  this.inputs = new Pipe();
+  this.outputs = new Pipe();
+
   // First get all of the information and data needed such that when
   // the command tokenizes it will have everything to work off of.
   var result = Token.analyze.at(0)(start, 0, code, this);
@@ -111,10 +116,6 @@ function Token(start, code, parent) {
   this.literal = result.literal;
   this.end = result.end;
   this.cmd = result.cmd;
-  
-  this.branches = new Pipe();
-  this.inputs = new Pipe();
-  this.outputs = new Pipe();
 }
 Token.prototype.next = function(path) {
   return this.branches.at(0);
