@@ -1,112 +1,24 @@
 <html>
 <head>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-	<link rel="stylesheet" href="content/css/jquery.mmenu.all.css">
-	<style type="text/css">
-		#my-page {
-			position:absolute;
-	    	top:0; right:0;
-	    	bottom:0; left:0;
-	    	background-color:rgba(250,250,250,1);
-	    	width: 100%;
-	    	height: 100%;
-		}
-
-		#right-menu {
-			background-color: rgb(0, 0, 0);
-			color: rgb(255, 255, 255);
-			list-style-type: none;
-			margin: 0 auto;
-			padding: 1em;
-			overflow-y: auto;
-		}
-
-		li {
-			margin:0 0 10px 0;
-		}
-		li.last {
-			margin:0 0 100px 0;
-		}
-		li.first {
-			margin:10px 0 10px 0;
-		}
-		li a, li a:hover, li a:visited {
-			color: rgb(255, 255, 255);
-			text-decoration: none;
-		}
-	</style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	<script src="src/parser.js"></script>
 	<script src="src/braingolfpp-latest.js"></script>
-	<script src="content/js/jquery.slidereveal.min.js"></script>
 	<script>
-		$(function(){
-			$("#right-menu").slideReveal({
-				trigger: $("#right-trigger"),
-				position: "bottom",
-				width: 30,
-				push: true
-			});
-
-			$(".char").each(function(){
-				$(this).click(function(e){
-					e.preventDefault();
-					$code = $("#code");
-					var txt = $(this).text();
-					if(txt === "\\s") txt = " ";
-					else if(txt === "\\n") txt = "\n";
-
-					$code.val($code.val() + txt);
-
-					// Makes the letter flicker.
-					$(this).effect("shake", {direction:"right",distance:5,times:1}, 100);
-				});
-$(this).effect("shake", {direction:"right",distance:5,times:1}, 100);
-			});
-		});
+$(function(){
+  $("#run")
+});
 	</script>
 </head>
 <body>
-	<div id="my-page">
-		<div id="my-content">
-			<center>
-				<textarea id="code" cols="100" rows="8"></textarea>
-			</center>
-			<a id="right-trigger">RIGHT</a>
-		</div>
-		<div>
-			<ul id="right-menu">
-				<li class="first"><a id="right-space" class="char" href="\">\s</a></li>
-				<li><a id="right-nline" class="char" href="\">\n</a></li>
-				<li><a id="right-A" class="char" href="\">A</a></li>
-				<li><a id="right-B" class="char" href="\">B</a></li>
-				<li><a id="right-C" class="char" href="\">C</a></li>
-				<li><a id="right-D" class="char" href="\">D</a></li>
-				<li><a id="right-E" class="char" href="\">E</a></li>
-				<li><a id="right-F" class="char" href="\">F</a></li>
-				<li><a id="right-G" class="char" href="\">G</a></li>
-				<li><a id="right-H" class="char" href="\">H</a></li>
-				<li><a id="right-I" class="char" href="\">I</a></li>
-				<li><a id="right-J" class="char" href="\">J</a></li>
-				<li><a id="right-K" class="char" href="\">K</a></li>
-				<li><a id="right-L" class="char" href="\">L</a></li>
-				<li><a id="right-M" class="char" href="\">M</a></li>
-				<li><a id="right-N" class="char" href="\">N</a></li>
-				<li><a id="right-O" class="char" href="\">O</a></li>
-				<li><a id="right-P" class="char" href="\">P</a></li>
-				<li><a id="right-Q" class="char" href="\">Q</a></li>
-				<li><a id="right-R" class="char" href="\">R</a></li>
-				<li><a id="right-S" class="char" href="\">S</a></li>
-				<li><a id="right-T" class="char" href="\">T</a></li>
-				<li><a id="right-U" class="char" href="\">U</a></li>
-				<li><a id="right-V" class="char" href="\">V</a></li>
-				<li><a id="right-W" class="char" href="\">W</a></li>
-				<li><a id="right-X" class="char" href="\">X</a></li>
-				<li><a id="right-Y" class="char" href="\">Y</a></li>
-				<li class="last"><a id="right-Z" class="char" href="\">Z</a></li>
-			</ul>
-		</div>
+	<div id="my-content">
+		<center>
+			<textarea id="code" cols="100" rows="8"></textarea>
+			<textarea id="input" cols="100" rows="8"></textarea>
+			<textarea id="output" cols="100" rows="8"></textarea>
+<input id="run" value="run" type="button"/>
+		</center>
 	</div>
 </body>
 </html>
