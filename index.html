@@ -7,7 +7,15 @@
 	<script src="src/braingolfpp-latest.js"></script>
 	<script>
 $(function(){
-  $("#run")
+  $("#run").click(function(){
+    var prgm = braingolfpp($("#code").val());
+    var b = (new braingolfpp.Cell.types.STRING($("#input").val())).byteify();
+    for(var i = b.length; i--;)
+      prgm.inputs.front(b[i]);
+    prgm.exec(function() {
+      $("#output").val(this.outputs+"")
+    });
+  }
 });
 	</script>
 </head>
