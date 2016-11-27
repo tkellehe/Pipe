@@ -74,6 +74,7 @@ parser.Symbols["]"].front(function(cmd) {
     }
     p.branches.back(tkn);
     tkn.branches.back(p);
+    tkn.next = function(){return p;};
     return temp(tkn);
   }
 });
