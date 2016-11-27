@@ -28,6 +28,14 @@ parser.Command.base = {
     } else {
       cell.value = new Cell.types.STRING();
     }
+  },
+  "b": function(tkn,prgm) {
+    var cell = prgm.current_cell();
+    if(cell.has()) {
+      cell.value = cell.byteify(tkn,prgm)[0];
+    } else {
+      cell.value = new Cell.types.BYTE();
+    }
   }
 }
 
@@ -41,6 +49,7 @@ parser.Symbols["."] = new parser.Pipe();
 parser.Symbols[","] = new parser.Pipe();
 parser.Symbols["ƒ"] = new parser.Pipe();
 parser.Symbols["'"] = new parser.Pipe();
+parser.Symbols["b"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.base["+"];
@@ -89,6 +98,9 @@ parser.Symbols["ƒ"].front(function(cmd) {
 });
 parser.Symbols["'"].front(function(cmd) {
   cmd.execute = parser.Command.base["'"];
+});
+parser.Symbols["b"].front(function(cmd) {
+  cmd.execute = parser.Command.base["b"];
 });
 
 //-----------------------------------------------------------------------------
