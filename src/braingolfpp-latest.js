@@ -4,48 +4,42 @@
 var version = "1.00.00.00";
 
 parser.Command.internal = {
-  pipe_data: function(tkn,prgm) {
+  pipe_oi: function(tkn,prgm) {
     if(tkn.parent === undefined) {
       tkn.inputs.pipe(prgm.inputs);
     } else {
       tkn.inputs.pipe(tkn.parent.outputs);
     }
+  },
+  pipe_io: function(tkn,prgm) {
+    tkn.outputs.pipe(tkn.inputs);
   }
 }
 parser.Command.base = {
   "+": function(tkn,prgm) {
-    parser.Command.internal.pipe_data(tkn,prgm);
     var v = prgm.current_cell().increment(tkn,prgm);
     prgm.current_cell().value = v;
   },
   "-": function(tkn,prgm) {
-    parser.Command.internal.pipe_data(tkn,prgm);
     var v = prgm.current_cell().decrement(tkn,prgm);
     prgm.current_cell().value = v;
   },
-  ">": function(tkn,prgm) { parser.Command.internal.pipe_data(tkn,prgm); prgm.move_right() },
+  ">": function(tkn,prgm) { prgm.move_right() },
   "<": function(tkn,prgm) { parser.Command.internal.pipe_data(tkn,prgm); prgm.move_left() },
   "[": function(tkn,prgm) {
-    parser.Command.internal.pipe_data(tkn,prgm);
     tkn.next_token =
     prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches.at(0): tkn.branches.at(1).branches.at(1)
   },
-  "]": function(tkn,prgm) {
-    parser.Command.internal.pipe_data(tkn,prgm);
-  },
+  "]": function(tkn,prgm) {},
   ".": function(tkn,prgm) {
-    parser.Command.internal.pipe_data(tkn,prgm);
     var a = prgm.current_cell().printify(tkn,prgm);
     for(var i = 0, l = a.length; i < l; ++i) {
       prgm.outputs.back(a[i]);
     }
   },
-  ",": function(tkn,prgm) {
-    parser.Command.internal.pipe_data(tkn,prgm);
-  },
-  "ƒ": function(tkn,prgm) { parser.Command.internal.pipe_data(tkn,prgm); prgm.flip_dim(); },
+  ",": function(tkn,prgm) {},
+  "ƒ": function(tkn,prgm) { prgm.flip_dim(); },
   "'": function(tkn,prgm) {
-    parser.Command.internal.pipe_data(tkn,prgm);
     var cell = prgm.current_cell();
     if(cell.has()) {
       cell.value = cell.stringify(tkn,prgm);
@@ -54,7 +48,6 @@ parser.Command.base = {
     }
   },
   "#": function(tkn,prgm) {
-    parser.Command.internal.pipe_data(tkn,prgm);
     var cell = prgm.current_cell();
     if(cell.has()) {
       cell.value = cell.numberify(tkn,prgm)[0];
@@ -77,18 +70,27 @@ parser.Symbols["'"] = new parser.Pipe();
 parser.Symbols["#"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["+"];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols["-"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["-"];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols[">"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base[">"];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols["<"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["<"];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols["["].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["["];
   // Need to save to call the base tokenize.
   var temp = cmd.tokenize;
@@ -97,8 +99,10 @@ parser.Symbols["["].front(function(cmd) {
     tkn.next = function() { return tkn.next_token; }
     return temp(tkn);
   }
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols["]"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["]"];
   var temp = cmd.tokenize;
   cmd.tokenize = function(tkn) {
@@ -111,21 +115,32 @@ parser.Symbols["]"].front(function(cmd) {
     tkn.next = function(){return p;};
     return temp(tkn);
   }
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols["."].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["."];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols[","].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base[","];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols["ƒ"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["ƒ"];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols["'"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["'"];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 parser.Symbols["#"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_io;
   cmd.execute = parser.Command.base["#"];
+  cmd.execute = parser.Command.internal.pipe_oi;
 });
 
 //-----------------------------------------------------------------------------
