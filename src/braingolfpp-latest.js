@@ -279,7 +279,7 @@ Memory.prototype.access = function(pos) {
 }
 
 //-----------------------------------------------------------------------------
-// The main clas for starting the program.
+// The main class for starting the program.
 function Program(code) {
   this.memory = new Memory();
   this.dimlr = "y";
