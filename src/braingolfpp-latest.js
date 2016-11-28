@@ -49,7 +49,7 @@ parser.Symbols["."] = new parser.Pipe();
 parser.Symbols[","] = new parser.Pipe();
 parser.Symbols["ƒ"] = new parser.Pipe();
 parser.Symbols["'"] = new parser.Pipe();
-parser.Symbols["b"] = new parser.Pipe();
+parser.Symbols["#"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.base["+"];
