@@ -187,7 +187,7 @@ Cell.types.NUMBER.prototype.printify = function(cell,tkn,prgm) {
 Cell.types.NUMBER.prototype.stringify = function(cell,tkn,prgm) {
   return new Cell.types.STRING(this.value+"");
 }
-Cell.types.BYTE.prototype.numberify = function(cell,tkn,prgm) {
+Cell.types.NUMBER.prototype.numberify = function(cell,tkn,prgm) {
   return [new Cell.types.NUMBER(this.value)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
