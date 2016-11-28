@@ -236,7 +236,7 @@ Cell.types.STRING.prototype.toString = function() {
   return this.stringify().value;
 }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
-  var obj = prgm.inputs.front();
+  var obj = tkn.inputs.front();
   var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
@@ -245,7 +245,7 @@ Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   return new Cell.types.STRING(value);
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
-  prgm.inputs.front(new Cell.types.STRING(this.value[this.value.length-1]));
+  tkn.inputs.front(new Cell.types.STRING(this.value[this.value.length-1]));
   return new Cell.types.STRING(this.value.slice(0,this.value.length-1));
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
