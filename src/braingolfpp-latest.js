@@ -6,7 +6,7 @@ var version = "1.00.00.00";
 parser.Command.internal = {
   pipe_oi: function(tkn,prgm) {
     if(tkn.parent === undefined) {
-      tkn.inputs.pipe(prgm.inputs);
+      tkn.inputs.pipe(prgm.inputs.copy());
     } else {
       tkn.inputs.pipe(tkn.parent.outputs);
     }
@@ -31,18 +31,23 @@ parser.Command.base = {
     prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches.at(0): tkn.branches.at(1).branches.at(1)
   },
   "]": function(tkn,prgm) {},
-  ".": function(tkn,prgm) {
-    var a = prgm.current_cell().printify(tkn,prgm);
-    for(var i = 0, l = a.length; i < l; ++i) {
-      prgm.outputs.back(a[i]);
-    }
+  ":": function(tkn,prgm) {
+    prgm.outputs.back(prgm.current_cell().copy(tkn,prgm));
   },
-  ",": function(tkn,prgm) {},
+  ".": function(tkn,prgm) {
+    tkn.outputs.back(prgm.current_cell().copy(tkn,prgm));
+  },
+  ",": function(tkn,prgm) {
+    prgm.current_cell().value = tkn.inputs.front();
+  },
+  ";": function(tkn,prgm) {
+    prgm.current_cell().value = prgm.inputs.front();
+  },
   "ƒ": function(tkn,prgm) { prgm.flip_dim(); },
   "'": function(tkn,prgm) {
     var cell = prgm.current_cell();
     if(cell.has()) {
-      cell.value = cell.stringify(tkn,prgm);
+      cell.value = cell.stringify(tkn,prgm)[0];
     } else {
       cell.value = new Cell.types.STRING();
     }
@@ -196,8 +201,8 @@ Cell.prototype.decrement = function(tkn,prgm) {
 Cell.prototype.is_non_zero = function(tkn,prgm) {
   return this.content().is_non_zero(this,tkn,prgm);
 }
-Cell.prototype.printify = function(tkn,prgm) {
-  return this.content().printify(this,tkn,prgm);
+Cell.prototype.copy = function(tkn,prgm) {
+  return this.content().copy(this,tkn,prgm);
 }
 Cell.prototype.stringify = function(tkn,prgm) {
   return this.content().stringify(this,tkn,prgm);
@@ -210,7 +215,7 @@ Cell.types.NUMBER = function(v) { this.value = v || 0; }
 Cell.types.NUMBER.prototype.type = "NUMBER";
 Cell.defaults.front(Cell.types.NUMBER);
 Cell.types.NUMBER.prototype.toString = function() {
-  return this.stringify().value;
+  return this.stringify()[0].value;
 }
 Cell.types.NUMBER.prototype.increment = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER(this.value + 1);
@@ -221,20 +226,20 @@ Cell.types.NUMBER.prototype.decrement = function(cell,tkn,prgm) {
 Cell.types.NUMBER.prototype.is_non_zero = function(cell,tkn,prgm) {
   return !this.value;
 }
-Cell.types.NUMBER.prototype.printify = function(cell,tkn,prgm) {
+Cell.types.NUMBER.prototype.copy = function(cell,tkn,prgm) {
   return [new Cell.types.NUMBER(this.value)];
 }
 Cell.types.NUMBER.prototype.stringify = function(cell,tkn,prgm) {
-  return new Cell.types.STRING(this.value+"");
+  return [new Cell.types.STRING(this.value+"")];
 }
 Cell.types.NUMBER.prototype.numberify = function(cell,tkn,prgm) {
-  return [new Cell.types.NUMBER(this.value)];
+  return [this.copy(cell,tkn,prgm)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; }
 Cell.types.STRING.prototype.type = "STRING";
 Cell.types.STRING.prototype.toString = function() {
-  return this.stringify().value;
+  return this.stringify()[0].value;
 }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   var obj = tkn.inputs.front();
@@ -246,17 +251,17 @@ Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   return new Cell.types.STRING(value);
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
-  tkn.inputs.front(new Cell.types.STRING(this.value[this.value.length-1]));
+  tkn.inputs.back(new Cell.types.STRING(this.value[this.value.length-1]));
   return new Cell.types.STRING(this.value.slice(0,this.value.length-1));
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
   return !!this.value.length;
 }
-Cell.types.STRING.prototype.printify = function(cell,tkn,prgm) {
-  return [new Cell.types.STRING(this.value)];
+Cell.types.STRING.prototype.copy = function(cell,tkn,prgm) {
+  return new Cell.types.STRING(this.value);
 }
 Cell.types.STRING.prototype.stringify = function(cell,tkn,prgm) {
-  return new Cell.types.STRING(this.value);
+  return [this.copy(cell,tkn,prgm)];
 }
 Cell.types.STRING.prototype.numberify = function(cell,tkn,prgm) {
   return [new Cell.types.NUMBER(+this.value)];
