@@ -59,6 +59,9 @@ parser.Command.base = {
     } else {
       cell.value = new Cell.types.NUMBER();
     }
+  },
+  " ": function(tkn,prgm) {
+    delete prgm.current_cell().value;
   }
 }
 
@@ -75,6 +78,7 @@ parser.Symbols[";"] = new parser.Pipe();
 parser.Symbols["ƒ"] = new parser.Pipe();
 parser.Symbols["'"] = new parser.Pipe();
 parser.Symbols["#"] = new parser.Pipe();
+parser.Symbols[" "] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -157,6 +161,11 @@ parser.Symbols["'"].front(function(cmd) {
 parser.Symbols["#"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["#"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols[" "].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base[" "];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
