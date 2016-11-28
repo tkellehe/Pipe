@@ -90,6 +90,13 @@ Pipe.prototype.pipe = function(o) {
 }
 
 //-----------------------------------------------------------------------------
+Pipe.prototype.each = function(f) {
+  for(var i = 0, l = this.length(); i < l;++i) {
+    f(this.at(i))
+  }
+}
+
+//-----------------------------------------------------------------------------
 Pipe.prototype.toString = function() {
   var s = "";
   for(var i = 0; i < this.length(); ++i) {
@@ -182,8 +189,14 @@ function Command(f) {
       return n.tokenize();
     }
   }
+  // Allows a Command to do multiple functions.
+  var exec = new Pipe();
+  exec.front(function(tkn,path){});
+  Object.defineProperty(this,"execute",{
+    get: function() { return function(tkn,path) { exec.each(function(i) { i(tkn,path) }) } },
+    set: function(v) { exec.front(v) }
+  });
 }
-Command.prototype.execute = function(tkn,path) {}
 Command.prototype.tokenize = function(tkn) {
   var n = new Token(tkn.end+1,tkn.code,tkn);
   tkn.branches.back(n);
