@@ -90,6 +90,13 @@ Pipe.prototype.pipe = function(o) {
 }
 
 //-----------------------------------------------------------------------------
+Pipe.prototype.copy = function(o) {
+  var c = o || new Pipe();
+  this.each(function(i){c.back(i)});
+  return c;
+}
+
+//-----------------------------------------------------------------------------
 Pipe.prototype.each = function(f) {
   for(var i = 0, l = this.length(); i < l;++i) {
     f(this.at(i))
