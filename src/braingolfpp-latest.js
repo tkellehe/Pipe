@@ -237,8 +237,7 @@ Cell.types.STRING.prototype.toString = function() {
   return this.stringify().value;
 }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
-  console.log(tkn.inputs.at(0));
-  var obj;// = tkn.inputs.front();
+  var obj = tkn.inputs.front();
   var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
