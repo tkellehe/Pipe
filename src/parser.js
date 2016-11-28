@@ -82,6 +82,14 @@ Pipe.prototype.has = function(v) {
 }
 
 //-----------------------------------------------------------------------------
+Pipe.prototype.pipe = function(o) {
+  var i;
+  while(i = o.front()) {
+    this.back(i);
+  }
+}
+
+//-----------------------------------------------------------------------------
 Pipe.prototype.toString = function() {
   var s = "";
   for(var i = 0; i < this.length(); ++i) {
