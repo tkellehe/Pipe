@@ -259,11 +259,7 @@ Cell.types.STRING.prototype.stringify = function(cell,tkn,prgm) {
   return new Cell.types.STRING(this.value);
 }
 Cell.types.STRING.prototype.numberify = function(cell,tkn,prgm) {
-  var a = [];
-  for(var i = this.value.length; i--;) {
-    a.unshift(new Cell.types.NUMBER(+b));
-  }
-  return a;
+  return [+this.value||0];
 }
 //-----------------------------------------------------------------------------
 function Memory() {
