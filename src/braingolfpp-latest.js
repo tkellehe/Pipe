@@ -68,8 +68,10 @@ parser.Symbols[">"] = new parser.Pipe();
 parser.Symbols["<"] = new parser.Pipe();
 parser.Symbols["["] = new parser.Pipe();
 parser.Symbols["]"] = new parser.Pipe();
+parser.Symbols[":"] = new parser.Pipe();
 parser.Symbols["."] = new parser.Pipe();
 parser.Symbols[","] = new parser.Pipe();
+parser.Symbols[";"] = new parser.Pipe();
 parser.Symbols["ƒ"] = new parser.Pipe();
 parser.Symbols["'"] = new parser.Pipe();
 parser.Symbols["#"] = new parser.Pipe();
@@ -122,9 +124,19 @@ parser.Symbols["]"].front(function(cmd) {
   }
   cmd.execute = parser.Command.internal.pipe_io;
 });
+parser.Symbols[":"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base[":"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
 parser.Symbols["."].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["."];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols[";"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base[";"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols[","].front(function(cmd) {
