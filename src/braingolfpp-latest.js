@@ -236,15 +236,13 @@ Cell.types.STRING.prototype.toString = function() {
   return this.stringify().value;
 }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
-  console.log(tkn);
   var obj = tkn.inputs.front();
+  console.log(obj);
   var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
     value += obj.value;
   }
-  console.log(this);
-  console.log(tkn);
   return new Cell.types.STRING(value);
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
