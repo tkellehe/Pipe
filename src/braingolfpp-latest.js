@@ -4,14 +4,14 @@
 var version = "1.00.00.00";
 
 parser.Command.internal = {
-  pipe_oi: function(tkn,prgm) {
+  pipe_io: function(tkn,prgm) {
     if(tkn.parent === undefined) {
       tkn.inputs.pipe(prgm.inputs);
     } else {
       tkn.inputs.pipe(tkn.parent.outputs);
     }
   },
-  pipe_io: function(tkn,prgm) {
+  pipe_oi: function(tkn,prgm) {
     tkn.outputs.pipe(tkn.inputs);
   }
 }
