@@ -132,7 +132,7 @@ Token.analyze.front(function(start, amount, code, tkn){
     // Extract what could be the literal.
     var result = {literal: code.substr(start, amount)};
     // If can successfully recognize the given characters as a valid symbol...
-    if(Symbols[result.literal] !== undefined\
+    if(Symbols[result.literal] !== undefined
        // Either there is not any more characters.
       && (code[start+amount] === undefined
        // Or, the current literal plus the next character is not a command.
