@@ -231,13 +231,14 @@ Cell.types.NUMBER.prototype.numberify = function(cell,tkn,prgm) {
   return [new Cell.types.NUMBER(this.value)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Cell.types.STRING = function(s) { this.value = s || ""; this.type = "STRING" }
+Cell.types.STRING = function(s) { this.value = s || ""; }
+Cell.types.STRING.prototype.type = "STRING";
 Cell.types.STRING.prototype.toString = function() {
   return this.stringify().value;
 }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   console.log(tkn.inputs.at(0));
-  //var obj = tkn.inputs.front();
+  var obj;// = tkn.inputs.front();
   var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
