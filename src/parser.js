@@ -132,12 +132,14 @@ Token.analyze.front(function(start, amount, code, tkn){
     // Extract what could be the literal.
     var result = {literal: code.substr(start, amount)};
     // If can successfully recognize the given characters as a valid symbol...
-    if(Symbols[result.literal] !== undefined
+    if(Symbols[result.literal] !== undefined\
+       // Either there is not any more characters.
       && (code[start+amount] === undefined
+       // Or, the current literal plus the next character is not a command.
         || Symbols[result.literal+code[start+amount]] === undefined)) {
       // Create a Command based off of the information stored in the Symbols.
       result.cmd = new Command(Symbols[result.literal].at(0));
-      // Set of the start and end for the token.
+      // Set the start and end of the token as well as the code.
       result.start = start;
       result.end = start+amount-1;
       result.code = code;
