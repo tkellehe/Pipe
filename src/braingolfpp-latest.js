@@ -3,25 +3,49 @@
 // The current verion of braingolfpp.
 var version = "1.00.00.00";
 
+parser.Command.internal = {
+  pipe_data: function(tkn,prgm) {
+    if(tkn.parent === undefined) {
+      tkn.inputs.pipe(prgm.inputs);
+    } else {
+      tkn.inputs.pipe(tkn.parent.outputs);
+    }
+  }
+}
 parser.Command.base = {
-  "+": function(tkn,prgm) { var v = prgm.current_cell().increment(tkn,prgm); prgm.current_cell().value = v; },
-  "-": function(tkn,prgm) { var v = prgm.current_cell().decrement(tkn,prgm); prgm.current_cell().value = v; },
-  ">": function(tkn,prgm) { prgm.move_right() },
-  "<": function(tkn,prgm) { prgm.move_left() },
+  "+": function(tkn,prgm) {
+    parser.Command.internal.pipe_data(tkn,prgm);
+    var v = prgm.current_cell().increment(tkn,prgm);
+    prgm.current_cell().value = v;
+  },
+  "-": function(tkn,prgm) {
+    parser.Command.internal.pipe_data(tkn,prgm);
+    var v = prgm.current_cell().decrement(tkn,prgm);
+    prgm.current_cell().value = v;
+  },
+  ">": function(tkn,prgm) { parser.Command.internal.pipe_data(tkn,prgm); prgm.move_right() },
+  "<": function(tkn,prgm) { parser.Command.internal.pipe_data(tkn,prgm); prgm.move_left() },
   "[": function(tkn,prgm) {
+    parser.Command.internal.pipe_data(tkn,prgm);
     tkn.next_token =
     prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches.at(0): tkn.branches.at(1).branches.at(1)
   },
-  "]": function(tkn,prgm) { },
+  "]": function(tkn,prgm) {
+    parser.Command.internal.pipe_data(tkn,prgm);
+  },
   ".": function(tkn,prgm) {
+    parser.Command.internal.pipe_data(tkn,prgm);
     var a = prgm.current_cell().printify(tkn,prgm);
     for(var i = 0, l = a.length; i < l; ++i) {
       prgm.outputs.back(a[i]);
     }
   },
-  ",": function(tkn,prgm) { },
-  "ƒ": function(tkn,prgm) { prgm.flip_dim(); },
+  ",": function(tkn,prgm) {
+    parser.Command.internal.pipe_data(tkn,prgm);
+  },
+  "ƒ": function(tkn,prgm) { parser.Command.internal.pipe_data(tkn,prgm); prgm.flip_dim(); },
   "'": function(tkn,prgm) {
+    parser.Command.internal.pipe_data(tkn,prgm);
     var cell = prgm.current_cell();
     if(cell.has()) {
       cell.value = cell.stringify(tkn,prgm);
@@ -30,6 +54,7 @@ parser.Command.base = {
     }
   },
   "#": function(tkn,prgm) {
+    parser.Command.internal.pipe_data(tkn,prgm);
     var cell = prgm.current_cell();
     if(cell.has()) {
       cell.value = cell.numberify(tkn,prgm)[0];
