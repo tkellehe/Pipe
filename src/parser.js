@@ -179,6 +179,15 @@ Token.prototype.tokenize = function() {
 // The Execution of the actual token.
 //-----------------------------------------------------------------------------
 function Command(f) {
+  // Allows a Command to do multiple functions.
+  var exec = new Pipe();
+  exec.front(function(tkn,path){});
+  Object.defineProperty(this,"execute",{
+    get: function() { return function(tkn,path) { exec.each(function(i) { i(tkn,path) }) } },
+    set: function(v) { exec.front(v) }
+  });
+  
+  // Sets up the Command object.
   if(typeof f === "function") {
     f(this);
   } else if(typeof f === "string") {
@@ -189,13 +198,6 @@ function Command(f) {
       return n.tokenize();
     }
   }
-  // Allows a Command to do multiple functions.
-  var exec = new Pipe();
-  exec.front(function(tkn,path){});
-  Object.defineProperty(this,"execute",{
-    get: function() { return function(tkn,path) { exec.each(function(i) { i(tkn,path) }) } },
-    set: function(v) { exec.front(v) }
-  });
 }
 Command.prototype.tokenize = function(tkn) {
   var n = new Token(tkn.end+1,tkn.code,tkn);
