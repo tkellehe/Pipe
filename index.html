@@ -8,7 +8,7 @@
 	<script>
 $(function(){
   $("#run").click(function(){
-    var prgm = braingolfpp($("#code").val());
+    prgm = braingolfpp($("#code").val());
     var b = (new braingolfpp.Cell.types.STRING($("#input").val())).byteify();
     for(var i = b.length; i--;)
       prgm.inputs.front(b[i]);
