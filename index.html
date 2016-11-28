@@ -1,32 +1,30 @@
 <html>
 <head>
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-	<script src="src/parser.js"></script>
-	<script src="src/braingolfpp-latest.js"></script>
-	<script>
-$(function(){
-  $("#run").click(function(){
-    prgm = braingolfpp($("#code").val());
-    var b = (new braingolfpp.Cell.types.STRING($("#input").val())).byteify();
-    for(var i = b.length; i--;)
-      prgm.inputs.front(b[i]);
-    prgm.exec(function() {
-      $("#output").val(this.outputs+"")
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="src/parser.js"></script>
+  <script src="src/braingolfpp-latest.js"></script>
+  <script>
+    $(function(){
+      $("#run").click(function(){
+        prgm = braingolfpp($("#code").val());
+        prgm.inputs.front(new braingolfpp.Cell.types.STRING($("#input").val()));
+        prgm.exec(function() {
+          $("#output").val(this.outputs+"")
+        });
+      });
     });
-  });
-});
-	</script>
+  </script>
 </head>
 <body>
-	<div id="my-content">
-		<center>
-			<textarea id="code" cols="100" rows="8"></textarea>
-			<textarea id="input" cols="100" rows="8"></textarea>
-			<textarea id="output" cols="100" rows="8"></textarea>
-<input id="run" value="run" type="button"/>
-		</center>
-	</div>
+  <div id="my-content">
+    <center>
+      <textarea id="code" cols="100" rows="8"></textarea>
+      <textarea id="input" cols="100" rows="8"></textarea>
+      <textarea id="output" cols="100" rows="8"></textarea>
+      <input id="run" value="run" type="button"/>
+    </center>
+  </div>
 </body>
 </html>
