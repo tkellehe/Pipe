@@ -202,8 +202,8 @@ Cell.prototype.printify = function(tkn,prgm) {
 Cell.prototype.stringify = function(tkn,prgm) {
   return this.content().stringify(this,tkn,prgm);
 }
-Cell.prototype.byteify = function(tkn,prgm) {
-  return this.content().byteify(this,tkn,prgm);
+Cell.prototype.numberify = function(tkn,prgm) {
+  return this.content().numberify(this,tkn,prgm);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.NUMBER = function(v) { this.value = v || 0; }
