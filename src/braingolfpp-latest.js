@@ -272,6 +272,11 @@ function Program(code) {
   this.pos = { x:0, y: 0 };
   // Does the path instantiation onto the Program object.
   parser.Path.apply(this, [code]);
+  
+  // Allows for the inputs to be moved to the outputs.
+  this.exit.cmd.execute = function(tkn,prgm) {
+    prgm.outputs.pipe(tkn.outputs)
+  }
 }
 // Makes them appear to be the same class.
 Program.prototype = parser.Path.prototype;
