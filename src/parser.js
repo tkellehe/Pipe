@@ -181,10 +181,10 @@ Token.prototype.tokenize = function() {
 function Command(f) {
   // Allows a Command to do multiple functions.
   var exec = new Pipe();
-  exec.front(function(tkn,path){});
+  exec.back(function(tkn,path){});
   Object.defineProperty(this,"execute",{
     get: function() { return function(tkn,path) { exec.each(function(i) { i(tkn,path) }) } },
-    set: function(v) { exec.front(v) }
+    set: function(v) { exec.back(v) }
   });
   
   // Sets up the Command object.
