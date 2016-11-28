@@ -4,14 +4,14 @@
 var version = "1.00.00.00";
 
 parser.Command.internal = {
-  pipe_io: function(tkn,prgm) {
+  pipe_oi: function(tkn,prgm) {
     if(tkn.parent === undefined) {
       tkn.inputs.pipe(prgm.inputs);
     } else {
       tkn.inputs.pipe(tkn.parent.outputs);
     }
   },
-  pipe_oi: function(tkn,prgm) {
+  pipe_io: function(tkn,prgm) {
     tkn.outputs.pipe(tkn.inputs);
   }
 }
@@ -70,27 +70,27 @@ parser.Symbols["'"] = new parser.Pipe();
 parser.Symbols["#"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base["+"];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["+"];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["-"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base["-"];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["-"];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols[">"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base[">"];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base[">"];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["<"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base["<"];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["<"];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["["].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
+  cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["["];
   // Need to save to call the base tokenize.
   var temp = cmd.tokenize;
@@ -99,10 +99,10 @@ parser.Symbols["["].front(function(cmd) {
     tkn.next = function() { return tkn.next_token; }
     return temp(tkn);
   }
-  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["]"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
+  cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["]"];
   var temp = cmd.tokenize;
   cmd.tokenize = function(tkn) {
@@ -115,32 +115,32 @@ parser.Symbols["]"].front(function(cmd) {
     tkn.next = function(){return p;};
     return temp(tkn);
   }
-  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["."].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base["."];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["."];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols[","].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base[","];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base[","];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["ƒ"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base["ƒ"];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["ƒ"];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["'"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base["'"];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["'"];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["#"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = parser.Command.base["#"];
   cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["#"];
+  cmd.execute = parser.Command.internal.pipe_io;
 });
 
 //-----------------------------------------------------------------------------
@@ -236,7 +236,8 @@ Cell.types.STRING.prototype.toString = function() {
   return this.stringify().value;
 }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
-  var obj = tkn.inputs.at(0);
+  console.log(tkn.inputs.at(0));
+  //var obj = tkn.inputs.front();
   var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
