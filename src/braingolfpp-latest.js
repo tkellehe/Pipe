@@ -332,13 +332,11 @@ Cell.types.ARRAY.prototype.toString = function() {
 }
 Cell.types.ARRAY.prototype.increment = function(cell,tkn,prgm) {
   var obj = tkn.inputs.front();
-  var value = this.value;
+  var value = this.copy();
   if(obj) {
-    obj = obj.stringify(cell,tkn,prgm);
-    for(var i = 0,l = obj.length;i < l;++i)
-      value += obj[i].value;
+    value.value.push(obj);
   }
-  return new Cell.types.ARRAY(value);
+  return value;
 }
 Cell.types.ARRAY.prototype.decrement = function(cell,tkn,prgm) {
   tkn.outputs.front(this.value[0].copy(cell,tkn,prgm));
