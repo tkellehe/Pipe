@@ -324,11 +324,11 @@ function Program(code) {
     prgm.outputs.pipe(tkn.outputs)
   }
 }
+// Makes them appear to be the same class.
+Program.prototype = parser.Path.prototype;
 Program.prototype.addArg = function(arg) {
   this.inputs.back(arg);
 }
-// Makes them appear to be the same class.
-Program.prototype = parser.Path.prototype;
 Program.prototype.move_left = function() {
   --this.pos[this.dimlr];
 }
