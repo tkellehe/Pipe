@@ -6,13 +6,13 @@ var version = "1.00.00.00";
 parser.Command.internal = {
   pipe_oi: function(tkn,prgm) {
     if(tkn.parent === undefined) {
-      tkn.inputs.pipe(prgm.inputs.copy());
+      tkn.inputs.fpipe(prgm.inputs.copy());
     } else {
       tkn.inputs.pipe(tkn.parent.outputs);
     }
   },
   pipe_io: function(tkn,prgm) {
-    tkn.outputs.rpipe(tkn.inputs);
+    tkn.outputs.fpipe(tkn.inputs);
   }
 }
 parser.Command.base = {
@@ -35,7 +35,7 @@ parser.Command.base = {
     prgm.outputs.back(prgm.current_cell().copy(tkn,prgm));
   },
   ".": function(tkn,prgm) {
-    tkn.outputs.back(prgm.current_cell().copy(tkn,prgm));
+    tkn.outputs.front(prgm.current_cell().copy(tkn,prgm));
   },
   ",": function(tkn,prgm) {
     prgm.current_cell().value = tkn.inputs.front();
@@ -320,7 +320,7 @@ function Program(code) {
   
   // Allows for the inputs to be moved to the outputs.
   this.exit.cmd.execute = function(tkn,prgm) {
-    prgm.outputs.pipe(tkn.outputs)
+    prgm.outputs.rpipe(tkn.outputs)
   }
 }
 // Makes them appear to be the same class.
