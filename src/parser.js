@@ -269,8 +269,9 @@ Path.prototype.step = function(f) {
 //-----------------------------------------------------------------------------
 Path.prototype.exec = function(c,f,r) {
   var self = this;
+  r = (r === undefined) ? 0 : r;
   if(this.step(f)) {
-    setTimeout(function() {self.exec(c,f,r)}, r === undefined ? 100: r);
+    setTimeout(function() {self.exec(c,f,r)}, r);
   } else if(c) {
     c.call(this);
   }
