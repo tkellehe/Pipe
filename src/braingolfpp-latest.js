@@ -324,6 +324,9 @@ function Program(code) {
     prgm.outputs.pipe(tkn.outputs)
   }
 }
+Program.prototype.addArg = function(arg) {
+  this.inputs.back(arg);
+}
 // Makes them appear to be the same class.
 Program.prototype = parser.Path.prototype;
 Program.prototype.move_left = function() {
