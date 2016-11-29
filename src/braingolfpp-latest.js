@@ -47,7 +47,7 @@ parser.Command.base = {
   "'": function(tkn,prgm) {
     var cell = prgm.current_cell();
     if(cell.has()) {
-      cell.value = cell.stringify(tkn,prgm)[0];
+      cell.value = cell.stringify(tkn,prgm);
     } else {
       cell.value = new Cell.types.STRING();
     }
@@ -55,9 +55,17 @@ parser.Command.base = {
   "#": function(tkn,prgm) {
     var cell = prgm.current_cell();
     if(cell.has()) {
-      cell.value = cell.numberify(tkn,prgm)[0];
+      cell.value = cell.numberify(tkn,prgm);
     } else {
       cell.value = new Cell.types.NUMBER();
+    }
+  },
+  "@": function(tkn,prgm) {
+    var cell = prgm.current_cell();
+    if(cell.has()) {
+      cell.value = cell.arrayify(tkn,prgm);
+    } else {
+      cell.value = new Cell.types.ARRAY();
     }
   },
   "ç": function(tkn,prgm) {
@@ -79,6 +87,7 @@ parser.Symbols[";"] = new parser.Pipe();
 parser.Symbols["ƒ"] = new parser.Pipe();
 parser.Symbols["'"] = new parser.Pipe();
 parser.Symbols["#"] = new parser.Pipe();
+parser.Symbols["@"] = new parser.Pipe();
 parser.Symbols[" "] = new parser.Pipe();
 parser.Symbols["ç"] = new parser.Pipe();
 
@@ -165,6 +174,11 @@ parser.Symbols["#"].front(function(cmd) {
   cmd.execute = parser.Command.base["#"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
+parser.Symbols["@"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["@"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
 parser.Symbols[" "].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base[" "];
@@ -238,6 +252,9 @@ Cell.prototype.stringify = function(tkn,prgm) {
 Cell.prototype.numberify = function(tkn,prgm) {
   return this.content().numberify(this,tkn,prgm);
 }
+Cell.prototype.arrayify = function(tkn,prgm) {
+  return this.content().arrayify(this,tkn,prgm);
+}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.NUMBER = function(v) { this.value = v || 0; }
 Cell.types.NUMBER.prototype.type = "NUMBER";
@@ -258,10 +275,13 @@ Cell.types.NUMBER.prototype.copy = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER(this.value);
 }
 Cell.types.NUMBER.prototype.stringify = function(cell,tkn,prgm) {
-  return [new Cell.types.STRING(this.value+"")];
+  return new Cell.types.STRING(this.value+"");
 }
 Cell.types.NUMBER.prototype.numberify = function(cell,tkn,prgm) {
-  return [this.copy(cell,tkn,prgm)];
+  return this.copy(cell,tkn,prgm);
+}
+Cell.types.NUMBER.prototype.arrayify = function(cell,tkn,prgm) {
+  return new Cell.types.ARRAY([this.copy(cell,tkn,prgm)]);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; }
@@ -274,8 +294,12 @@ Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
-    for(var i = 0,l = obj.length;i < l;++i)
-      value += obj[i].value;
+    if(obj.type === "ARRAY") {
+      for(var i = 0,l = obj.value.length;i < l;++i)
+        value += obj.value[i].value;
+    } else if(obj.type === "STRING") {
+      value += obj.value;
+    }
   }
   return new Cell.types.STRING(value);
 }
@@ -290,10 +314,56 @@ Cell.types.STRING.prototype.copy = function(cell,tkn,prgm) {
   return new Cell.types.STRING(this.value);
 }
 Cell.types.STRING.prototype.stringify = function(cell,tkn,prgm) {
-  return [this.copy(cell,tkn,prgm)];
+  return this.copy(cell,tkn,prgm);
 }
 Cell.types.STRING.prototype.numberify = function(cell,tkn,prgm) {
-  return [new Cell.types.NUMBER(+this.value)];
+  return new Cell.types.NUMBER(+this.value);
+}
+Cell.types.STRING.prototype.arrayify = function(cell,tkn,prgm) {
+  return new Cell.types.ARRAY([this.copy(cell,tkn,prgm)]);
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Cell.types.ARRAY = function(s) { this.value = s || []; }
+Cell.types.ARRAY.prototype.type = "ARRAY";
+Cell.types.ARRAY.prototype.toString = function() {
+  var a = this.stringify(), v = "";
+  for(var i = 0, l = a.value.length; i < l; ++i) v += a.value[i].value;
+  return v;
+}
+Cell.types.ARRAY.prototype.increment = function(cell,tkn,prgm) {
+  var obj = tkn.inputs.front();
+  var value = this.value;
+  if(obj) {
+    obj = obj.stringify(cell,tkn,prgm);
+    for(var i = 0,l = obj.length;i < l;++i)
+      value += obj[i].value;
+  }
+  return new Cell.types.ARRAY(value);
+}
+Cell.types.ARRAY.prototype.decrement = function(cell,tkn,prgm) {
+  tkn.outputs.front(this.value[0].copy(cell,tkn,prgm));
+  return new Cell.types.ARRAY(this.value.slice(1,this.value.length));
+}
+Cell.types.ARRAY.prototype.is_non_zero = function(cell,tkn,prgm) {
+  return !!this.value.length;
+}
+Cell.types.ARRAY.prototype.copy = function(cell,tkn,prgm) {
+  var a = [];
+  for(var i = this.value.length;i--;) a.unshift(this.value[i].copy(cell,tkn,prgm));
+  return new Cell.types.ARRAY(a);
+}
+Cell.types.ARRAY.prototype.stringify = function(cell,tkn,prgm) {
+  var a = [];
+  for(var i = this.value.length;i--;) a.unshift(this.value[i].stringify(cell,tkn,prgm));
+  return new Cell.types.ARRAY(a);
+}
+Cell.types.ARRAY.prototype.numberify = function(cell,tkn,prgm) {
+  var a = [];
+  for(var i = this.value.length;i--;) a.unshift(this.value[i].numberify(cell,tkn,prgm));
+  return new Cell.types.ARRAY(a);
+}
+Cell.types.ARRAY.prototype.arrayify = function(cell,tkn,prgm) {
+  return this.copy(cell,tkn,prgm);
 }
 //-----------------------------------------------------------------------------
 function Memory() {
