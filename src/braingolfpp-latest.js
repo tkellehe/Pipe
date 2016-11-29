@@ -8,7 +8,7 @@ parser.Command.internal = {
     if(tkn.parent === undefined) {
       tkn.inputs.fpipe(prgm.inputs.copy());
     } else {
-      tkn.inputs.pipe(tkn.parent.outputs);
+      tkn.inputs.bpipe(tkn.parent.outputs);
     }
   },
   pipe_io: function(tkn,prgm) {
