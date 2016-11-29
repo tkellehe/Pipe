@@ -16,9 +16,9 @@
         prgm = braingolfpp($("#code").val());
         prgm.addArg(new braingolfpp.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
-          $("#output").val(this.outputs+"")
+          $("#output").val(this.outputs+"").trigger("input")
         },function() {
-          $("#output").val(this.outputs+"")
+          $("#output").val(this.outputs+"").trigger("input")
         });
       });
     });
