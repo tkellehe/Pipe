@@ -59,6 +59,10 @@ textarea {
 mark {
   border-radius: 3px;
   background-color: transparent;
+  color: black;
+}
+mark.bg-grey {
+  background-color: #dddddd;
 }
 mark.bg-blue {
   background-color: #b1d5e5;
