@@ -25,7 +25,7 @@ parser.Command.base = {
     prgm.current_cell().value = v;
   },
   ">": function(tkn,prgm) { prgm.move_right() },
-  "<": function(tkn,prgm) { parser.Command.internal.pipe_data(tkn,prgm); prgm.move_left() },
+  "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
     tkn.next_token =
     prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches.at(0): tkn.branches.at(1).branches.at(1)
