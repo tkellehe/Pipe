@@ -83,33 +83,29 @@ Pipe.prototype.has = function(v) {
 
 //-----------------------------------------------------------------------------
 Pipe.prototype.pipe = function(o) {
-  var i;
-  while(i = o.front()) {
-    this.back(i);
+  while(o.length()) {
+    this.back(o.front());
   }
 }
 
 //-----------------------------------------------------------------------------
 Pipe.prototype.rpipe = function(o) {
-  var i;
-  while(i = o.back()) {
-    this.front(i);
+  while(o.length()) {
+    this.front(o.back());
   }
 }
 
 //-----------------------------------------------------------------------------
 Pipe.prototype.fpipe = function(o) {
-  var i;
-  while(i = o.front()) {
-    this.front(i);
+  while(o.length()) {
+    this.front(o.front());
   }
 }
 
 //-----------------------------------------------------------------------------
 Pipe.prototype.bpipe = function(o) {
-  var i;
-  while(i = o.back()) {
-    this.back(i);
+  while(o.length()) {
+    this.back(o.back());
   }
 }
 
@@ -125,6 +121,18 @@ Pipe.prototype.each = function(f) {
   for(var i = 0, l = this.length(); i < l;++i) {
     f(this.at(i))
   }
+}
+
+//-----------------------------------------------------------------------------
+Pipe.prototype.reach = function(f) {
+  for(var i = this.length();i--;) {
+    f(this.at(i))
+  }
+}
+
+//-----------------------------------------------------------------------------
+Pipe.prototype.wipe = function(f) {
+  while(this.length()) this.front();
 }
 
 //-----------------------------------------------------------------------------
