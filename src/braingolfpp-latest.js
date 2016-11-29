@@ -279,8 +279,8 @@ Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   return new Cell.types.STRING(value);
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
-  tkn.inputs.back(new Cell.types.STRING(this.value[this.value.length-1]));
-  return new Cell.types.STRING(this.value.slice(0,this.value.length-1));
+  tkn.inputs.back(new Cell.types.STRING(this.value[0]));
+  return new Cell.types.STRING(this.value.slice(1,this.value.length-1));
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
   return !!this.value.length;
