@@ -21,15 +21,15 @@ function Syntaxer($textarea) {
   // Resize the textarea.
   this.$container.css({
     width: this.cols,
-    hieght: this.rows
+    height: this.rows
   });
   this.$backdrop.css({
     width: this.cols,
-    hieght: this.rows
+    height: this.rows
   });
   this.$textarea.css({
     width: this.cols,
-    hieght: this.rows
+    height: this.rows
   });
   
   if (Syntaxer.isIOS) {
