@@ -106,7 +106,7 @@ Pipe.prototype.each = function(f) {
 //-----------------------------------------------------------------------------
 Pipe.prototype.toString = function() {
   var s = "";
-  for(var i = 0; i < this.length(); ++i) {
+  for(var i = 0, l = this.length(); i < l; ++i) {
     s += this.at(i);
   }
   return s;
