@@ -9,7 +9,7 @@
     $(function(){
       $("#run").click(function(){
         prgm = braingolfpp($("#code").val());
-        prgm.inputs.front(new braingolfpp.Cell.types.STRING($("#input").val()));
+        prgm.addArg(new braingolfpp.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
           $("#output").val(this.outputs+"")
         },function() {
