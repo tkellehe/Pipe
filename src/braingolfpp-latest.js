@@ -274,12 +274,13 @@ Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   var value = this.value;
   if(obj) {
     obj = obj.stringify(cell,tkn,prgm);
-    value += obj.value;
+    for(var i = 0,l = obj.length;i < l;++i)
+      value += obj[i].value;
   }
   return new Cell.types.STRING(value);
 }
 Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
-  tkn.inputs.back(new Cell.types.STRING(this.value[0]));
+  tkn.outputs.front(new Cell.types.STRING(this.value[0]));
   return new Cell.types.STRING(this.value.slice(1,this.value.length));
 }
 Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
