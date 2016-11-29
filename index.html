@@ -12,6 +12,8 @@
         prgm.inputs.front(new braingolfpp.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
           $("#output").val(this.outputs+"")
+        },function() {
+          $("#output").val(this.outputs+"")
         });
       });
     });
