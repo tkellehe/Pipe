@@ -12,7 +12,7 @@ parser.Command.internal = {
     }
   },
   pipe_io: function(tkn,prgm) {
-    tkn.outputs.pipe(tkn.inputs);
+    tkn.outputs.rpipe(tkn.inputs);
   }
 }
 parser.Command.base = {
