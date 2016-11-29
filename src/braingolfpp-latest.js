@@ -318,7 +318,7 @@ function Program(code) {
   // Does the path instantiation onto the Program object.
   parser.Path.apply(this, [code]);
   
-  // Allows for the inputs to be moved to the outputs.
+  // Allows for the pipe to move into the outputs.
   this.exit.cmd.execute = function(tkn,prgm) {
     prgm.outputs.rpipe(tkn.outputs)
   }
