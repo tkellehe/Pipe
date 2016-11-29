@@ -255,7 +255,7 @@ Cell.types.NUMBER.prototype.is_non_zero = function(cell,tkn,prgm) {
   return !!this.value;
 }
 Cell.types.NUMBER.prototype.copy = function(cell,tkn,prgm) {
-  return [new Cell.types.NUMBER(this.value)];
+  return new Cell.types.NUMBER(this.value);
 }
 Cell.types.NUMBER.prototype.stringify = function(cell,tkn,prgm) {
   return [new Cell.types.STRING(this.value+"")];
