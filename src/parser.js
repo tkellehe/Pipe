@@ -98,6 +98,22 @@ Pipe.prototype.rpipe = function(o) {
 }
 
 //-----------------------------------------------------------------------------
+Pipe.prototype.fpipe = function(o) {
+  var i;
+  while(i = o.front()) {
+    this.front(i);
+  }
+}
+
+//-----------------------------------------------------------------------------
+Pipe.prototype.bpipe = function(o) {
+  var i;
+  while(i = o.back()) {
+    this.back(i);
+  }
+}
+
+//-----------------------------------------------------------------------------
 Pipe.prototype.copy = function(o) {
   var c = o || new Pipe();
   this.each(function(i){c.back(i)});
