@@ -8,6 +8,15 @@ String.prototype.mark = function(regex, classes) {
 
 function Syntaxer($textarea) {
   this.$textarea = $textarea.clone();
+  
+  this.cols = $textarea.prop("cols");
+  this.rows = $textarea.prop("rows");
+  
+  this.$textarea.css({
+    width: (this.cols*Syntaxer.px) + "px",
+    hieght: (this.rows*Syntaxer.px) + "px"
+  });
+  
   this.$container = $('<div class="container"></div>');
   this.$backdrop = $('<div class="backdrop"></div>');
   this.$highlights = $('<div class="highlights"></div>');
@@ -58,6 +67,8 @@ Syntaxer.prototype.applyParse = function(text) {
   
   return text;
 }
+
+Syntaxer.px = 10;
 
 Syntaxer.ua = window.navigator.userAgent.toLowerCase();
 Syntaxer.isIE = !!Syntaxer.ua.match(/msie|trident\/7|edge/);
