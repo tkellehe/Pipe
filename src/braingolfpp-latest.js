@@ -71,6 +71,9 @@ parser.Command.base = {
   "ç": function(tkn,prgm) {
     delete prgm.current_cell().value;
   },
+  '"': function(tkn,prgm) {
+    tkn.outputs.back(new Cell.types.STRING(tkn.content));
+  },
   " ": function(tkn,prgm) { }
 }
 
@@ -90,6 +93,7 @@ parser.Symbols["#"] = new parser.Pipe();
 parser.Symbols["@"] = new parser.Pipe();
 parser.Symbols[" "] = new parser.Pipe();
 parser.Symbols["ç"] = new parser.Pipe();
+parser.Symbols['"'] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -119,7 +123,7 @@ parser.Symbols["["].front(function(cmd) {
   cmd.tokenize = function(tkn) {
     tkn.next_token = tkn.branches.at(0);
     tkn.next = function() { return tkn.next_token; }
-    return temp(tkn);
+    return temp.call(this, tkn);
   }
   cmd.execute = parser.Command.internal.pipe_io;
 });
@@ -135,7 +139,7 @@ parser.Symbols["]"].front(function(cmd) {
     p.branches.back(tkn);
     tkn.branches.back(p);
     tkn.next = function(){return p;};
-    return temp(tkn);
+    return temp.call(this, tkn);
   }
   cmd.execute = parser.Command.internal.pipe_io;
 });
@@ -187,6 +191,22 @@ parser.Symbols[" "].front(function(cmd) {
 parser.Symbols["ç"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["ç"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols['"'].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base['"'];
+  
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn,prgm) {
+    tkn.content = "";
+    for(var i = tkn.end+1; i < tkn.code.length && (tkn.code[i] !== "\n");++i) {
+        tkn.content += tkn.code[i];
+    }
+    tkn.end = tkn.start + tkn.content.length + 1; // +1 for the line feed.
+    return temp.call(this, tkn);
+  }
+  
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
