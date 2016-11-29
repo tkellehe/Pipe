@@ -252,7 +252,7 @@ Cell.types.NUMBER.prototype.decrement = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER(this.value - 1);
 }
 Cell.types.NUMBER.prototype.is_non_zero = function(cell,tkn,prgm) {
-  return !this.value;
+  return !!this.value;
 }
 Cell.types.NUMBER.prototype.copy = function(cell,tkn,prgm) {
   return [new Cell.types.NUMBER(this.value)];
