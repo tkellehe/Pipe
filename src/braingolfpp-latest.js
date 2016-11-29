@@ -60,9 +60,10 @@ parser.Command.base = {
       cell.value = new Cell.types.NUMBER();
     }
   },
-  " ": function(tkn,prgm) {
+  "ç": function(tkn,prgm) {
     delete prgm.current_cell().value;
-  }
+  },
+  " ": function(tkn,prgm) { }
 }
 
 parser.Symbols["+"] = new parser.Pipe();
@@ -79,6 +80,7 @@ parser.Symbols["ƒ"] = new parser.Pipe();
 parser.Symbols["'"] = new parser.Pipe();
 parser.Symbols["#"] = new parser.Pipe();
 parser.Symbols[" "] = new parser.Pipe();
+parser.Symbols["ç"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -166,6 +168,11 @@ parser.Symbols["#"].front(function(cmd) {
 parser.Symbols[" "].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base[" "];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["ç"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["ç"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
