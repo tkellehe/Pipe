@@ -1,0 +1,95 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 30px;
+  background-color: #f0f0f0;
+}
+
+.container, .backdrop, textarea {
+  width: 460px;
+  height: 180px;
+}
+
+.highlights, textarea {
+  padding: 10px;
+  /*font: 20px/28px 'Open Sans', sans-serif;*/
+  font: 20px/28px monospace;
+  letter-spacing: 1px;
+}
+
+.container {
+  display: block;
+  margin: 0 auto;
+  transform: translateZ(0);
+  -webkit-text-size-adjust: none;
+}
+
+.backdrop {
+  position: absolute;
+  z-index: 1;
+  border: 2px solid #685972;
+  background-color: #fff;
+  overflow: auto;
+  pointer-events: none;
+  transition: transform 1s;
+}
+
+.highlights {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: #444;
+}
+
+textarea {
+  display: block;
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  border: 2px solid #74637f;
+  border-radius: 0;
+  color: rgba(0,0,0,0.2); /* Done like this to show the cursor. */
+  background-color: transparent;
+  overflow: auto;
+  resize: none;
+  transition: transform 1s;
+}
+
+mark {
+  border-radius: 3px;
+  background-color: transparent;
+}
+mark.bg-blue {
+  background-color: #b1d5e5;
+}
+mark.bg-green {
+  background-color: #90d4b3;
+}
+mark.fg-green {
+  color: #90d4b3;
+}
+mark.fg-green.bg-blue {
+  color: green;
+  background-color: #b1d5e5;
+}
+
+button {
+  display: block;
+  width: 300px;
+  margin: 30px auto 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  background-color: #74637f;
+  font: 18px 'Opens Sans', sans-serif;
+  letter-spacing: 1px;
+  appearance: none;
+  cursor: pointer;
+}
+
+textarea:focus, button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #c6aada;
+}
