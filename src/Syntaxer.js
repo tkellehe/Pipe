@@ -64,7 +64,7 @@ Syntaxer.prototype.handleScroll = function() {
   this.$backdrop.scrollLeft(scrollLeft);  
 }
 Syntaxer.prototype.parse = function(text) {
-  return text.mark(/\s/g, ["bg-grey"]).mark(/\#\@\'\"/g, ["fg-red"]);
+  return text.mark(/\s/g, ["bg-grey"]).mark(/[\#\@\'\"]/g, ["fg-red"]);
 }
 Syntaxer.prototype.applyParse = function(text) {
   text = this.parse(text.replace(/\n$/g, '\n\n'));
