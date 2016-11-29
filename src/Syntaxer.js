@@ -77,7 +77,7 @@ Syntaxer.prototype.applyParse = function(text) {
   return text;
 }
 
-Syntaxer.px = 10;
+Syntaxer.px = 5;
 
 Syntaxer.ua = window.navigator.userAgent.toLowerCase();
 Syntaxer.isIE = !!Syntaxer.ua.match(/msie|trident\/7|edge/);
