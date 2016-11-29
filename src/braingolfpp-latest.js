@@ -260,7 +260,7 @@ Cell.types.NUMBER = function(v) { this.value = v || 0; }
 Cell.types.NUMBER.prototype.type = "NUMBER";
 Cell.defaults.front(Cell.types.NUMBER);
 Cell.types.NUMBER.prototype.toString = function() {
-  return this.stringify()[0].value;
+  return this.stringify().value;
 }
 Cell.types.NUMBER.prototype.increment = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER(this.value + 1);
@@ -287,7 +287,7 @@ Cell.types.NUMBER.prototype.arrayify = function(cell,tkn,prgm) {
 Cell.types.STRING = function(s) { this.value = s || ""; }
 Cell.types.STRING.prototype.type = "STRING";
 Cell.types.STRING.prototype.toString = function() {
-  return this.stringify()[0].value;
+  return this.stringify().value;
 }
 Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
   var obj = tkn.inputs.front();
