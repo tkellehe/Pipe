@@ -9,19 +9,28 @@ String.prototype.mark = function(regex, classes) {
 function Syntaxer($textarea) {
   this.$textarea = $textarea.clone();
   
-  this.cols = $textarea.prop("cols");
-  this.rows = $textarea.prop("rows");
-  
-  this.$textarea.css({
-    width: (this.cols*Syntaxer.px) + "px",
-    hieght: (this.rows*Syntaxer.px) + "px"
-  });
+  this.cols = ($textarea.prop("cols")*Syntaxer.px) + "px";
+  this.rows = ($textarea.prop("rows")*Syntaxer.px) + "px";
   
   this.$container = $('<div class="container"></div>');
   this.$backdrop = $('<div class="backdrop"></div>');
   this.$highlights = $('<div class="highlights"></div>');
   this.$container.append(this.$backdrop.append(this.$highlights)).append(this.$textarea);
   $textarea.replaceWith(this.$container);
+  
+  // Resize the textarea.
+  this.$container.css({
+    width: this.cols,
+    hieght: this.rows
+  });
+  this.$backdrop.css({
+    width: this.cols,
+    hieght: this.rows
+  });
+  this.$textarea.css({
+    width: this.cols,
+    hieght: this.rows
+  });
   
   if (Syntaxer.isIOS) {
     this.fixIOS();
