@@ -64,6 +64,12 @@ mark {
 mark.bg-grey {
   background-color: #dddddd;
 }
+mark.bg-red {
+  background-color: #e5d5b1;
+}
+mark.fg-red {
+  color: #e5d5b1;
+}
 mark.bg-blue {
   background-color: #b1d5e5;
 }
