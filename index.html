@@ -64,7 +64,7 @@
       $("#output").prop("readonly",true);
       
       $("#url").click(function() {
-        $("#output").val(windows.location.href + $.param({input:$("#input").val(),code:$("#code").val()})).select();
+        $("#output").val(window.location.href + $.param({input:$("#input").val(),code:$("#code").val()})).select();
         try { document.execCommand('copy'); } catch (err) {}
       });
     });
