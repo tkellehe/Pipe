@@ -1,9 +1,41 @@
 (function(global) {
-
-String.prototype.mark = function(regex, classes) {
+function setMark(marks, mark, index, capture) {
+  marks[index++] = mark + capture + '</mark>';
+  for(;index < capture.length; ++index) {
+    marks[index] = "";
+  }
+}
+String.prototype.mark = function(arg1, classes) {
   var css = "";
   for(var i = classes.length; i--;) css += classes[i] + " ";
-  return this.replace(regex, '<mark class="'+css+'">$&</mark>');
+  var mark = '<mark class="'+css+'">';
+  if(this.marks === undefined) {
+    this.marks = [];
+    for(var i = this.length; i--;) this.marks.unshift(this[i])
+  }
+  if(arg1 instanceof RegExp) {
+    if(arg1.flags.search("g") === -1) {
+      var res = arg1.exec(this);
+      if(res) {
+        setMark(this.marks,mark,res.index,res[0]);
+      }
+    } else {
+      var res = arg1.exec(this);
+      while(res) {
+        setMark(this.marks,mark,res.index,res[0].length);
+        res = arg1.exec(this);
+      }
+    }
+  }
+  return this;
+}
+String.prototype.markup = function() {
+  if(this.marks === undefined) return this+"";
+  var s = "";
+  for(var i = 0, l = this.marks.length; i < l; ++i) {
+    s += this.marks[i];
+  }
+  return s;
 }
 
 function Syntaxer($textarea) {
@@ -63,11 +95,13 @@ Syntaxer.prototype.handleScroll = function() {
   var scrollLeft = this.$textarea.scrollLeft();
   this.$backdrop.scrollLeft(scrollLeft);  
 }
-Syntaxer.prototype.parse = function(text) {
-  return text;
-}
+Syntaxer.prototype.parse = function(text) {}
 Syntaxer.prototype.applyParse = function(text) {
-  text = this.parse(text.replace(/\n$/g, '\n\n'));
+  this.parse(text);
+  // Fixes line feeds.
+  text.replace(/\n$/g, '\n\n');
+  // Applys all of the markings to the text.
+  text = text.markup();
   
   // IE wraps whitespace differently in a div vs textarea, this fixes it.
   if (Syntaxer.isIE) {
