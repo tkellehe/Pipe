@@ -26,16 +26,16 @@
         prgm = pipe($("#code").val());
         prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
-          $("#output").val(this.outputs+"").trigger("input");
-          $("#run").val("RUN").click(run);
+          $("#output").text(this.outputs+"").trigger("input");
+          $("#run").text("RUN").click(clickRun);
         },function() {
-          $("#output").val(this.outputs+"").trigger("input")
+          $("#output").text(this.outputs+"").trigger("input")
         });
-        $(this).val("STOP").click(clickStop);
+        $(this).text("STOP").click(clickStop);
       }
       function clickStop(){
         prgm.stop();
-        $(this).val("RUN").click(clickRun);
+        $(this).text("RUN").click(clickRun);
       }
       
       $("#run").click(clickRun);
