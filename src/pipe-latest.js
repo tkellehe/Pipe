@@ -83,6 +83,7 @@ parser.Command.base = {
     prgm.outputs.wipe()
   },
   "//": function(tkn,prgm) { },
+  "\n": function(tkn,prgm) { },
   " ": function(tkn,prgm) { }
 }
 
@@ -106,6 +107,7 @@ parser.Symbols['"'] = new parser.Pipe();
 parser.Symbols['w'] = new parser.Pipe();
 parser.Symbols['W'] = new parser.Pipe();
 parser.Symbols['//'] = new parser.Pipe();
+parser.Symbols['\n'] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -226,6 +228,11 @@ parser.Symbols["@"].front(function(cmd) {
 parser.Symbols[" "].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base[" "];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["\n"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["\n"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["ç"].front(function(cmd) {
