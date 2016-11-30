@@ -11,7 +11,7 @@
     $(function(){
       var code = new Syntaxer($("#code"));
       code.parse = function(text) {
-        return text.mark(/\s/g, ["bg-grey"]).mark(/[\#\@\'\"]/g, ["fg-red"]).mark(/\".+\n/g, ["bg-blue"]);
+        return text.mark(/\s/g, ["bg-grey"]).mark(/[\#\@\'\"]/g, ["fg-red"]).mark(/(\".+(?:\n|$))/g, ["bg-blue"]);
       }
       new Syntaxer($("#input"));
       new Syntaxer($("#output"));
