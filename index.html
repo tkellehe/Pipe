@@ -17,15 +17,10 @@
     $.urlParamDecode = function(name) {
       var result = $.urlParam(name);
       if(result !== undefined) return decodeURIComponent(result)
+      return "";
     }
     
     $(function(){
-      
-      var i = $.urlParamDecode("input"),
-          c = $.urlParamDecode("code");
-      $("#input").val(i===undefined?"":i);
-      $("#code").val(c===undefined?"":c);
-      
       var code = new Syntaxer($("#code"));
       code.parse = function(text) {
         return text
@@ -39,9 +34,13 @@
       new Syntaxer($("#input"));
       new Syntaxer($("#output"));
       
+      $("#input").val($.urlParamDecode("input"));
+      $("#code").val($.urlParamDecode("input"));
+      
       function clickRun(){
         $("#input").prop("readonly",true);
         $("#code").prop("readonly",true);
+        $("#url").prop("disable",true);
         prgm = pipe($("#code").val());
         prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
@@ -56,6 +55,7 @@
         prgm.stop();
         $("#input").prop("readonly",false);
         $("#code").prop("readonly",false);
+        $("#url").prop("disable",false);
         $(this).text("RUN").unbind("click").click(clickRun);
       }
       
@@ -63,16 +63,10 @@
       
       $("#output").prop("readonly",true);
       
-      function updateSearch() {
-        var I = $("#input").val(),
-            C = $("#code").val();
-        var i = $.urlParamDecode("input"),
-            c = $.urlParamDecode("code");
-        if(I !== i || C !== c) window.location.search = $.param({input:I,code:C});
-      }
-      
-      $("#input").on("input",updateSearch);
-      $("#code").on("input",updateSearch);
+      $("#url").click(function() {
+        $("#output").val(windows.location.href + $.param({input:$("#input").val(),code:$("#code").val()})).select();
+        try { document.execCommand('copy'); } catch (err) {}
+      });
     });
   </script>
 </head>
@@ -82,6 +76,7 @@
     <textarea id="code" cols="100" rows="30"></textarea>
     <textarea id="input" cols="100" rows="11"></textarea>
     <textarea id="output" cols="100" rows="30"></textarea>
+    <button id="url">URL</button>
   </div>
 </body>
 </html>
