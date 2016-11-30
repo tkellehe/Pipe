@@ -338,7 +338,7 @@ Cell.types.NUMBER.prototype.smallest_unit = function() {
   }
   l -= i;
   s = "0.";
-  for(;l--;) s+="0"
+  for(;--l;) s+="0"
   s+="1";
   return +s;
 }
