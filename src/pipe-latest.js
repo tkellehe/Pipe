@@ -69,11 +69,36 @@ parser.Command.base = {
     }
   },
   "@": function(tkn,prgm) {
-    var cell = prgm.current_cell();
-    if(cell.has()) {
-      cell.value = cell.arrayify(tkn,prgm);
-    } else {
-      cell.value = new Cell.types.ARRAY();
+    if(tkn.content === undefined) {
+      var cell = prgm.current_cell();
+      if(cell.has()) {
+        cell.value = cell.arrayify(tkn,prgm);
+      } else {
+        cell.value = new Cell.types.ARRAY();
+      }
+    } else if(typeof tkn.content === "number") {
+      var temp = prgm.current_cell().content(), item;
+      if(temp.type !== "ARRAY" && temp.type !== "STRING") {
+        item = temp.arrayify(tkn,prgm);
+        prgm.current_cell().value = item;
+      } else item = temp;
+      if(item.type === "ARRAY") {
+        var i = item.value[tkn.content], r;
+        if(i === undefined) {
+          r = new Cell.types.NUMBER();
+        } else {
+          r = i.copy();
+        }
+        tkn.outputs.back(r);
+      } else if(item.type === "STRING") {
+        var i = item.value[tkn.content], r;
+        if(i === undefined) {
+          r = new Cell.types.STRING();
+        } else {
+          r = new Cell.types.STRING(i);
+        }
+        tkn.outputs.back(r);
+      }
     }
   },
   "ç": function(tkn,prgm) {
@@ -247,6 +272,27 @@ parser.Symbols["#"].front(function(cmd) {
 parser.Symbols["@"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["@"];
+  
+  var checkR = /[0-9]/;
+  function check(c) { return !!checkR.exec(c); }
+  
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn,prgm) {
+    tkn.content = "";
+    for(var i = tkn.end+1; i < tkn.code.length && check(tkn.code[i]);++i) {
+      tkn.content += tkn.code[i];
+    }
+    // If the content is empty then do nothing.
+    if(tkn.content.length === 0) {
+      tkn.content = undefined;
+    } else {
+      tkn.end = tkn.start + tkn.content.length + (tkn.literal.length-1);
+      tkn.content = +tkn.content;
+    }
+    
+    return temp.call(this, tkn);
+  }
+  
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols[" "].front(function(cmd) {
