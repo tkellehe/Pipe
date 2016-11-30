@@ -6,15 +6,18 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="src/Syntaxer.js"></script>
   <script src="src/parser.js"></script>
-  <script src="src/braingolfpp-latest.js"></script>
+  <script src="src/pipe-latest.js"></script>
   <script>
     $(function(){
-      new Syntaxer($("#code"));
+      var code = new Syntaxer($("#code"));
+      code.parse = function(text) {
+        return text.mark(/\s/g, ["bg-grey"]).mark(/[\#\@\']/g, ["fg-red"]);
+      }
       new Syntaxer($("#input"));
       new Syntaxer($("#output"));
       $("#run").click(function(){
-        prgm = braingolfpp($("#code").val());
-        prgm.addArg(new braingolfpp.Cell.types.STRING($("#input").val()));
+        prgm = pipe($("#code").val());
+        prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
           $("#output").val(this.outputs+"").trigger("input")
         },function() {
