@@ -21,15 +21,23 @@
       }
       new Syntaxer($("#input"));
       new Syntaxer($("#output"));
-      $("#run").click(function(){
+      
+      function run(){
         prgm = pipe($("#code").val());
         prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
-        prgm.stop().exec(function() {
+        prgm.exec(function() {
           $("#output").val(this.outputs+"").trigger("input")
         },function() {
           $("#output").val(this.outputs+"").trigger("input")
         });
-      });
+        $(this).val("STOP").click(stop);
+      }
+      function stop(){
+        prgm.stop();
+        $(this).val("RUN").click(run);
+      }
+      
+      $("#run").click(run);
     });
   </script>
 </head>
