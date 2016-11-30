@@ -271,7 +271,7 @@ Path.prototype.isExecuting = function() {
 Path.prototype.step = function(f) {
   if(this.current !== undefined) {
     this.current.execute(this);
-    if(f) f.call(this);
+    if(f) f.call(this); else this.onstep();
     ++this.num_steps;
     this.current = this.current.next(this);
     return true;
@@ -281,13 +281,15 @@ Path.prototype.step = function(f) {
 
 //-----------------------------------------------------------------------------
 Path.prototype.exec = function(c,f,r) {
+  this.oncomplete = c;
+  this.onstep = f;
   var self = this;
   r = (r === undefined) ? 0 : r;
-  if(this.step(f)) {
+  if(this.step()) {
     this.timeout = setTimeout(function() {self.exec(c,f,r)}, r);
-  } else if(c) {
+  } else if(this.oncomplete) {
     this.timeout = undefined;
-    c.call(this);
+    this.oncomplete();
   }
   return this;
 }
@@ -296,6 +298,7 @@ Path.prototype.exec = function(c,f,r) {
 Path.prototype.stop = function() {
   if(this.isExecuting()) {
     clearTimeout(this.timeout);
+    this.oncomplete();
   }
   return this;
 }
