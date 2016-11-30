@@ -297,7 +297,7 @@ Cell.defaults.front(Cell.types.NUMBER);
 Cell.types.NUMBER.prototype.toString = function() {
   return this.stringify().value;
 }
-Cell.types.NUMBER.prototype.smallest_unit() {
+Cell.types.NUMBER.prototype.smallest_unit = function() {
   var s = this.value+"", i = s.search(".");
   if(i === -1) return 1;
   var l = i;
