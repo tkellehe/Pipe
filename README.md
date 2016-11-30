@@ -21,7 +21,7 @@ _Pipe_ follows the same memory model as _brainf*ck_ except for the fact that it 
 |`,`|Consume item from the pipe and place into the current cell|
 
 
-With those commands we can create a simple [program](https://tkellehe.github.io/Pipe/?):
+With those commands we can create a simple [program](https://tkellehe.github.io/Pipe/?input=&code=%2B%2B%2B%2B%2B%2B%5B.-%5D):
 
 ```
 ++++++[.-]
