@@ -17,7 +17,7 @@
           .mark(/(\#\-\d+\.\d+|\#\d+\.\d+|\#\-\d+|\#\d+)/g, ["bg-orange"])
           .mark(/(\".+(?:\n|$))/g, ["bg-blue"])
           
-          .mark(/(\/\/.+(?:\n|$))/g, ["fg-green"]);
+          .mark(/(\/\/.*(?:\n|$))/g, ["fg-green"]);
       }
       new Syntaxer($("#input"));
       new Syntaxer($("#output"));
