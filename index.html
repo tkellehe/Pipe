@@ -8,7 +8,24 @@
   <script src="src/parser.js"></script>
   <script src="src/pipe-latest.js"></script>
   <script>
+    $.urlParam = function(name) {
+      var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+      if (results) {
+        return results[1] || "";
+      }
+    }
+    $.urlParamDecode = function(name) {
+      var result = $.urlParam(name);
+      if(result !== undefined) return decodeURIComponent(result)
+    }
+    
     $(function(){
+      
+      var i = $.urlParamDecode("input"),
+          c = $.urlParamDecode("code");
+      $("#input").val(i===undefined?"":i);
+      $("#code").val(c===undefined?"":c);
+      
       var code = new Syntaxer($("#code"));
       code.parse = function(text) {
         return text
@@ -23,22 +40,39 @@
       new Syntaxer($("#output"));
       
       function clickRun(){
+        $("#input").prop("readonly",true);
+        $("#code").prop("readonly",true);
         prgm = pipe($("#code").val());
         prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
           $("#output").val(this.outputs+"").trigger("input");
-          $("#run").text("RUN").click(clickRun);
+          $("#run").text("RUN").unbind("click").click(clickRun);
         },function() {
           $("#output").val(this.outputs+"").trigger("input")
         });
-        $(this).text("STOP").click(clickStop);
+        $(this).text("STOP").unbind("click").click(clickStop);
       }
       function clickStop(){
         prgm.stop();
-        $(this).text("RUN").click(clickRun);
+        $("#input").prop("readonly",false);
+        $("#code").prop("readonly",false);
+        $(this).text("RUN").unbind("click").click(clickRun);
       }
       
-      $("#run").click(clickRun);
+      $("#run").unbind("click").click(clickRun);
+      
+      $("#output").prop("readonly",true);
+      
+      function updateSearch() {
+        var I = $("#input").val(),
+            C = $("#code").val();
+        var i = $.urlParamDecode("input"),
+            c = $.urlParamDecode("code");
+        if(I !== i || C !== c) window.location.search = $.param({input:I,code:C});
+      }
+      
+      $("#input").on("input",updateSearch);
+      $("#code").on("input",updateSearch);
     });
   </script>
 </head>
