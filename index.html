@@ -45,6 +45,9 @@
         prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
           $("#output").val(this.outputs+"").trigger("input");
+          $("#input").prop("readonly",false);
+          $("#code").prop("readonly",false);
+          $("#url").prop("disable",false);
           $("#run").text("RUN").unbind("click").click(clickRun);
         },function() {
           $("#output").val(this.outputs+"").trigger("input")
@@ -64,7 +67,7 @@
       $("#output").prop("readonly",true);
       
       $("#url").click(function() {
-        $("#output").val(window.location.href.replace(window.location.search,'')
+        $("#output").val(window.location.href.replace(window.location.search,'?')
                          + $.param({input:$("#input").val(),code:$("#code").val()})).trigger("input").select();
         try { document.execCommand('copy'); } catch (err) {}
       });
