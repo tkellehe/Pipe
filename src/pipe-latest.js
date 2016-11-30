@@ -45,11 +45,15 @@ parser.Command.base = {
   },
   "ƒ": function(tkn,prgm) { prgm.flip_dim(); },
   "'": function(tkn,prgm) {
-    var cell = prgm.current_cell();
-    if(cell.has()) {
-      cell.value = cell.stringify(tkn,prgm);
+    if(tkn.content === undefined) {
+      var cell = prgm.current_cell();
+      if(cell.has()) {
+        cell.value = cell.stringify(tkn,prgm);
+      } else {
+        cell.value = new Cell.types.STRING();
+      }
     } else {
-      cell.value = new Cell.types.STRING();
+      tkn.outputs.back(new Cell.types.STRING(tkn.content));
     }
   },
   "#": function(tkn,prgm) {
@@ -185,6 +189,26 @@ parser.Symbols["ƒ"].front(function(cmd) {
 parser.Symbols["'"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["'"];
+  
+  var checkR = /[a-zA-Z0-9_ ]/;
+  function check(c) { return !!checkR.exec(c); }
+  
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn,prgm) {
+    tkn.content = "";
+    for(var i = tkn.end+1; i < tkn.code.length && check(tkn.code[i]);++i) {
+      tkn.content += tkn.code[i];
+    }
+    // If the content is empty then do nothing.
+    if(tkn.content.length === 0) {
+      tkn.content = undefined;
+    } else {
+      tkn.end = tkn.start + tkn.content.length + (tkn.literal.length-1);
+    }
+    
+    return temp.call(this, tkn);
+  }
+  
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["#"].front(function(cmd) {
