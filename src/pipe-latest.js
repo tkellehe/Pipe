@@ -82,6 +82,7 @@ parser.Command.base = {
   "W": function(tkn,prgm) {
     prgm.outputs.wipe()
   },
+  "//": function(tkn,prgm) { },
   " ": function(tkn,prgm) { }
 }
 
@@ -104,6 +105,7 @@ parser.Symbols["ç"] = new parser.Pipe();
 parser.Symbols['"'] = new parser.Pipe();
 parser.Symbols['w'] = new parser.Pipe();
 parser.Symbols['W'] = new parser.Pipe();
+parser.Symbols['//'] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -243,6 +245,22 @@ parser.Symbols["w"].front(function(cmd) {
 parser.Symbols['"'].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base['"'];
+  
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn,prgm) {
+    tkn.content = "";
+    for(var i = tkn.end+1; i < tkn.code.length && (tkn.code[i] !== "\n");++i) {
+      tkn.content += tkn.code[i];
+    }
+    tkn.end = tkn.start + tkn.content.length + 1; // +1 for the line feed.
+    return temp.call(this, tkn);
+  }
+  
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols['//'].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base['//'];
   
   var temp = cmd.tokenize;
   cmd.tokenize = function(tkn,prgm) {
