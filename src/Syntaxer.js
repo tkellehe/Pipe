@@ -22,7 +22,7 @@ String.prototype.mark = function(arg1, classes) {
     } else {
       var res = arg1.exec(this);
       while(res) {
-        setMark(this.marks,mark,res.index,res[0].length);
+        setMark(this.marks,mark,res.index,res[0]);
         res = arg1.exec(this);
       }
     }
