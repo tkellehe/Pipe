@@ -263,6 +263,11 @@ function Path(code) {
 }
 
 //-----------------------------------------------------------------------------
+Path.prototype.isExecuting = function() {
+  return !!this.timeout;
+}
+
+//-----------------------------------------------------------------------------
 Path.prototype.step = function(f) {
   if(this.current !== undefined) {
     this.current.execute(this);
@@ -279,10 +284,20 @@ Path.prototype.exec = function(c,f,r) {
   var self = this;
   r = (r === undefined) ? 0 : r;
   if(this.step(f)) {
-    setTimeout(function() {self.exec(c,f,r)}, r);
+    this.timeout = setTimeout(function() {self.exec(c,f,r)}, r);
   } else if(c) {
+    this.timeout = undefined;
     c.call(this);
   }
+  return this;
+}
+
+//-----------------------------------------------------------------------------
+Path.prototype.stop = function() {
+  if(this.isExecuting()) {
+    clearTimeout(this.timeout);
+  }
+  return this;
 }
 
 //=============================================================================
