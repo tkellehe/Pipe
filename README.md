@@ -17,15 +17,14 @@ _Pipe_ follows the same memory model as _brainf*ck_ except for the fact that it 
 |`-`|Decrement cell where ptr is at|
 |`[`|Continues to run the contained code until the current cell is zero|
 |`]`|Ends a `[` command|
-|`:`|Copies the data in the current cell and places it into the output|
-|`;`|Consume item from input and writes it to the current cell|
+|`.`|Copies content of the current cell into the pipe|
+|`,`|Consume item from the pipe and place into the current cell|
 
-__Note:__ The commands `.` and `,` are valid, but not as simple as `:` and `;`.
 
-With those commands we can create a simple [program](https://tkellehe.github.io/Pipe/?input=&code=%2B%2B%2B%2B%2B%2B%5B%3A-%5D):
+With those commands we can create a simple [program](https://tkellehe.github.io/Pipe/?):
 
 ```
-++++++[:-]
+++++++[.-]
 ```
 __OUTPUT:__
 ```
@@ -36,7 +35,7 @@ A further break down of the program:
 ```
 ++++++     // Increments the current cell by one six times.
       [    // Checks to see if the current cell is non zero.
-       :   // Buffers the value of the current cell into the output.
+       .   // Buffers the value of the current cell into the pipe.
         -  // Decrements the current cell by one.
-         ] // Jump back to the '['.
+         ] // Jump back to the '[' (Because is the last command pushes pipe into stdout).
 ```
