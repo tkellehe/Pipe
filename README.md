@@ -96,7 +96,7 @@ __OUTPUT:__
 
 For `STRING`s we have two options. The first is `'` which will make the _literal_ everything following it that is `[a-zA-Z0-9_ ]` (There is a space character following the underscore). This command by itself will also `stringify` the current cell which for a `NUMBER` turns it into a `STRING`. This is enough for us to have a `Hello World`:
 
-[CODE]()
+[CODE](https://tkellehe.github.io/Pipe/?input=&code=%27Hello%20World)
 
 ```
 'Hello World
