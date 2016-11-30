@@ -64,7 +64,7 @@
       $("#output").prop("readonly",true);
       
       $("#url").click(function() {
-        $("#copy").val(window.location.href + $.param({input:$("#input").val(),code:$("#code").val()})).select();
+        $("#output").val(window.location.href + $.param({input:$("#input").val(),code:$("#code").val()})).trigger("input").select();
         try { document.execCommand('copy'); } catch (err) {}
       });
     });
@@ -76,7 +76,6 @@
     <textarea id="code" cols="100" rows="30"></textarea>
     <textarea id="input" cols="100" rows="11"></textarea>
     <textarea id="output" cols="100" rows="30"></textarea>
-    <textarea id="copy" style="visibility:hidden" hidden></textarea>
     <button id="url">URL</button>
   </div>
 </body>
