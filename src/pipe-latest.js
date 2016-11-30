@@ -297,11 +297,20 @@ Cell.defaults.front(Cell.types.NUMBER);
 Cell.types.NUMBER.prototype.toString = function() {
   return this.stringify().value;
 }
+Cell.types.NUMBER.prototype.smallest_unit() {
+  var s = this.value+"", i = s.search(".");
+  if(i === -1) return 1;
+  var l = i;
+  for(var j = i+1;j<s.length;++j) {
+    if(s[j] !== "0") l = j;
+  }
+  return Math.pow(10,-(l-i));
+}
 Cell.types.NUMBER.prototype.increment = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(this.value + 1);
+  return new Cell.types.NUMBER(this.value + this.smallest_unit());
 }
 Cell.types.NUMBER.prototype.decrement = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(this.value - 1);
+  return new Cell.types.NUMBER(this.value - this.smallest_unit());
 }
 Cell.types.NUMBER.prototype.is_non_zero = function(cell,tkn,prgm) {
   return !!this.value;
