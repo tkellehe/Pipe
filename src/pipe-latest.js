@@ -336,7 +336,11 @@ Cell.types.NUMBER.prototype.smallest_unit = function() {
   for(var j = i+1;j<s.length;++j) {
     if(s[j] !== "0") l = j;
   }
-  return Math.pow(10,-(l-i));
+  l -= i;
+  s = "0.";
+  for(;l--;) s+="0"
+  s+="1";
+  return +s;
 }
 Cell.types.NUMBER.prototype.increment = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER(this.value + this.smallest_unit());
