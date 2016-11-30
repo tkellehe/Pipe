@@ -22,7 +22,7 @@
       new Syntaxer($("#input"));
       new Syntaxer($("#output"));
       
-      function run(){
+      function clickRun(){
         prgm = pipe($("#code").val());
         prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
@@ -31,15 +31,14 @@
         },function() {
           $("#output").val(this.outputs+"").trigger("input")
         });
-        $(this).val("STOP").click(stop);
+        $(this).val("STOP").click(clickStop);
       }
-      function stop(){
+      function clickStop(){
         prgm.stop();
-        $(this).val("RUN").click(run);
+        $(this).val("RUN").click(clickRun);
       }
       
-      $("#run").click(run);
-      console.log("Asd");
+      $("#run").click(clickRun);
     });
   </script>
 </head>
