@@ -1,18 +1,29 @@
 (function(global) {
+function fixChar(char) {
+  if(char === "<") return "&lt";
+  if(char === ">") return "&gt";
+  return char;
+}
+function fixChars(text) {
+  var s = "";
+  for(var i = 0; i < text.length; ++i) s+=fixChar(text[i]);
+  return s;
+}
 function setMark(marks, mark, index, capture) {
-  marks[index++] = mark + capture + '</mark>';
+  marks[index++] = mark + fixChars(capture) + '</mark>';
   for(;index < capture.length; ++index) {
     marks[index] = "";
   }
 }
 String.prototype.mark = function(arg1, classes) {
+  if(this.marks === undefined) {
+    this.marks = [];
+    for(var i = this.length; i--;) this.marks.unshift(fixChar(this[i]));
+  }
+  if(arg1 === undefined) return this;
   var css = "";
   for(var i = classes.length; i--;) css += classes[i] + " ";
   var mark = '<mark class="'+css+'">';
-  if(this.marks === undefined) {
-    this.marks = [];
-    for(var i = this.length; i--;) this.marks.unshift(this[i])
-  }
   if(arg1 instanceof RegExp) {
     if(arg1.flags.search("g") === -1) {
       var res = arg1.exec(this);
@@ -30,7 +41,7 @@ String.prototype.mark = function(arg1, classes) {
   return this;
 }
 String.prototype.markup = function() {
-  if(this.marks === undefined) return this+"";
+  if(this.marks === undefined) return this;
   var s = "";
   for(var i = 0, l = this.marks.length; i < l; ++i) {
     s += this.marks[i];
@@ -99,11 +110,7 @@ Syntaxer.prototype.parse = function(text) {
   return text;
 }
 Syntaxer.prototype.applyParse = function(text) {
-  text = this.parse(text);
-  // Fixes line feeds.
-  text.replace(/\n$/g, '\n\n');
-  // Applys all of the markings to the text.
-  text = text.markup();
+  text = this.parse(text.mark()).replace(/\n$/g, '\n\n').markup();
   
   // IE wraps whitespace differently in a div vs textarea, this fixes it.
   if (Syntaxer.isIE) {
