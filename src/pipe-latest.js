@@ -1,6 +1,6 @@
 (function(global, parser){
 
-// The current verion of braingolfpp.
+// The current verion of pipe.
 var version = "1.00.00.00";
 
 parser.Command.internal = {
@@ -455,15 +455,15 @@ Program.prototype.current_cell = function() {
 
 //-----------------------------------------------------------------------------
 // The main function for processing and executing the code.
-var braingolfpp = function(code) {
+var pipe = function(code) {
   return new Program(code);
 }
 
 //-----------------------------------------------------------------------------
 // Sets all of the global variables defined earlier.
-braingolfpp.Memory = Memory;
-braingolfpp.Cell = Cell;
-braingolfpp.version = version;
-global.braingolfpp = braingolfpp;
+pipe.Memory = Memory;
+pipe.Cell = Cell;
+pipe.version = version;
+global.pipe = pipe;
 
 })(this, this.parser)
