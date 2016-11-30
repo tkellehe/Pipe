@@ -53,11 +53,15 @@ parser.Command.base = {
     }
   },
   "#": function(tkn,prgm) {
-    var cell = prgm.current_cell();
-    if(cell.has()) {
-      cell.value = cell.numberify(tkn,prgm);
+    if(tkn.content === undefined) {
+      var cell = prgm.current_cell();
+      if(cell.has()) {
+        cell.value = cell.numberify(tkn,prgm);
+      } else {
+        cell.value = new Cell.types.NUMBER();
+      }
     } else {
-      cell.value = new Cell.types.NUMBER();
+      tkn.outputs.back(new Cell.types.NUMBER(tkn.content));
     }
   },
   "@": function(tkn,prgm) {
@@ -182,6 +186,34 @@ parser.Symbols["'"].front(function(cmd) {
 parser.Symbols["#"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["#"];
+  
+  var checkR = /[\d\.\-]/;
+  function check(c) { return !!checkR.exec(c); }
+  
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn,prgm) {
+    tkn.content = "";
+    var found = 0, add = 1;
+    if(tkn.code[tkn.end+1] === "-") { tkn.content = "-"; ++add; }
+    for(var i = tkn.end+add; i < tkn.code.length && check(tkn.code[i]) && found < 2;++i) {
+      if(tkn.code[i] === ".") ++found;
+      tkn.content += tkn.code[i];
+    }
+    // Remove the '.' or '-' if it ends with one.
+    while(tkn.content[tkn.content.length-1] === "." || tkn.content[tkn.content.length-1] === "-")
+      tkn.content = tkn.content.slice(0,tkn.content.length-1);
+    // If the content is empty then do nothing.
+    if(tkn.content.length === 0) {
+      tkn.content = undefined;
+    } else {
+      tkn.end = tkn.start + tkn.content.length;
+      // Turn it into a number.
+      tkn.content = +tkn.content;
+    }
+    
+    return temp.call(this, tkn);
+  }
+  
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["@"].front(function(cmd) {
@@ -216,7 +248,7 @@ parser.Symbols['"'].front(function(cmd) {
   cmd.tokenize = function(tkn,prgm) {
     tkn.content = "";
     for(var i = tkn.end+1; i < tkn.code.length && (tkn.code[i] !== "\n");++i) {
-        tkn.content += tkn.code[i];
+      tkn.content += tkn.code[i];
     }
     tkn.end = tkn.start + tkn.content.length + 1; // +1 for the line feed.
     return temp.call(this, tkn);
@@ -298,7 +330,7 @@ Cell.types.NUMBER.prototype.toString = function() {
   return this.stringify().value;
 }
 Cell.types.NUMBER.prototype.smallest_unit = function() {
-  var s = this.value+"", i = s.search(".");
+  var s = this.value+"", i = s.search("\\.");
   if(i === -1) return 1;
   var l = i;
   for(var j = i+1;j<s.length;++j) {
