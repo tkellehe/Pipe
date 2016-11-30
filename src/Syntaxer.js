@@ -108,7 +108,7 @@ Syntaxer.prototype.parse = function(text) {
   return text;
 }
 Syntaxer.prototype.applyParse = function(text) {
-  text = this.parse(text.mark()).replace(/\n$/g, '\n\n').markup();
+  text = this.parse(text.replace(/\n$/g, '\n\n').mark()).markup();
   
   // IE wraps whitespace differently in a div vs textarea, this fixes it.
   if (Syntaxer.isIE) {
