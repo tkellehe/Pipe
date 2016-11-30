@@ -67,6 +67,9 @@ mark.bg-grey {
 mark.bg-red {
   background-color: #e5b1d5;
 }
+mark.bg-orange {
+  background-color: #ffa34d;
+}
 mark.fg-red {
   color: #e5b1d5;
 }
