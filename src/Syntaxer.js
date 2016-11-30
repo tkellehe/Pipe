@@ -15,10 +15,9 @@ function fixChars(text) {
   return s;
 }
 function setMark(marks, mark, index, capture) {
-  marks[index] = mark + fixChars(capture) + '</mark>';
-  console.log(marks);
-  for(++index;index < capture.length; ++index) {
-    marks[index] = "";
+  marks[index++] = mark + fixChars(capture) + '</mark>';
+  for(var i = capture.length-1; i--;) {
+    marks[index+i] = "";
   }
 }
 String.prototype.mark = function(arg1, classes) {
