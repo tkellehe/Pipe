@@ -74,6 +74,10 @@ parser.Command.base = {
   '"': function(tkn,prgm) {
     tkn.outputs.back(new Cell.types.STRING(tkn.content));
   },
+  "w": function(tkn,prgm) { },
+  "W": function(tkn,prgm) {
+    prgm.outputs.wipe()
+  },
   " ": function(tkn,prgm) { }
 }
 
@@ -94,6 +98,8 @@ parser.Symbols["@"] = new parser.Pipe();
 parser.Symbols[" "] = new parser.Pipe();
 parser.Symbols["ç"] = new parser.Pipe();
 parser.Symbols['"'] = new parser.Pipe();
+parser.Symbols['w'] = new parser.Pipe();
+parser.Symbols['W'] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -192,6 +198,15 @@ parser.Symbols["ç"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["ç"];
   cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["W"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["W"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["w"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["w"];
 });
 parser.Symbols['"'].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
