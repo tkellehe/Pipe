@@ -26,7 +26,8 @@
         prgm = pipe($("#code").val());
         prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
         prgm.exec(function() {
-          $("#output").val(this.outputs+"").trigger("input")
+          $("#output").val(this.outputs+"").trigger("input");
+          $("#run").val("RUN").click(run);
         },function() {
           $("#output").val(this.outputs+"").trigger("input")
         });
