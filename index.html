@@ -34,8 +34,8 @@
       new Syntaxer($("#input"));
       new Syntaxer($("#output"));
       
-      $("#input").val($.urlParamDecode("input"));
-      $("#code").val($.urlParamDecode("code"));
+      $("#input").val($.urlParamDecode("input")).trigger("input");
+      $("#code").val($.urlParamDecode("code")).trigger("input");
       
       function clickRun(){
         $("#input").prop("readonly",true);
