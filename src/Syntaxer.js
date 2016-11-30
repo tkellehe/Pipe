@@ -97,14 +97,12 @@ Syntaxer.prototype.fixIOS = function() {
 Syntaxer.prototype.handleInput = function() {
   var text = this.$textarea.val();
   var highlightedText = this.applyParse(text);
+  console.log(highlightedText);
   this.$highlights.html(highlightedText);
 }
 Syntaxer.prototype.handleScroll = function() {
-  var scrollTop = this.$textarea.scrollTop();
-  this.$backdrop.scrollTop(scrollTop);
-  
-  var scrollLeft = this.$textarea.scrollLeft();
-  this.$backdrop.scrollLeft(scrollLeft);  
+  this.$backdrop.scrollTop(this.$textarea.scrollTop());
+  this.$backdrop.scrollLeft(this.$textarea.scrollLeft());  
 }
 Syntaxer.prototype.parse = function(text) {
   return text;
