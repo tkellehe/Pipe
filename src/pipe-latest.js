@@ -268,7 +268,7 @@ parser.Symbols['//'].front(function(cmd) {
     for(var i = tkn.end+1; i < tkn.code.length && (tkn.code[i] !== "\n");++i) {
       tkn.content += tkn.code[i];
     }
-    tkn.end = tkn.start + tkn.content.length + 1; // +1 for the line feed.
+    tkn.end = tkn.start + tkn.content.length + 2; // +1 for the line feed and +1 because two chars.
     return temp.call(this, tkn);
   }
   
