@@ -28,7 +28,7 @@
           .mark(/[\#\@\']/g, ["fg-red"])
           .mark(/(\#\-\d+\.\d+|\#\d+\.\d+|\#\-\d+|\#\d+)/g, ["bg-orange"])
           .mark(/(\'[a-zA-Z0-9_ ]+)/g, ["bg-purple"])
-          .mark(/(\".+(?:\n|$))/g, ["bg-blue"])
+          .mark(/(\".*(?:\n|$))/g, ["bg-blue"])
           .mark(/(\/\/.*(?:\n|$))/g, ["fg-green"]);
       }
       new Syntaxer($("#input"));
