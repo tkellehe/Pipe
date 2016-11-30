@@ -22,7 +22,7 @@ _Pipe_ follows the same memory model as _brainf*ck_ except for the fact that it 
 
 __Note:__ The commands `.` and `,` are valid, but not as simple as `:` and `;`.
 
-With those commands we can create a simple [program](https://tkellehe.github.io/Pipe/input=&code=%2B%2B%2B%2B%2B%2B%5B%3A-%5D):
+With those commands we can create a simple [program](https://tkellehe.github.io/Pipe/?input=&code=%2B%2B%2B%2B%2B%2B%5B%3A-%5D):
 
 ```
 ++++++[:-]
