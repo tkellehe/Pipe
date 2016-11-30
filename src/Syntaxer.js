@@ -1,7 +1,12 @@
 (function(global) {
+// Handles rare bug where specific special characters get a character prepended.
+function hr(char) { return (char.length === 1 ? char : char[char.length-1]); }
 function fixChar(char) {
-  if(char === "<") return "&lt";
-  if(char === ">") return "&gt";
+  if(char === "<") return "&lt;";
+  if(char === ">") return "&gt;";
+  if(char === '"') return "&quot;";
+  if(char === " ") return "&nbsp;";
+  if(char === hr("¡")) return "&iexcl;";
   return char;
 }
 function fixChars(text) {
