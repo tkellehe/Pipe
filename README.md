@@ -25,7 +25,7 @@ With those commands we can create a simple program:
 
 [SNIPPET](https://tkellehe.github.io/Pipe/?input=&code=%2B%2B%2B%5B.-%5D)
 ```
-++++++[.-]
++++[.-]
 ```
 __OUTPUT:__
 ```
