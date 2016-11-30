@@ -95,9 +95,11 @@ Syntaxer.prototype.handleScroll = function() {
   var scrollLeft = this.$textarea.scrollLeft();
   this.$backdrop.scrollLeft(scrollLeft);  
 }
-Syntaxer.prototype.parse = function(text) {}
+Syntaxer.prototype.parse = function(text) {
+  return text;
+}
 Syntaxer.prototype.applyParse = function(text) {
-  this.parse(text);
+  text = this.parse(text);
   // Fixes line feeds.
   text.replace(/\n$/g, '\n\n');
   // Applys all of the markings to the text.
