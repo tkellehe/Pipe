@@ -69,7 +69,8 @@
       $("#url").click(function() {
         $("#output").val(window.location.href.replace(window.location.search,'') + "?"
                          + $.param({input:$("#input").val(),code:$("#code").val()})).trigger("input").select();
-        try { document.execCommand('copy'); window.location.href = $("#output").val(); } catch (err) {}
+        try { document.execCommand('copy'); } catch (err) {}
+        try { window.location.href = $("#output").val(); } catch (err) {}
       });
     });
   </script>
