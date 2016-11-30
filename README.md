@@ -21,7 +21,9 @@ _Pipe_ follows the same memory model as _brainf*ck_ except for the fact that it 
 |`,`|Consume item from the pipe and place into the current cell|
 
 
-With those commands we can create a simple program:[CODE](https://tkellehe.github.io/Pipe/?input=&code=%2B%2B%2B%5B.-%5D)
+With those commands we can create a simple program:
+
+[CODE](https://tkellehe.github.io/Pipe/?input=&code=%2B%2B%2B%5B.-%5D)
 ```
 ++++++[.-]
 ```
@@ -39,7 +41,9 @@ A further break down of the program:
       ] // Jump back to the '[' (Because is the last command pushes pipe into stdout).
 ```
 
-Now, let us try to use `,` to take in a three which will look like:[CODE](https://tkellehe.github.io/Pipe/?input=3&code=%2C%5B.-%5D)
+Now, let us try to use `,` to take in a three which will look like:
+
+[CODE](https://tkellehe.github.io/Pipe/?input=3&code=%2C%5B.-%5D)
 ```
 ,[.-]
 ```
@@ -62,7 +66,9 @@ which are `"3"` and `"3"`.
 ```
 
 To fix this merely place a `#` in after the `,`. This will `numberify` the current cell which for a `STRING` turns
-it directly into a `NUMBER`.[CODE](https://tkellehe.github.io/Pipe/?input=3&code=%2C%23%5B.-%5D)
+it directly into a `NUMBER`.
+
+[CODE](https://tkellehe.github.io/Pipe/?input=3&code=%2C%23%5B.-%5D)
 ```
 ,#[.-]
 ```
