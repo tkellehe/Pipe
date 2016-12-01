@@ -1104,7 +1104,6 @@ Cell.types.REFERENCE = function(o) {
   if(o === undefined || !Cell.isType(o)) return undefined;
   
   this.type = o.type;
-  
   this.object = o;
   
   Object.defineProperty(this,"value",{
@@ -1136,7 +1135,7 @@ Cell.types.REFERENCE.prototype.is_non_zero = function(cell,tkn,prgm) {
   return this.object.is_non_zero(cell,tkn,prgm);
 }
 Cell.types.REFERENCE.prototype.copy = function(cell,tkn,prgm) {
-  return new Cell.types.REFERENCE(this.object);
+  return new Cell.types.REFERENCE(this);
 }
 Cell.types.REFERENCE.prototype.stringify = function(cell,tkn,prgm) {
   this.object = this.object.stringify(cell,tkn,prgm);
