@@ -440,7 +440,7 @@ parser.Symbols["@"].front(function(cmd) {
       }
     }
     // If the last token is a minus then do not get a range.
-    if(tkn.content[tkn.content.length-1] === "-" || mid==-1) tkn.content = "";
+    if(tkn.content[tkn.content.length-1] === "-" || mid===-1) tkn.content = "";
 
     if(tkn.content.length !== 0) which = "RANGE";
     
