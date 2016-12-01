@@ -53,8 +53,6 @@ textarea {
   overflow: auto;
   resize: none;
   transition: transform 1s;
-  white-space: pre-wrap;
-  word-wrap: break-word;
 }
 
 mark {
