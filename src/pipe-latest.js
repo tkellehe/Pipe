@@ -191,6 +191,10 @@ parser.Symbols["]"].front(function(cmd) {
     return temp.call(this, tkn);
   }
   cmd.execute = parser.Command.internal.pipe_io;
+  cmd.execute = function(tkn,prgm) {
+    var n = tkn.next();
+    n.inputs.pipe(tkn.outputs);
+  }
 });
 parser.Symbols[":"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
