@@ -377,6 +377,18 @@ parser.Command.base = {
     }
   },
   "//": function(tkn,prgm) { },
+  "&": function(tkn,prgm) {
+    var cell = prgm.current_cell();
+    if(cell.has()) {
+      tkn.outputs.back(new Cell.types.REFERENCE(cell.value));
+    } else {
+      var f = tkn.inputs.front();
+      if(f !== undefined) {
+        tkn.outputs.back(new Cell.types.REFERENCE(f));
+        tkn.inputs.front(f);
+      }
+    }
+  },
   "\n": function(tkn,prgm) { },
   " ": function(tkn,prgm) { }
 }
@@ -830,6 +842,12 @@ Cell.create_default = function() {
   return new (Cell.defaults.at(0))();
 }
 Cell.types = {}
+Cell.isType = function(o) {
+  for(var i in Cell.types) {
+    if(o instanceof Cell.types[i]) return true;
+  }
+  return false;
+}
 Cell.characters = [
 '¡','¢','£','¤','¥','¦','©','¬','®','µ','\n','¿','€','Æ','Ç','Ð',
 'Ñ','×','Ø','Œ','Þ','ß','æ','ç','ð','ı','ȷ','ñ','÷','ø','œ','þ',
@@ -902,6 +920,7 @@ Cell.prototype.range = function(tkn,prgm,r) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.NUMBER = function(v) { this.value = v || 0; }
 Cell.types.NUMBER.prototype.type = "NUMBER";
+Cell.types.NUMBER.prototype.actual = "NUMBER";
 Cell.defaults.front(Cell.types.NUMBER);
 Cell.types.NUMBER.prototype.toString = function() {
   return this.stringify().value;
@@ -969,6 +988,7 @@ Cell.types.NUMBER.prototype.range = function(cell,tkn,prgm,r) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; }
 Cell.types.STRING.prototype.type = "STRING";
+Cell.types.STRING.prototype.actual = "STRING";
 Cell.types.STRING.prototype.toString = function() {
   return this.stringify().value;
 }
@@ -1020,8 +1040,9 @@ Cell.types.STRING.prototype.range = function(cell,tkn,prgm,r) {
   return [new Cell.types.STRING(s)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Cell.types.ARRAY = function(s) { this.value = s || []; }
+Cell.types.ARRAY = function(a) { this.value = a || []; }
 Cell.types.ARRAY.prototype.type = "ARRAY";
+Cell.types.ARRAY.prototype.actual = "ARRAY";
 Cell.types.ARRAY.prototype.toString = function() {
   var a = this.stringify(), v = "";
   for(var i = 0, l = a.value.length; i < l; ++i) v += a.value[i].value;
@@ -1077,6 +1098,71 @@ Cell.types.ARRAY.prototype.range = function(cell,tkn,prgm,r) {
   var a = [];
   for(var i = 0; i < r.length; ++i) a.push(this.index(cell,tkn,prgm,r[i]));
   return a;
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Cell.types.REFERENCE = function(o) {
+  // Forces the object created to be destroyed and undefined is returned.
+  if(o === undefined || !Cell.isType(o)) return undefined;
+  
+  this.type = o.type;
+  
+  this.object = o;
+  
+  Object.definedProperty(this,"value",{
+    get: function() {
+      return o.value;
+    },
+    set: function(v) {
+      o.value = v;
+    },
+    enumerable: true
+  });
+}
+Cell.types.REFERENCE.prototype.actual = "REFERENCE";
+Cell.types.REFERENCE.prototype.toString = function() {
+  return this.object.toString();
+}
+Cell.types.REFERENCE.prototype.smallest_unit = function() {
+  return this.object.smallest_unit();
+}
+Cell.types.REFERENCE.prototype.increment = function(cell,tkn,prgm) {
+  this.object = this.object.increment(cell,tkn,prgm);
+  return this;
+}
+Cell.types.REFERENCE.prototype.decrement = function(cell,tkn,prgm) {
+  this.object = this.object.decrement(cell,tkn,prgm);
+  return this;
+}
+Cell.types.REFERENCE.prototype.is_non_zero = function(cell,tkn,prgm) {
+  return this.object.is_non_zero(cell,tkn,prgm);
+}
+Cell.types.REFERENCE.prototype.copy = function(cell,tkn,prgm) {
+  return new Cell.types.REFERENCE(this.object);
+}
+Cell.types.REFERENCE.prototype.stringify = function(cell,tkn,prgm) {
+  this.object = this.object.stringify(cell,tkn,prgm);
+  return this;
+}
+Cell.types.REFERENCE.prototype.numberify = function(cell,tkn,prgm) {
+  this.object = this.object.numberify(cell,tkn,prgm);
+  return this;
+}
+Cell.types.REFERENCE.prototype.integerify = function(cell,tkn,prgm) {
+  this.object = this.object.integerify(cell,tkn,prgm);
+  return this;
+}
+Cell.types.REFERENCE.prototype.arrayify = function(cell,tkn,prgm) {
+  this.object = this.object.arrayify(cell,tkn,prgm);
+  return this;
+}
+Cell.types.REFERENCE.prototype.length = function(cell,tkn,prgm) {
+  return this.object.length(cell,tkn,prgm);
+}
+Cell.types.REFERENCE.prototype.index = function(cell,tkn,prgm,i) {
+  return this.object.index(cell,tkn,prgm,i);
+}
+Cell.types.REFERENCE.prototype.range = function(cell,tkn,prgm,r) {
+  return this.object.range(cell,tkn,prgm,r);
 }
 
 //-----------------------------------------------------------------------------
