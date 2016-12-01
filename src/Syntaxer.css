@@ -72,6 +72,9 @@ mark.bg-purple {
 mark.bg-orange {
   background-color: #ffd7b3;
 }
+mark.fg-orange {
+  color: #ffd7b3;
+}
 mark.fg-red {
   color: #e5b1d5;
 }
