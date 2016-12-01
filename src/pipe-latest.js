@@ -35,7 +35,7 @@ parser.Command.base = {
       // Go ahead and pipe everything correctly.
       tkn.outputs.pipe(tkn.inputs);
       end.inputs.pipe(tkn.outputs);
-      end.execute(end,prgm);
+      end.outputs.pipe(end.inputs);
     }
   },
   "]": function(tkn,prgm) {},
