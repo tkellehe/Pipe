@@ -38,7 +38,7 @@ A further break down of the program:
    [    // Checks to see if the current cell is non zero.
     .   // Buffers the value of the current cell into the pipe.
      -  // Decrements the current cell by one.
-      ] // Jump back to the '[' (Because is the last command pushes pipe into stdout).
+      ] // Jump back to the '['.
 ```
 
 Now, let us try to use `,` to take in a three which will look like:
@@ -62,7 +62,7 @@ which are `"3"` and `"3"`.
  [    // Checks to see if the STRING has any more characters.
   .   // Buffers the value of the current cell into the pipe.
    -  // Pops the first character off of the STRING into the pipe.
-    ] // Jump back to the '[' (Because is the last command pushes pipe into stdout).
+    ] // Jump back to the '['.
 ```
 
 To fix this merely place a `#` in after the `,`. This will `numberify` the current cell which for a `STRING` turns
