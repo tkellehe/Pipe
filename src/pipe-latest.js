@@ -495,8 +495,8 @@ Cell.prototype.arrayify = function(tkn,prgm) {
 Cell.prototype.length = function(tkn,prgm) {
   return this.content().length(this,tkn,prgm);
 }
-Cell.prototype.index = function(cell,tkn,prgm,i) {
-  return this.content().index(cell,tkn,prgm,i);
+Cell.prototype.index = function(tkn,prgm,i) {
+  return this.content().index(this,tkn,prgm,i);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.NUMBER = function(v) { this.value = v || 0; }
