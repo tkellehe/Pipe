@@ -36,9 +36,8 @@ body {
 }
 
 .highlights {
-  /*white-space: pre-wrap;
-  word-wrap: break-word;*/
-  white-space: nowrap;
+  white-space: pre-wrap;
+  /*word-wrap: break-word;*/
   word-wrap: none;
   color: #444;
 }
