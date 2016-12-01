@@ -25,7 +25,7 @@
       code.parse = function(text) {
         return text
           .mark(/\s/g, ["bg-grey"])
-          .mark(/\@\,|\'\,|\#\,|[\I\#\@\']/g, ["fg-red"])
+          .mark(/\@\,\,|\@\,|\'\,|\#\,|[\I\#\@\']/g, ["fg-red"])
           .mark(/\+\,|\-\,|\+|\-/g, ["fg-purple"])
           .mark(/(l\,|[l])/g, ["fg-orange"])
           .mark(/(\I\-\d+|\I\d+)/g, ["bg-orange"])
