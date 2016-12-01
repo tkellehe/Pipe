@@ -110,8 +110,8 @@ parser.Command.base = {
   },
   "l,": function(tkn,prgm) {
     var f = tkn.inputs.front();
-    tkn.outputs.back(f);
     tkn.outputs.back(f.length(undefined,tkn,prgm));
+    tkn.outputs.back(f);
   },
   "//": function(tkn,prgm) { },
   "\n": function(tkn,prgm) { },
