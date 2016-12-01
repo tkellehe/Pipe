@@ -76,10 +76,20 @@ parser.Command.base = {
   },
   "}": function(tkn,prgm) {},
   ":": function(tkn,prgm) {
-    prgm.outputs.back(prgm.current_cell().copy(tkn,prgm));
+    var cell = prgm.current_cell();
+    if(cell.has()) {
+      prgm.outputs.back(cell.copy(tkn,prgm));
+    } else {
+      prgm.outputs.back(Cell.create_default());
+    }
   },
   ".": function(tkn,prgm) {
-    tkn.outputs.back(prgm.current_cell().copy(tkn,prgm));
+    var cell = prgm.current_cell();
+    if(cell.has()) {
+      tkn.outputs.back(cell.copy(tkn,prgm));
+    } else {
+      tkn.outputs.back(Cell.create_default());
+    }
   },
   ",": function(tkn,prgm) {
     prgm.current_cell().value = tkn.inputs.front();
