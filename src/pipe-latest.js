@@ -108,6 +108,11 @@ parser.Command.base = {
   "l": function(tkn,prgm) {
     tkn.outputs.back(prgm.current_cell().length(tkn,prgm));
   },
+  "l,": function(tkn,prgm) {
+    var f = tkn.inputs.front();
+    tkn.outputs.back(f);
+    tkn.outputs.back(f.length(undefined,tkn,prgm));
+  },
   "//": function(tkn,prgm) { },
   "\n": function(tkn,prgm) { },
   " ": function(tkn,prgm) { }
@@ -137,6 +142,7 @@ parser.Symbols['\n'] = new parser.Pipe();
 parser.Symbols['n'] = new parser.Pipe();
 parser.Symbols['I'] = new parser.Pipe();
 parser.Symbols['l'] = new parser.Pipe();
+parser.Symbols['l,'] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -400,6 +406,11 @@ parser.Symbols['//'].front(function(cmd) {
 parser.Symbols["l"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["l"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["l,"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["l,"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
