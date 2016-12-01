@@ -24,11 +24,12 @@
       var code = new Syntaxer($("#code"));
       code.parse = function(text) {
         return text
-          .mark(/[\s\n]/g, ["bg-grey"])
-          .mark(/[\#\@\']/g, ["fg-red"])
+          .mark(/\s/g, ["bg-grey"])
+          .mark(/[\I\#\@\']/g, ["fg-red"])
+          .mark(/(\I\-\d+|\I\d+)/g, ["bg-orange"])
           .mark(/(\#\-\d+\.\d+|\#\d+\.\d+|\#\-\d+|\#\d+)/g, ["bg-orange"])
           .mark(/(\'[a-zA-Z0-9_ ]+)/g, ["bg-purple"])
-          .mark(/(\@\d+)/g, ["bg-green"])
+          .mark(/(\@\-\d+|\@\d+)/g, ["bg-green"])
           .mark(/(\".*(?:\n|$))/g, ["bg-blue"])
           
           .mark(/(\/\/.*(?:\n|$))/g, ["fg-green"]);
