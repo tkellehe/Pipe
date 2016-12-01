@@ -36,9 +36,9 @@ body {
 }
 
 .highlights {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    color: #444;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #444;
 }
 
 textarea {
@@ -53,6 +53,8 @@ textarea {
   overflow: auto;
   resize: none;
   transition: transform 1s;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 mark {
