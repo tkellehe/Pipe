@@ -336,6 +336,36 @@ parser.Command.base = {
   "d": function(tkn,prgm) {
     tkn.inputs.front();
   },
+  "e": function(tkn,prgm) {
+    var f = tkn.inputs.front(),
+        g = tkn.inputs.front();
+    if(f === undefined) {
+      if(g !== undefined) {
+        tkn.inputs.front(g);
+      }
+    } else if(g === undefined) {
+      tkn.inputs.front(f);
+    } else {
+      // Reverse g and f.
+      tkn.inputs.front(f);
+      tkn.inputs.front(g);
+    }
+  },
+  "E": function(tkn,prgm) {
+    var f = tkn.inputs.front(),
+        g = tkn.inputs.back();
+    if(f === undefined) {
+      if(g !== undefined) {
+        tkn.inputs.front(g);
+      }
+    } else if(g === undefined) {
+      tkn.inputs.back(f);
+    } else {
+      // Reverse g and f.
+      tkn.inputs.back(f);
+      tkn.inputs.front(g);
+    }
+  },
   "//": function(tkn,prgm) { },
   "\n": function(tkn,prgm) { },
   " ": function(tkn,prgm) { }
@@ -375,6 +405,8 @@ parser.Symbols["@,"] = new parser.Pipe();
 parser.Symbols["+,"] = new parser.Pipe();
 parser.Symbols["-,"] = new parser.Pipe();
 parser.Symbols["@,,"] = new parser.Pipe();
+parser.Symbols["e"] = new parser.Pipe();
+parser.Symbols["E"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -758,6 +790,16 @@ parser.Symbols["@,"].front(function(cmd) {
 parser.Symbols["@,,"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["@,,"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["e"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["e"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["E"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["E"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
