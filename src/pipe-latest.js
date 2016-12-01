@@ -440,7 +440,7 @@ parser.Symbols["@"].front(function(cmd) {
       }
     }
     // If the last token is a minus then do not get a range.
-    if(tkn.content[tkn.content.length-1] === "-" || mid===-1) tkn.content = "";
+    if(tkn.content[tkn.content.length-1] === "-" || mid === -1) tkn.content = "";
 
     if(tkn.content.length !== 0) which = "RANGE";
     
@@ -470,9 +470,9 @@ parser.Symbols["@"].front(function(cmd) {
           right = +tkn.content.slice(mid+1);
       tkn.content = [];
       if(left < right) {
-        for(var i = left; i < right; ++i) tkn.content.push(i);
+        for(var i = left; i <= right; ++i) tkn.content.push(i);
       } else {
-        for(var i = left-1; right <= i; --i) tkn.content.push(i);
+        for(var i = left; right <= i; --i) tkn.content.push(i);
       }
     }
     
