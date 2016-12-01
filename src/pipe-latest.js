@@ -694,7 +694,7 @@ Cell.types.NUMBER.prototype.index = function(cell,tkn,prgm,i) {
 }
 Cell.types.NUMBER.prototype.range = function(cell,tkn,prgm,r) {
   var d = 0;
-  for(var i = 0; i < r.length; ++i) d += this.index(cell,tkn,prgm,r[i]);
+  for(var i = 0; i < r.length; ++i) d += this.index(cell,tkn,prgm,r[i]).value;
   return [new Cell.types.NUMBER(d)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -747,7 +747,7 @@ Cell.types.STRING.prototype.index = function(cell,tkn,prgm,i) {
 }
 Cell.types.STRING.prototype.range = function(cell,tkn,prgm,r) {
   var s = "";
-  for(var i = 0; i < r.length; ++i) s += this.index(cell,tkn,prgm,r[i]);
+  for(var i = 0; i < r.length; ++i) s += this.index(cell,tkn,prgm,r[i]).value;
   return [new Cell.types.STRING(s)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
