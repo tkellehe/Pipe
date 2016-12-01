@@ -159,7 +159,6 @@ parser.Command.base = {
       }
     } else if(f.type === "STRING") {
       tkn.outputs.back(f.arrayify(tkn,prgm));
-    }
     } else if(f.type === "ARRAY") {
       // Must be a range of numbers.
       var temp = f.integerify(undefined,tkn,prgm);
