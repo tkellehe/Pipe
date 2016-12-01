@@ -149,7 +149,7 @@ parser.Command.base = {
   'n': function(tkn,prgm) {
     tkn.outputs.back(new Cell.types.STRING("\n"));
   },
-  "w": function(tkn,prgm) { },
+  "b": function(tkn,prgm) { },
   "W": function(tkn,prgm) {
     prgm.outputs.wipe()
   },
@@ -169,6 +169,9 @@ parser.Command.base = {
     } else {
       tkn.outputs.back(new Cell.types.NUMBER());
     }
+  },
+  "d": function(tkn,prgm) {
+    tkn.inputs.front();
   },
   "//": function(tkn,prgm) { },
   "\n": function(tkn,prgm) { },
@@ -194,7 +197,7 @@ parser.Symbols["@"] = new parser.Pipe();
 parser.Symbols[" "] = new parser.Pipe();
 parser.Symbols["c"] = new parser.Pipe();
 parser.Symbols['"'] = new parser.Pipe();
-parser.Symbols['w'] = new parser.Pipe();
+parser.Symbols['b'] = new parser.Pipe();
 parser.Symbols['W'] = new parser.Pipe();
 parser.Symbols['//'] = new parser.Pipe();
 parser.Symbols['\n'] = new parser.Pipe();
@@ -202,6 +205,7 @@ parser.Symbols['n'] = new parser.Pipe();
 parser.Symbols['I'] = new parser.Pipe();
 parser.Symbols['l'] = new parser.Pipe();
 parser.Symbols['l,'] = new parser.Pipe();
+parser.Symbols['d'] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -506,9 +510,9 @@ parser.Symbols["W"].front(function(cmd) {
   cmd.execute = parser.Command.base["W"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
-parser.Symbols["w"].front(function(cmd) {
+parser.Symbols["b"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
-  cmd.execute = parser.Command.base["w"];
+  cmd.execute = parser.Command.base["b"];
 });
 parser.Symbols['"'].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -550,6 +554,11 @@ parser.Symbols["l"].front(function(cmd) {
 parser.Symbols["l,"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["l,"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["d"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["d"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
