@@ -269,7 +269,7 @@ parser.Command.base = {
         for(var i = 0; i < range.length; ++i)
           tkn.outputs.back(range[i]);
       } else {
-        for(var i = 0; i < tkn.content.length; ++i)
+        for(var i = 0; i < a.length; ++i)
           tkn.outputs.back(new Cell.types.ARRAY());
       }
     } else if(f.type === "ARRAY") {
