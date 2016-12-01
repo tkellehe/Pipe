@@ -1114,7 +1114,7 @@ Cell.types.REFERENCE = function(o) {
   
   this.object = o;
   
-  Object.definedProperty(this,"value",{
+  Object.defineProperty(this,"value",{
     get: function() {
       return o.value;
     },
