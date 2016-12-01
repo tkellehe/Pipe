@@ -29,6 +29,7 @@
           .mark(/(l\,|[l])/g, ["fg-orange"])
           .mark(/(\I\-\d+|\I\d+)/g, ["bg-orange"])
           .mark(/(\#\-\d+\.\d+|\#\d+\.\d+|\#\-\d+|\#\d+)/g, ["bg-orange"])
+          .mark(/(\-\d+\-\-\d+|\-\d+\-\d+|\d+\-\-\d+|\d+\-\d+)/g, ["bg-orange"])
           .mark(/(\'[a-zA-Z0-9_ ]+)/g, ["bg-purple"])
           .mark(/(\@\-\d+|\@\d+)/g, ["bg-green"])
           .mark(/(\".*(?:\n|$))/g, ["bg-blue"])
