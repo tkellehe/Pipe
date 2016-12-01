@@ -46,7 +46,7 @@ parser.Command.base = {
     var end = tkn.branches.at(1);
     tkn.inputs.pipe(end.outputs);
     var f = tkn.inputs.front();
-    if(f.is_non_zero(undefined,tkn,prgm)) {
+    if(f !== undefined && f.is_non_zero(undefined,tkn,prgm)) {
       tkn.next_token = tkn.branches.at(0);
       // Puts the item back into the pipe.
       tkn.inputs.front(f);
@@ -136,12 +136,21 @@ parser.Command.base = {
     prgm.outputs.wipe()
   },
   "l": function(tkn,prgm) {
-    tkn.outputs.back(prgm.current_cell().length(tkn,prgm));
+    var cell = prgm.current_cell();
+    if(cell.has()) {
+      tkn.outputs.back(cell.length(tkn,prgm));
+    } else {
+      tkn.outputs.back(new Cell.types.NUMBER());
+    }
   },
   "l,": function(tkn,prgm) {
     var f = tkn.inputs.front();
-    tkn.outputs.back(f.length(undefined,tkn,prgm));
-    tkn.inputs.front(f);
+    if(f !== undefined) {
+      tkn.outputs.back(f.length(undefined,tkn,prgm));
+      tkn.inputs.front(f);
+    } else {
+      tkn.outputs.back(new Cell.types.NUMBER());
+    }
   },
   "//": function(tkn,prgm) { },
   "\n": function(tkn,prgm) { },
