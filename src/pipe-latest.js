@@ -149,7 +149,7 @@ parser.Command.base = {
   "@,": function(tkn,prgm) {
     var f = tkn.inputs.front();
     if(f === undefined) {
-      f = new Cell.types.ARRAY();
+      tkn.outputs.back(new Cell.types.ARRAY());
     } else if(f.type === "NUMBER") {
       var cell = prgm.current_cell();
       if(cell.has()) {
@@ -183,8 +183,6 @@ parser.Command.base = {
         })(temp);
       }
     }
-    // Push f back on after the item.
-    tkn.outputs.back(f);
   },
   "I": function(tkn,prgm) {
     if(tkn.content === undefined) {
