@@ -84,7 +84,7 @@ __OUTPUT:__
 So far we have not done a `Hello World` for _Pipe_. Before we could do that we need to talk about _literals_. _Literals_ 
 are merely _"What you put, is literally what you get"_. When a _literal_ is created it is immediately placed into the pipe. For `NUMBER`s, we can use our `#` followed by a number:
 
-[CODE](https://tkellehe.github.io/Pipe/?input=&code=%23100)
+[SNIPPET](https://tkellehe.github.io/Pipe/?input=&code=%23100)
 
 ```
 #321
@@ -96,7 +96,7 @@ __OUTPUT:__
 
 For `STRING`s we have two options. The first is `'` which will make the _literal_ everything following it that is `[a-zA-Z0-9_ ]` (There is a space character following the underscore). This command by itself will also `stringify` the current cell which for a `NUMBER` turns it into a `STRING`. This is enough for us to have a `Hello World`:
 
-[CODE](https://tkellehe.github.io/Pipe/?input=&code=%27Hello%20World)
+[SNIPPET](https://tkellehe.github.io/Pipe/?input=&code=%27Hello%20World)
 
 ```
 'Hello World
@@ -108,7 +108,7 @@ Hello World
 
 The second is `"` which will make the _literal_ everything up to the end of that line. This command if by itself creates an empty `STRING` and places it into the pipe.
 
-[CODE](https://tkellehe.github.io/Pipe/?input=&code=%22Hello%20World!)
+[SNIPPET](https://tkellehe.github.io/Pipe/?input=&code=%22Hello%20World!)
 
 ```
 "Hello World!
