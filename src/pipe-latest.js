@@ -66,8 +66,9 @@ parser.Command.base = {
       tkn.inputs.front(f);
     } else {
       tkn.next_token = end.branches.at(1);
-      // Puts the item back into the pipe.
-      tkn.inputs.front(f);
+      
+      // Does not put item back into pipe.
+      
       // Go ahead and pipe everything correctly.
       tkn.outputs.pipe(tkn.inputs);
       end.inputs.pipe(tkn.outputs);
