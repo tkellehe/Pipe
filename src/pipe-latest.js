@@ -146,6 +146,46 @@ parser.Command.base = {
       }
     }
   },
+  "@,": function(tkn,prgm) {
+    var f = tkn.inputs.front();
+    if(f === undefined) {
+      f = new Cell.types.ARRAY();
+    } else if(f.type === "NUMBER") {
+      var cell = prgm.current_cell();
+      if(cell.has()) {
+        tkn.outputs.back(cell.index(tkn,prgm,f.value));
+      } else {
+        tkn.outputs.back(new Cell.types.ARRAY());
+      }
+    } else if(f.type === "ARRAY") {
+      // Must be a range of numbers.
+      var temp = f.integerify(undefined,tkn,prgm);
+      var cell = prgm.current_cell();
+      if(cell.has()) {
+        (function loop0(array) {
+          for(var i = 0; i < array.value.length; ++i) {
+            if(array.value[i].type === "ARRAY") {
+              loop0(array.value[i]);
+            } else {
+              tkn.outputs.back(cell.index(tkn,prgm,array.value[i]));
+            }
+          }
+        })(temp);
+      } else {
+        (function loop1(array) {
+          for(var i = 0; i < array.value.length; ++i) {
+            if(array.value[i].type === "ARRAY") {
+              loop1(array.value[i]);
+            } else {
+              tkn.outputs.back(new Cell.types.ARRAY());
+            }
+          }
+        })(temp);
+      }
+    }
+    // Push f back on after the item.
+    tkn.outputs.back(f);
+  },
   "I": function(tkn,prgm) {
     if(tkn.content === undefined) {
       var cell = prgm.current_cell();
@@ -226,6 +266,7 @@ parser.Symbols['l,'] = new parser.Pipe();
 parser.Symbols['d'] = new parser.Pipe();
 parser.Symbols['#,'] = new parser.Pipe();
 parser.Symbols["',"] = new parser.Pipe();
+parser.Symbols["@,"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -589,6 +630,11 @@ parser.Symbols["#,"].front(function(cmd) {
 parser.Symbols["',"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["',"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["@,"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["@,"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
