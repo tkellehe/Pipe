@@ -54,7 +54,7 @@ __OUTPUT:__
 
 Well that did not work... Essentially, _Pipe_ has data types which are currently `NUMBER`, `STRING`, and `ARRAY`.
 What we just did was place a `STRING` into the current cell from the pipe which came from the stdin. Then the `[` evaluated
-the `STRING` and check if is non zero (has characters). This then got to `.` which copied the current cell into the pipe.
+the `STRING` and checked if is non zero (has characters). This then got to `.` which copied the current cell into the pipe.
 When you decrement a `STRING` it removes the first character placing it into the pipe. So, the pipe still contains two `STRING`s
 which are `"3"` and `"3"`.
 ```
