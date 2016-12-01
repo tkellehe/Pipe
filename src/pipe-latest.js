@@ -87,7 +87,7 @@ parser.Command.base = {
         cell.value = new Cell.types.ARRAY();
       }
     } else if(typeof tkn.content === "number") {
-      tkn.outputs.back(prgm.current_cell().index(tkn.content));
+      tkn.outputs.back(prgm.current_cell().index(tkn,prgm,tkn.content));
     }
   },
   "I": function(tkn,prgm) {
@@ -495,8 +495,8 @@ Cell.prototype.arrayify = function(tkn,prgm) {
 Cell.prototype.length = function(tkn,prgm) {
   return this.content().length(this,tkn,prgm);
 }
-Cell.prototype.index = function(i) {
-  return this.content().index(i);
+Cell.prototype.index = function(cell,tkn,prgm,i) {
+  return this.content().index(cell,tkn,prgm,i);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.NUMBER = function(v) { this.value = v || 0; }
@@ -547,7 +547,7 @@ Cell.types.NUMBER.prototype.arrayify = function(cell,tkn,prgm) {
 Cell.types.NUMBER.prototype.length = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER((this.value+"").replace(".","").length);
 }
-Cell.types.NUMBER.prototype.index = function(i) {
+Cell.types.NUMBER.prototype.index = function(cell,tkn,prgm,i) {
   var s = this.value + "",
   // Finds the decimal location.
       d = s.search("\\.");
@@ -605,7 +605,7 @@ Cell.types.STRING.prototype.arrayify = function(cell,tkn,prgm) {
 Cell.types.STRING.prototype.length = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER(this.value.length);
 }
-Cell.types.STRING.prototype.index = function(i) {
+Cell.types.STRING.prototype.index = function(cell,tkn,prgm,i) {
   return new Cell.types.STRING(this.value[i]);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -657,8 +657,10 @@ Cell.types.ARRAY.prototype.arrayify = function(cell,tkn,prgm) {
 Cell.types.ARRAY.prototype.length = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER(this.value.length);
 }
-Cell.types.ARRAY.prototype.index = function(i) {
-  return this.value.copy(cell,tkn,prgm);
+Cell.types.ARRAY.prototype.index = function(cell,tkn,prgm,i) {
+  var v = this.value[i];
+  if(v === undefined) return new Cell.types.ARRAY();
+  return v.copy(cell,tkn,prgm);
 }
 //-----------------------------------------------------------------------------
 function Memory() {
