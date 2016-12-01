@@ -1108,10 +1108,10 @@ Cell.types.REFERENCE = function(o) {
   
   Object.defineProperty(this,"value",{
     get: function() {
-      return o.value;
+      return this.object.value;
     },
     set: function(v) {
-      o.value = v;
+      this.object.value = v;
     },
     enumerable: true
   });
