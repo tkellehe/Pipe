@@ -519,7 +519,7 @@ Cell.types.NUMBER.prototype.index = function(i) {
   s = s.replace(".","");
   var l = s.length;
   // Make sure that d is not negative one.
-  d = (d === -1) ? l : d;
+  d = (d === -1) ? 0 : d;
   // Calculates the actual position of the digit.
   var c = s[l - (i + d) - 1];
   return new Cell.types.NUMBER((c === undefined) ? 0 : (+c * Math.pow(10,i)));
