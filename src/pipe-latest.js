@@ -408,58 +408,56 @@ parser.Symbols["@"].front(function(cmd) {
     var which = "NONE";
     
     //*************************************************************************
-    // Tries to get an integer.
-    var offset = 1;
-    if(tkn.code[tkn.end+1] === "-") { tkn.content = "-"; ++offset; }
-    for(var i = tkn.end+offset; i < tkn.code.length && checkDigit(tkn.code[i]);++i) {
-      tkn.content += tkn.code[i];
-    }
-    // If the last token is a minus then do not get a number.
-    if(tkn.content[tkn.content.length-1] === "-") tkn.content = "";
-    
-    if(tkn.content.length !== 0) which = "INTEGER";
-    //*************************************************************************
-    if(which === "NONE") {
-      // Tries to get a range.
-      var offset = 1, bail = false;
-      if(tkn.code[tkn.end+1] === "-") {
-        tkn.content = "-";
-        if(checkDigit(tkn.code[tkn.end+2])) {
-          tkn.content += tkn.code[tkn.end+2];
-        } else {
-          bail = true;
-        }
-        offset+=2;
+    // Tries to get a range.
+    var offset = 1, bail = false;
+    if(tkn.code[tkn.end+1] === "-") {
+      tkn.content = "-";
+      if(checkDigit(tkn.code[tkn.end+2])) {
+        tkn.content += tkn.code[tkn.end+2];
+      } else {
+        bail = true;
       }
-      if(!bail) {
-        var mid = -1;
-        for(var i = tkn.end+offset; i < tkn.code.length;++i) {
-          if(checkDigit(tkn.code[i])) {
-            tkn.content += tkn.code[i];
-          } else if(tkn.code[i] === "-") {
-            if(mid === -1) {
-              mid = i;
+      offset+=2;
+    }
+    if(!bail) {
+      var mid = -1;
+      for(var i = tkn.end+offset; i < tkn.code.length;++i) {
+        if(checkDigit(tkn.code[i])) {
+          tkn.content += tkn.code[i];
+        } else if(tkn.code[i] === "-") {
+          if(mid === -1) {
+            mid = i;
+            tkn.content += "-";
+            // If another dash after go ahead and get it.
+            if(tkn.code[i+1] === "-") {
+              ++i;
               tkn.content += "-";
-              // If another dash after go ahead and get it.
-              if(tkn.code[i+1] === "-") {
-                ++i;
-                tkn.content += "-";
-              }
-            } else {
-              break;
             }
+          } else {
+            break;
           }
         }
       }
-      // If the last token is a minus then do not get a range.
+    }
+    // If the last token is a minus then do not get a range.
+    if(tkn.content[tkn.content.length-1] === "-") tkn.content = "";
+
+    if(tkn.content.length !== 0) which = "RANGE";
+    
+    //*************************************************************************
+    if(which === "NONE") {
+      // Tries to get an integer.
+      var offset = 1;
+      if(tkn.code[tkn.end+1] === "-") { tkn.content = "-"; ++offset; }
+      for(var i = tkn.end+offset; i < tkn.code.length && checkDigit(tkn.code[i]);++i) {
+        tkn.content += tkn.code[i];
+      }
+      // If the last token is a minus then do not get a number.
       if(tkn.content[tkn.content.length-1] === "-") tkn.content = "";
 
-      if(tkn.content.length !== 0) which = "RANGE";
+      if(tkn.content.length !== 0) which = "INTEGER";
     }
     //*************************************************************************
-    
-    console.log(which);
-    console.log(tkn.content);
     
     if(which === "NONE") {
       tkn.content = undefined;
