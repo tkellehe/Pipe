@@ -113,7 +113,7 @@ parser.Command.base = {
       } else {
         tkn.outputs.back(new Cell.types.ARRAY());
       }
-    } else if(typeof tkn.content === "array") {
+    } else if(tkn.content instanceof Array) {
       // Must be a range of numbers.
       if(typeof tkn.content[0] === "number") {
         var cell = prgm.current_cell();
