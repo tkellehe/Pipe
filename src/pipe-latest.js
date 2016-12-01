@@ -426,7 +426,7 @@ parser.Symbols["@"].front(function(cmd) {
           tkn.content += tkn.code[i];
         } else if(tkn.code[i] === "-") {
           if(mid === -1) {
-            mid = i;
+            mid = tkn.content.length;
             tkn.content += "-";
             // If another dash after go ahead and get it.
             if(tkn.code[i+1] === "-") {
