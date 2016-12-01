@@ -105,6 +105,9 @@ parser.Command.base = {
   "W": function(tkn,prgm) {
     prgm.outputs.wipe()
   },
+  'l': function(tkn,prgm) {
+    tkn.outputs.back(prgm.current_cell().length(tkn,prgm));
+  },
   "//": function(tkn,prgm) { },
   "\n": function(tkn,prgm) { },
   " ": function(tkn,prgm) { }
@@ -133,6 +136,7 @@ parser.Symbols['//'] = new parser.Pipe();
 parser.Symbols['\n'] = new parser.Pipe();
 parser.Symbols['n'] = new parser.Pipe();
 parser.Symbols['I'] = new parser.Pipe();
+parser.Symbols['l'] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -393,6 +397,11 @@ parser.Symbols['//'].front(function(cmd) {
   
   cmd.execute = parser.Command.internal.pipe_io;
 });
+parser.Symbols["l"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["l"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
 
 //-----------------------------------------------------------------------------
 function Cell(x,y) {
@@ -462,6 +471,9 @@ Cell.prototype.integerify = function(tkn,prgm) {
 Cell.prototype.arrayify = function(tkn,prgm) {
   return this.content().arrayify(this,tkn,prgm);
 }
+Cell.prototype.length = function(tkn,prgm) {
+  return this.content().length(this,tkn,prgm);
+}
 Cell.prototype.index = function(i) {
   return this.content().index(i);
 }
@@ -510,6 +522,9 @@ Cell.types.NUMBER.prototype.integerify = function(cell,tkn,prgm) {
 }
 Cell.types.NUMBER.prototype.arrayify = function(cell,tkn,prgm) {
   return new Cell.types.ARRAY([this.copy(cell,tkn,prgm)]);
+}
+Cell.types.NUMBER.prototype.length = function(cell,tkn,prgm) {
+  return new Cell.types.NUMBER((this.value+"").replace(".","").length);
 }
 Cell.types.NUMBER.prototype.index = function(i) {
   var s = this.value + "",
@@ -566,6 +581,9 @@ Cell.types.STRING.prototype.integerify = function(cell,tkn,prgm) {
 Cell.types.STRING.prototype.arrayify = function(cell,tkn,prgm) {
   return new Cell.types.ARRAY([this.copy(cell,tkn,prgm)]);
 }
+Cell.types.STRING.prototype.length = function(cell,tkn,prgm) {
+  return new Cell.types.NUMBER(this.value.length);
+}
 Cell.types.STRING.prototype.index = function(i) {
   return new Cell.types.STRING(this.value[i]);
 }
@@ -614,6 +632,9 @@ Cell.types.ARRAY.prototype.integerify = function(cell,tkn,prgm) {
 }
 Cell.types.ARRAY.prototype.arrayify = function(cell,tkn,prgm) {
   return this.copy(cell,tkn,prgm);
+}
+Cell.types.ARRAY.prototype.length = function(cell,tkn,prgm) {
+  return new Cell.types.NUMBER(this.value.length);
 }
 Cell.types.ARRAY.prototype.index = function(i) {
   return this.value.copy(cell,tkn,prgm);
