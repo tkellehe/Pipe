@@ -10,6 +10,7 @@ function fixChar(char) {
   if(char === "{") return "&#123;";
   if(char === "}") return "&#125;";
   if(char === "'") return "&#39;";
+  if(char === "\n") return "&#10;";
   return char;
 }
 function fixChars(text) {
