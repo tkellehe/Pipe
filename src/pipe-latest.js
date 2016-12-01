@@ -107,7 +107,25 @@ parser.Command.base = {
         cell.value = new Cell.types.ARRAY();
       }
     } else if(typeof tkn.content === "number") {
-      tkn.outputs.back(prgm.current_cell().index(tkn,prgm,tkn.content));
+      var cell = prgm.current_cell();
+      if(cell.has()) {
+        tkn.outputs.back(cell.index(tkn,prgm,tkn.content));
+      } else {
+        tkn.outputs.back(new Cell.types.ARRAY());
+      }
+    } else if(typeof tkn.content === "array") {
+      // Must be a range of numbers.
+      if(typeof tkn.content[0] === "number") {
+        var cell = prgm.current_cell();
+        if(cell.has()) {
+          var range = cell.range(tkn,prgm,tkn.content);
+          for(var i = 0; i < range.length; ++i)
+            tkn.outputs.back(range[i]);
+        } else {
+          for(var i = 0; i < tkn.content.length; ++i)
+            tkn.outputs.back(new Cell.types.ARRAY());
+        }
+      }
     }
   },
   "I": function(tkn,prgm) {
@@ -387,6 +405,8 @@ parser.Symbols["@"].front(function(cmd) {
   cmd.tokenize = function(tkn,prgm) {
     tkn.content = "";
     
+    var which = "NONE";
+    
     //*************************************************************************
     // Tries to get an integer.
     var offset = 1;
@@ -396,14 +416,63 @@ parser.Symbols["@"].front(function(cmd) {
     }
     // If the last token is a minus then do not get a number.
     if(tkn.content[tkn.content.length-1] === "-") tkn.content = "";
+    
+    if(tkn.content.length !== 0) which = "INTEGER";
+    //*************************************************************************
+    if(which === "NONE") {
+      // Tries to get a range.
+      var offset = 1, bail = false;
+      if(tkn.code[tkn.end+1] === "-") {
+        tkn.content = "-";
+        if(checkDigit(tkn.code[tkn.end+2])) {
+          tkn.content += tkn.code[tkn.end+2];
+        } else {
+          bail = true;
+        }
+        offset+=2;
+      }
+      if(!bail) {
+        var mid = -1;
+        for(var i = tkn.end+offset; i < tkn.code.length;++i) {
+          if(checkDigit(tkn.code[i])) {
+            tkn.content += tkn.code[i];
+          } else if(tkn.code[i] === "-") {
+            if(mid === -1) {
+              mid = i;
+              tkn.content += "-";
+              // If another dash after go ahead and get it.
+              if(tkn.code[i+1] === "-") {
+                ++i;
+                tkn.content += "-";
+              }
+            } else {
+              break;
+            }
+          }
+        }
+      }
+      // If the last token is a minus then do not get a range.
+      if(tkn.content[tkn.content.length-1] === "-") tkn.content = "";
+
+      if(tkn.content.length !== 0) which = "RANGE";
+    }
     //*************************************************************************
     
-    // If the content is empty then do nothing.
-    if(tkn.content.length === 0) {
+    if(which === "NONE") {
       tkn.content = undefined;
-    } else {
+    } else if(which === "INTEGER") {
       tkn.end = tkn.start + tkn.content.length + (tkn.literal.length-1);
       tkn.content = +tkn.content;
+    } else if(which === "RANGE") {
+      tkn.end = tkn.start + tkn.content.length + (tkn.literal.length-1);
+      var left = +tkn.content.slice(0,mid),
+          right = +tkn.content.slice(mid+1);
+      tkn.content = [];
+      if(left < right) {
+        for(var i = left; i < right; ++i) tkn.content.push(i);
+      } else {
+        for(var i = left-1; right <= i; --i) tkn.content.push(i);
+      }
     }
     
     return temp.call(this, tkn);
@@ -557,6 +626,9 @@ Cell.prototype.length = function(tkn,prgm) {
 Cell.prototype.index = function(tkn,prgm,i) {
   return this.content().index(this,tkn,prgm,i);
 }
+Cell.prototype.range = function(tkn,prgm,r) {
+  return this.content().range(this,tkn,prgm,r);
+}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.NUMBER = function(v) { this.value = v || 0; }
 Cell.types.NUMBER.prototype.type = "NUMBER";
@@ -619,6 +691,11 @@ Cell.types.NUMBER.prototype.index = function(cell,tkn,prgm,i) {
   var c = s[l - (i + d) - 1];
   return new Cell.types.NUMBER((c === undefined) ? 0 : (+c * Math.pow(10,i)));
 }
+Cell.types.NUMBER.prototype.range = function(cell,tkn,prgm,r) {
+  var d = 0;
+  for(var i = 0; i < r.length; ++i) d += this.index(cell,tkn,prgm,r[i]);
+  return [new Cell.types.NUMBER(d)];
+}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; }
 Cell.types.STRING.prototype.type = "STRING";
@@ -666,6 +743,11 @@ Cell.types.STRING.prototype.length = function(cell,tkn,prgm) {
 }
 Cell.types.STRING.prototype.index = function(cell,tkn,prgm,i) {
   return new Cell.types.STRING(this.value[i]);
+}
+Cell.types.STRING.prototype.range = function(cell,tkn,prgm,r) {
+  var s = "";
+  for(var i = 0; i < r.length; ++i) s += this.index(cell,tkn,prgm,r[i]);
+  return [new Cell.types.STRING(s)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.ARRAY = function(s) { this.value = s || []; }
@@ -721,6 +803,12 @@ Cell.types.ARRAY.prototype.index = function(cell,tkn,prgm,i) {
   if(v === undefined) return new Cell.types.ARRAY();
   return v.copy(cell,tkn,prgm);
 }
+Cell.types.ARRAY.prototype.range = function(cell,tkn,prgm,r) {
+  var a = [];
+  for(var i = 0; i < r.length; ++i) a.push(this.index(cell,tkn,prgm,r[i]));
+  return a;
+}
+
 //-----------------------------------------------------------------------------
 function Memory() {
   this.__arrays__ = [[new Cell(0,0)]];
