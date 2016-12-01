@@ -7,6 +7,9 @@ function fixChar(char) {
   if(char === '"') return "&quot;";
   if(char === " ") return "&nbsp;";
   if(char === hr("¡")) return "&iexcl;";
+  if(char === "{") return "&#123;";
+  if(char === "}") return "&#125;";
+  if(char === "'") return "&#39;";
   return char;
 }
 function fixChars(text) {
