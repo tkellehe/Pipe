@@ -41,6 +41,26 @@ parser.Command.base = {
     }
   },
   "]": function(tkn,prgm) {},
+  "{": function(tkn,prgm) {
+    // First must carry over any items from the '}'.
+    var end = tkn.branches.at(1);
+    tkn.inputs.pipe(end.outputs);
+    var f = tkn.inputs.front();
+    if(f.is_non_zero(undefined,tkn,prgm)) {
+      tkn.next_token = tkn.branches.at(0);
+      // Puts the item back into the pipe.
+      tkn.inputs.front(f);
+    } else {
+      tkn.next_token = end.branches.at(1);
+      // Puts the item back into the pipe.
+      tkn.inputs.front(f);
+      // Go ahead and pipe everything correctly.
+      tkn.outputs.pipe(tkn.inputs);
+      end.inputs.pipe(tkn.outputs);
+      end.execute(end,prgm);
+    }
+  },
+  "}": function(tkn,prgm) {},
   ":": function(tkn,prgm) {
     prgm.outputs.back(prgm.current_cell().copy(tkn,prgm));
   },
@@ -121,7 +141,7 @@ parser.Command.base = {
   "l,": function(tkn,prgm) {
     var f = tkn.inputs.front();
     tkn.outputs.back(f.length(undefined,tkn,prgm));
-    tkn.outputs.back(f);
+    tkn.inputs.front(f);
   },
   "//": function(tkn,prgm) { },
   "\n": function(tkn,prgm) { },
@@ -134,6 +154,8 @@ parser.Symbols[">"] = new parser.Pipe();
 parser.Symbols["<"] = new parser.Pipe();
 parser.Symbols["["] = new parser.Pipe();
 parser.Symbols["]"] = new parser.Pipe();
+parser.Symbols["{"] = new parser.Pipe();
+parser.Symbols["}"] = new parser.Pipe();
 parser.Symbols[":"] = new parser.Pipe();
 parser.Symbols["."] = new parser.Pipe();
 parser.Symbols[","] = new parser.Pipe();
@@ -193,6 +215,34 @@ parser.Symbols["]"].front(function(cmd) {
   cmd.tokenize = function(tkn) {
     var p = tkn.parent;
     while(p.literal !== "[" || p.branches.length() !== 1) {
+      p = p.parent;
+    }
+    p.branches.back(tkn);
+    tkn.branches.back(p);
+    tkn.next = function(){return p;};
+    return temp.call(this, tkn);
+  }
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["{"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["{"];
+  // Need to save to call the base tokenize.
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn) {
+    tkn.next_token = tkn.branches.at(0);
+    tkn.next = function() { return tkn.next_token; }
+    return temp.call(this, tkn);
+  }
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["}"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["}"];
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn) {
+    var p = tkn.parent;
+    while(p.literal !== "{" || p.branches.length() !== 1) {
       p = p.parent;
     }
     p.branches.back(tkn);
