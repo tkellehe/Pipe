@@ -77,28 +77,19 @@ parser.Command.base = {
         cell.value = new Cell.types.ARRAY();
       }
     } else if(typeof tkn.content === "number") {
-      var temp = prgm.current_cell().content(), item;
-      if(temp.type !== "ARRAY" && temp.type !== "STRING") {
-        item = temp.arrayify(tkn,prgm);
-        prgm.current_cell().value = item;
-      } else item = temp;
-      if(item.type === "ARRAY") {
-        var i = item.value[tkn.content], r;
-        if(i === undefined) {
-          r = new Cell.types.NUMBER();
-        } else {
-          r = i.copy();
-        }
-        tkn.outputs.back(r);
-      } else if(item.type === "STRING") {
-        var i = item.value[tkn.content], r;
-        if(i === undefined) {
-          r = new Cell.types.STRING();
-        } else {
-          r = new Cell.types.STRING(i);
-        }
-        tkn.outputs.back(r);
+      tkn.outputs.back(prgm.current_cell().index(tkn.content));
+    }
+  },
+  "I": function(tkn,prgm) {
+    if(tkn.content === undefined) {
+      var cell = prgm.current_cell();
+      if(cell.has()) {
+        cell.value = cell.integerify(tkn,prgm);
+      } else {
+        cell.value = new Cell.types.NUMBER();
       }
+    } else {
+      tkn.outputs.back(new Cell.types.NUMBER(tkn.content));
     }
   },
   "c": function(tkn,prgm) {
@@ -141,6 +132,7 @@ parser.Symbols['W'] = new parser.Pipe();
 parser.Symbols['//'] = new parser.Pipe();
 parser.Symbols['\n'] = new parser.Pipe();
 parser.Symbols['n'] = new parser.Pipe();
+parser.Symbols['I'] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -215,6 +207,38 @@ parser.Symbols["f"].front(function(cmd) {
   cmd.execute = parser.Command.base["f"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
+
+parser.Symbols["I"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["I"];
+  
+  var checkR = /[0-9]/;
+  function check(c) { return !!checkR.exec(c); }
+  
+  var temp = cmd.tokenize;
+  cmd.tokenize = function(tkn,prgm) {
+    tkn.content = "";
+    var offset = 1;
+    if(tkn.code[tkn.end+1] === "-") { tkn.content = "-"; ++offset; }
+    for(var i = tkn.end+offset; i < tkn.code.length && check(tkn.code[i]);++i) {
+      tkn.content += tkn.code[i];
+    }
+    // Remove the '-' if it ends with one.
+    if(tkn.content[tkn.content.length-1] === "-") tkn.content = "";
+    // If the content is empty then do nothing.
+    if(tkn.content.length === 0) {
+      tkn.content = undefined;
+    } else {
+      tkn.end = tkn.start + tkn.content.length + (tkn.literal.length-1);
+      // Turn it into a number.
+      tkn.content = +tkn.content;
+    }
+    
+    return temp.call(this, tkn);
+  }
+  
+  cmd.execute = parser.Command.internal.pipe_io;
+});
 parser.Symbols["'"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["'"];
@@ -250,9 +274,9 @@ parser.Symbols["#"].front(function(cmd) {
   var temp = cmd.tokenize;
   cmd.tokenize = function(tkn,prgm) {
     tkn.content = "";
-    var found = 0, add = 1;
-    if(tkn.code[tkn.end+1] === "-") { tkn.content = "-"; ++add; }
-    for(var i = tkn.end+add; i < tkn.code.length && check(tkn.code[i]) && found < 2;++i) {
+    var found = 0, offset = 1;
+    if(tkn.code[tkn.end+1] === "-") { tkn.content = "-"; ++offset; }
+    for(var i = tkn.end+offset; i < tkn.code.length && check(tkn.code[i]) && found < 2;++i) {
       if(tkn.code[i] === ".") ++found;
       tkn.content += tkn.code[i];
     }
@@ -277,15 +301,24 @@ parser.Symbols["@"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["@"];
   
-  var checkR = /[0-9]/;
-  function check(c) { return !!checkR.exec(c); }
+  var checkDigitR = /[0-9]/;
+  function checkDigit(c) { return !!checkDigitR.exec(c); }
   
   var temp = cmd.tokenize;
   cmd.tokenize = function(tkn,prgm) {
     tkn.content = "";
-    for(var i = tkn.end+1; i < tkn.code.length && check(tkn.code[i]);++i) {
+    
+    //*************************************************************************
+    // Tries to get an integer.
+    var offset = 1;
+    if(tkn.code[tkn.end+1] === "-") { tkn.content = "-"; ++offset; }
+    for(var i = tkn.end+offset; i < tkn.code.length && checkDigit(tkn.code[i]);++i) {
       tkn.content += tkn.code[i];
     }
+    // If the last token is a minus then do not get a number.
+    if(tkn.content[tkn.content.length-1] === "-") tkn.content = "";
+    //*************************************************************************
+    
     // If the content is empty then do nothing.
     if(tkn.content.length === 0) {
       tkn.content = undefined;
@@ -423,8 +456,14 @@ Cell.prototype.stringify = function(tkn,prgm) {
 Cell.prototype.numberify = function(tkn,prgm) {
   return this.content().numberify(this,tkn,prgm);
 }
+Cell.prototype.integerify = function(tkn,prgm) {
+  return this.content().numberify(this,tkn,prgm);
+}
 Cell.prototype.arrayify = function(tkn,prgm) {
   return this.content().arrayify(this,tkn,prgm);
+}
+Cell.prototype.index = function(i) {
+  return this.content().index(i);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.NUMBER = function(v) { this.value = v || 0; }
@@ -464,8 +503,26 @@ Cell.types.NUMBER.prototype.stringify = function(cell,tkn,prgm) {
 Cell.types.NUMBER.prototype.numberify = function(cell,tkn,prgm) {
   return this.copy(cell,tkn,prgm);
 }
+Cell.types.NUMBER.prototype.integerify = function(cell,tkn,prgm) {
+  var copy = this.copy(cell,tkn,prgm);
+  copy.value = Math.floor(copy.value);
+  return copy;
+}
 Cell.types.NUMBER.prototype.arrayify = function(cell,tkn,prgm) {
   return new Cell.types.ARRAY([this.copy(cell,tkn,prgm)]);
+}
+Cell.types.NUMBER.prototype.index = function(i) {
+  var s = this.value + "",
+  // Finds the decimal location.
+      d = s.search("\\.");
+  // Removes the decimal from the lookup.
+  s = s.replace(".","");
+  var l = s.length;
+  // Make sure that d is not negative one.
+  d = (d === -1) ? l : d;
+  // Calculates the actual position of the digit.
+  var c = s[l - (i + d) - 1];
+  return new Cell.types.NUMBER((c === undefined) ? 0 : (+c * Math.pow(10,i)));
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) { this.value = s || ""; }
@@ -503,8 +560,14 @@ Cell.types.STRING.prototype.stringify = function(cell,tkn,prgm) {
 Cell.types.STRING.prototype.numberify = function(cell,tkn,prgm) {
   return new Cell.types.NUMBER(+this.value);
 }
+Cell.types.STRING.prototype.integerify = function(cell,tkn,prgm) {
+  return new Cell.types.NUMBER(Math.floor(+this.value));
+}
 Cell.types.STRING.prototype.arrayify = function(cell,tkn,prgm) {
   return new Cell.types.ARRAY([this.copy(cell,tkn,prgm)]);
+}
+Cell.types.STRING.prototype.index = function(i) {
+  return new Cell.types.STRING(this.value[i]);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.ARRAY = function(s) { this.value = s || []; }
@@ -544,8 +607,16 @@ Cell.types.ARRAY.prototype.numberify = function(cell,tkn,prgm) {
   for(var i = this.value.length;i--;) a.unshift(this.value[i].numberify(cell,tkn,prgm));
   return new Cell.types.ARRAY(a);
 }
+Cell.types.ARRAY.prototype.integerify = function(cell,tkn,prgm) {
+  var a = [];
+  for(var i = this.value.length;i--;) a.unshift(this.value[i].integerify(cell,tkn,prgm));
+  return new Cell.types.ARRAY(a);
+}
 Cell.types.ARRAY.prototype.arrayify = function(cell,tkn,prgm) {
   return this.copy(cell,tkn,prgm);
+}
+Cell.types.ARRAY.prototype.index = function(i) {
+  return this.value.copy(cell,tkn,prgm);
 }
 //-----------------------------------------------------------------------------
 function Memory() {
