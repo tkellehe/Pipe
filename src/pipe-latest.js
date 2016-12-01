@@ -27,8 +27,14 @@ parser.Command.base = {
   ">": function(tkn,prgm) { prgm.move_right() },
   "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
-    tkn.next_token =
-    prgm.current_cell().is_non_zero(tkn,prgm) ? tkn.branches.at(0): tkn.branches.at(1).branches.at(1)
+    if(prgm.current_cell().is_non_zero(tkn,prgm)) {
+      tkn.next_token = tkn.branches.at(0);
+    } else {
+      tkn.next_token = tkn.branches.at(1).branches.at(1);
+      // Go ahead and pipe everything correctly.
+      tkn.outputs.pipe(tkn.inputs);
+      tkn.branches.at(1).inputs.pipe(tkn.outputs);
+    }
   },
   "]": function(tkn,prgm) {},
   ":": function(tkn,prgm) {
