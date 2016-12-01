@@ -86,6 +86,15 @@ parser.Command.base = {
       tkn.outputs.back(new Cell.types.STRING(tkn.content));
     }
   },
+  "',": function(tkn,prgm) {
+    var f = tkn.inputs.front();
+    if(f === undefined) {
+      f = new Cell.type.STRING();
+    } else {
+      f = f.stringify(tkn,prgm);
+    }
+    tkn.outputs.back(f);
+  },
   "#": function(tkn,prgm) {
     if(tkn.content === undefined) {
       var cell = prgm.current_cell();
@@ -97,6 +106,15 @@ parser.Command.base = {
     } else {
       tkn.outputs.back(new Cell.types.NUMBER(tkn.content));
     }
+  },
+  "#,": function(tkn,prgm) {
+    var f = tkn.inputs.front();
+    if(f === undefined) {
+      f = new Cell.type.NUMBER();
+    } else {
+      f = f.numberify(tkn,prgm);
+    }
+    tkn.outputs.back(f);
   },
   "@": function(tkn,prgm) {
     if(tkn.content === undefined) {
@@ -206,6 +224,8 @@ parser.Symbols['I'] = new parser.Pipe();
 parser.Symbols['l'] = new parser.Pipe();
 parser.Symbols['l,'] = new parser.Pipe();
 parser.Symbols['d'] = new parser.Pipe();
+parser.Symbols['#,'] = new parser.Pipe();
+parser.Symbols["',"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -559,6 +579,16 @@ parser.Symbols["l,"].front(function(cmd) {
 parser.Symbols["d"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["d"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["#,"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["#,"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["',"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["',"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
