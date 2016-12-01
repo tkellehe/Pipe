@@ -30,10 +30,12 @@ parser.Command.base = {
     if(prgm.current_cell().is_non_zero(tkn,prgm)) {
       tkn.next_token = tkn.branches.at(0);
     } else {
-      tkn.next_token = tkn.branches.at(1).branches.at(1);
+      var end = tkn.branches.at(1);
+      tkn.next_token = end.branches.at(1);
       // Go ahead and pipe everything correctly.
       tkn.outputs.pipe(tkn.inputs);
-      tkn.branches.at(1).inputs.pipe(tkn.outputs);
+      end.inputs.pipe(tkn.outputs);
+      end.execute(end,prgm);
     }
   },
   "]": function(tkn,prgm) {},
