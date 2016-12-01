@@ -210,6 +210,87 @@ parser.Command.base = {
       }
     }
   },
+  "@,,": function(tkn,prgm) {
+    var f = tkn.inputs.front(),
+        g = tkn.inputs.front();
+    if(f === undefined) {
+      tkn.outputs.back(new Cell.types.ARRAY());
+    } else if(g === undefined) {
+      if(f.type === "NUMBER") {
+        var cell = prgm.current_cell();
+        if(cell.has()) {
+          tkn.outputs.back(cell.index(tkn,prgm,f.value));
+        } else {
+          tkn.outputs.back(f.arrayify(tkn,prgm));
+        }
+      } else if(f.type === "STRING") {
+        tkn.outputs.back(f.arrayify(tkn,prgm));
+      } else if(f.type === "ARRAY") {
+        // Must be a range of numbers.
+        var temp = f.integerify(undefined,tkn,prgm);
+        var cell = prgm.current_cell();
+        if(cell.has()) {
+          (function loop0(array) {
+            for(var i = 0; i < array.value.length; ++i) {
+              if(array.value[i].type === "ARRAY") {
+                loop0(array.value[i]);
+              } else {
+                tkn.outputs.back(cell.index(tkn,prgm,array.value[i]));
+              }
+            }
+          })(temp);
+        } else {
+          (function loop1(array) {
+            for(var i = 0; i < array.value.length; ++i) {
+              if(array.value[i].type === "ARRAY") {
+                loop1(array.value[i]);
+              } else {
+                tkn.outputs.back(new Cell.types.ARRAY());
+              }
+            }
+          })(temp);
+        }
+      }
+    // f and g have been provided, therein we got a lot of work to do...
+    } else if(f.type === "NUMBER" && g.type !== "NUMBER") {
+      tkn.outputs.back(g.index(undefined,tkn,prgm,f.value));
+    } else if(f.type === "NUMBER" && g.type === "NUMBER") {
+      // Handle case for if it is a range.
+      var a = [];
+      // f is left and g is right.
+      if(f.value < g.value) {
+        for(var i = f.value; i <= g.value; ++i) a.push(i);
+      } else {
+        for(var i = f.value; g.value <= i; --i) a.push(i);
+      }
+      var cell = prgm.current_cell();
+      if(cell.has()) {
+        var range = cell.range(tkn,prgm,a);
+        for(var i = 0; i < range.length; ++i)
+          tkn.outputs.back(range[i]);
+      } else {
+        for(var i = 0; i < tkn.content.length; ++i)
+          tkn.outputs.back(new Cell.types.ARRAY());
+      }
+    } else if(f.type === "ARRAY") {
+      // Must be a range of numbers.
+      var temp = f.integerify(undefined,tkn,prgm);
+      (function loop(array) {
+        for(var i = 0; i < array.value.length; ++i) {
+          if(array.value[i].type === "ARRAY") {
+            loop(array.value[i]);
+          } else {
+            tkn.outputs.back(g.index(undefined,tkn,prgm,array.value[i]));
+          }
+        }
+      })(temp);
+    } else {
+      // Final case is to arrayify both then concat.
+      f = f.arrayify(undefined,tkn,prgm);
+      g = g.arrayify(undefined,tkn,prgm);
+      tkn.outputs.back(new Cell.types.ARRAY(f.value.concat(g.value)));
+    }
+  },
   "I": function(tkn,prgm) {
     if(tkn.content === undefined) {
       var cell = prgm.current_cell();
@@ -293,6 +374,7 @@ parser.Symbols["',"] = new parser.Pipe();
 parser.Symbols["@,"] = new parser.Pipe();
 parser.Symbols["+,"] = new parser.Pipe();
 parser.Symbols["-,"] = new parser.Pipe();
+parser.Symbols["@,,"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -671,6 +753,11 @@ parser.Symbols["',"].front(function(cmd) {
 parser.Symbols["@,"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["@,"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["@,,"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["@,,"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 
