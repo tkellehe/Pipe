@@ -27,15 +27,17 @@ parser.Command.base = {
   ">": function(tkn,prgm) { prgm.move_right() },
   "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
+    // First must carry over any items from the ']'.
+    var end = tkn.branches.at(1);
+    tkn.inputs.pipe(end.outputs);
     if(prgm.current_cell().is_non_zero(tkn,prgm)) {
       tkn.next_token = tkn.branches.at(0);
     } else {
-      var end = tkn.branches.at(1);
       tkn.next_token = end.branches.at(1);
       // Go ahead and pipe everything correctly.
       tkn.outputs.pipe(tkn.inputs);
       end.inputs.pipe(tkn.outputs);
-      end.outputs.pipe(end.inputs);
+      end.execute(end,prgm);
     }
   },
   "]": function(tkn,prgm) {},
@@ -199,10 +201,6 @@ parser.Symbols["]"].front(function(cmd) {
     return temp.call(this, tkn);
   }
   cmd.execute = parser.Command.internal.pipe_io;
-  cmd.execute = function(tkn,prgm) {
-    var n = tkn.next();
-    n.inputs.pipe(tkn.outputs);
-  }
 });
 parser.Symbols[":"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
