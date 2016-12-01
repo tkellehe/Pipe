@@ -105,7 +105,7 @@ parser.Command.base = {
   "W": function(tkn,prgm) {
     prgm.outputs.wipe()
   },
-  'l': function(tkn,prgm) {
+  "l": function(tkn,prgm) {
     tkn.outputs.back(prgm.current_cell().length(tkn,prgm));
   },
   "//": function(tkn,prgm) { },
