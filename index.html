@@ -46,7 +46,8 @@
         $("#code").prop("readonly",true);
         $("#url").prop("disable",true);
         prgm = pipe($("#code").val());
-        prgm.addArg(new pipe.Cell.types.STRING($("#input").val()));
+        var value = $("#input").val();
+        if(value.length > 0) prgm.addArg(new pipe.Cell.types.STRING(value));
         prgm.exec(function() {
           $("#output").val(this.outputs+"").trigger("input");
           $("#input").prop("readonly",false);
