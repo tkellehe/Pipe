@@ -24,6 +24,20 @@ parser.Command.base = {
     var v = prgm.current_cell().decrement(tkn,prgm);
     prgm.current_cell().value = v;
   },
+  "+,": function(tkn,prgm) {
+    var f = tkn.inputs.front();
+    if(f === undefined) {
+      f = Cell.create_default();
+    }
+    tkn.outputs.back(f.increment(undefined,tkn,prgm));
+  },
+  "-,": function(tkn,prgm) {
+    var f = tkn.inputs.front();
+    if(f === undefined) {
+      f = Cell.create_default();
+    }
+    tkn.outputs.back(f.decrement(undefined,tkn,prgm));
+  },
   ">": function(tkn,prgm) { prgm.move_right() },
   "<": function(tkn,prgm) { prgm.move_left() },
   "[": function(tkn,prgm) {
@@ -267,6 +281,8 @@ parser.Symbols['d'] = new parser.Pipe();
 parser.Symbols['#,'] = new parser.Pipe();
 parser.Symbols["',"] = new parser.Pipe();
 parser.Symbols["@,"] = new parser.Pipe();
+parser.Symbols["+,"] = new parser.Pipe();
+parser.Symbols["-,"] = new parser.Pipe();
 
 parser.Symbols["+"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -276,6 +292,16 @@ parser.Symbols["+"].front(function(cmd) {
 parser.Symbols["-"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["-"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["+,"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["+,"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["-,"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["-,"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols[">"].front(function(cmd) {
@@ -645,6 +671,9 @@ function Cell(x,y) {
   this.value = undefined;
 }
 Cell.defaults = new parser.Pipe();
+Cell.create_default = function() {
+  return new (Cell.defaults.at(0))();
+}
 Cell.types = {}
 Cell.characters = [
 '¡','¢','£','¤','¥','¦','©','¬','®','µ','\n','¿','€','Æ','Ç','Ð',
@@ -679,7 +708,7 @@ Cell.prototype.has = function() {
   return this.value !== undefined;
 }
 Cell.prototype.content = function() {
-  if(!this.has()) this.value = new (Cell.defaults.at(0));
+  if(!this.has()) this.value = Cell.create_default();
   return this.value;
 }
 Cell.prototype.increment = function(tkn,prgm) {
