@@ -379,15 +379,8 @@ parser.Command.base = {
   "//": function(tkn,prgm) { },
   "&": function(tkn,prgm) {
     var cell = prgm.current_cell();
-    if(cell.has()) {
-      tkn.outputs.back(new Cell.types.REFERENCE(cell.value));
-    } else {
-      var f = tkn.inputs.front();
-      if(f !== undefined) {
-        tkn.outputs.back(new Cell.types.REFERENCE(f));
-        tkn.inputs.front(f);
-      }
-    }
+    cell.content();
+    cell.value = new Cell.types.REFERENCE(cell.value);
   },
   "\n": function(tkn,prgm) { },
   " ": function(tkn,prgm) { }
