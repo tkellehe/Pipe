@@ -458,6 +458,9 @@ parser.Symbols["@"].front(function(cmd) {
     }
     //*************************************************************************
     
+    console.log(which);
+    console.log(tkn.content);
+    
     if(which === "NONE") {
       tkn.content = undefined;
     } else if(which === "INTEGER") {
