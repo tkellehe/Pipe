@@ -92,7 +92,7 @@ parser.Command.base = {
       tkn.outputs.back(Cell.create_default());
     }
   },
-  ".,": function(tkn,prgm) {
+  ";": function(tkn,prgm) {
     var f = tkn.inputs.front();
     if(f === undefined) {
       tkn.outputs.back(Cell.create_default());
@@ -101,11 +101,17 @@ parser.Command.base = {
       tkn.inputs.front(f);
     }
   },
+  "!": function(tkn,prgm) {
+    var f = tkn.inputs.front();
+    if(f === undefined) {
+      prgm.outputs.back(Cell.create_default());
+    } else {
+      prgm.outputs.back(f.copy(undefined,tkn,prgm));
+      tkn.inputs.front(f);
+    }
+  },
   ",": function(tkn,prgm) {
     prgm.current_cell().value = tkn.inputs.front();
-  },
-  ";": function(tkn,prgm) {
-    prgm.current_cell().value = prgm.inputs.front();
   },
   "f": function(tkn,prgm) { prgm.flip_dim(); },
   "'": function(tkn,prgm) {
@@ -423,15 +429,20 @@ parser.Symbols["',"] = new parser.Pipe();
 parser.Symbols["@,"] = new parser.Pipe();
 parser.Symbols["+,"] = new parser.Pipe();
 parser.Symbols["-,"] = new parser.Pipe();
-parser.Symbols[".,"] = new parser.Pipe();
 parser.Symbols["@,,"] = new parser.Pipe();
 parser.Symbols["e"] = new parser.Pipe();
 parser.Symbols["E"] = new parser.Pipe();
 parser.Symbols["&"] = new parser.Pipe();
+parser.Symbols["!"] = new parser.Pipe();
 
 parser.Symbols["&"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["&"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["!"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["!"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["+"].front(function(cmd) {
@@ -452,11 +463,6 @@ parser.Symbols["+,"].front(function(cmd) {
 parser.Symbols["-,"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["-,"];
-  cmd.execute = parser.Command.internal.pipe_io;
-});
-parser.Symbols[".,"].front(function(cmd) {
-  cmd.execute = parser.Command.internal.pipe_oi;
-  cmd.execute = parser.Command.base[".,"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols[">"].front(function(cmd) {
