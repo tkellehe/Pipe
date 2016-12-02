@@ -102,12 +102,16 @@
       // Char selector.
       var $selector = $("#char-selector").clone();
       
-      var $container = $('<div class="container"></div>');
+      var $container = $('<div class="cs-container"></div>');
       // Inlined css because "pointer-events" does not work with jQuery?
-      var $backdrop = $('<div class="backdrop" style="pointer-events:default; width: 500px; height: 55px"></div>');
+      var $backdrop = $('<div class="cs-backdrop"></div>');
       $container.append($backdrop.append($selector));
       
       $selector.css({
+        width:"500px",
+        height:"55px"
+      });
+      $backdrop.css({
         width:"500px",
         height:"55px"
       });
@@ -151,6 +155,22 @@
     a.char {
       padding: 5px;
       cursor: pointer;
+    }
+    .cs-container {
+      display: block;
+      margin: 0 auto;
+      transform: translateZ(0);
+      -webkit-text-size-adjust: none;
+    }
+
+    .cs-backdrop {
+      position: absolute;
+      z-index: 1;
+      border: 2px solid #685972;
+      background-color: #fff;
+      overflow: auto;
+      pointer-events: default;
+      transition: transform 1s;
     }
   </style>
 </head>
