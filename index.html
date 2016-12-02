@@ -103,7 +103,7 @@
       var $selector = $("#char-selector").clone();
       
       var $container = $('<div class="container"></div>');
-      var $backdrop = $('<div class="backdrop"></div>');
+      var $backdrop = $('<div class="backdrop" style="pointer-events:default;"></div>');
       $container.append($backdrop.append($selector));
       
       $selector.css({
@@ -112,9 +112,7 @@
       });
       $backdrop.css({
         width:"500px",
-        height:"55px",
-        "pointer-events": "default",
-        "cursor": "pointer"
+        height:"55px"
       });
       $container.css({
         width:"500px",
@@ -154,7 +152,8 @@
       box-shadow: 0 0 0 2px #c6aada;
     }
     a.char {
-      padding: 5px
+      padding: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
