@@ -123,7 +123,7 @@ parser.Command.base = {
   "',": function(tkn,prgm) {
     var f = tkn.inputs.front();
     if(f === undefined) {
-      f = new Cell.type.STRING();
+      f = new Cell.types.STRING();
     } else {
       f = f.stringify(tkn,prgm);
     }
