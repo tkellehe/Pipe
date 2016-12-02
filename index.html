@@ -24,18 +24,36 @@
       var code = new Syntaxer($("#code"));
       code.parse = function(text) {
         return text
+          // Make all white space grey.
           .mark(/\s/g, ["bg-grey"])
+          // Complex and basic commands.
           .mark(/\@\,\,|\@\,|\'\,|\#\,|[\I\#\@\']/g, ["fg-red"])
+          // Inline Pipe commands.
           .mark(/\+\,|\-\,|\.\,/g, ["fg-purple"])
+          // Calculate length of items.
           .mark(/(l\,|[l])/g, ["fg-orange"])
+          // Integer literal.
           .mark(/(\I\-\d+|\I\d+)/g, ["bg-orange"])
+          // Number literals.
           .mark(/(\#\-\d+\.\d+|\#\d+\.\d+|\#\-\d+|\#\d+)/g, ["bg-orange"])
+          // Character 'n' for new line string literal.
+          .mark(/(n)/g, ["bg-purple"])
+          // Basic word string literals.
           .mark(/(\'[a-zA-Z0-9_ ]+)/g, ["bg-purple"])
+          // Array index.
           .mark(/(\@\-\d+|\@\d+)/g, ["bg-green"])
+          // Array ranges.
           .mark(/(\@\-\d+\-\-\d+|\@\-\d+\-\d+|\@\d+\-\-\d+|\@\d+\-\d+)/g, ["bg-green"])
-          .mark(/(\".*(?:\n|$))/g, ["bg-blue"])
+          // User variables
+          .mark(/(\$\w+)/g, ["bg-yellow"])
           
-          .mark(/(\/\/.*(?:\n|$))/g, ["fg-green"]);
+          // Comments.
+          .mark(/(\/\/.*(?:\n|$))/g, ["fg-green"])
+        
+          // Long string literals.
+          .mark(/(\".*(?:\n|$))/g, ["bg-blue"]);
+          
+          
       }
       new Syntaxer($("#input"));
       new Syntaxer($("#output"));
