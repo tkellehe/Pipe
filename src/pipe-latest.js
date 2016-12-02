@@ -111,7 +111,21 @@ parser.Command.base = {
     }
   },
   ",": function(tkn,prgm) {
-    prgm.current_cell().value = tkn.inputs.front();
+    var f = tkn.inputs.front();
+    if(f === undefined) {
+      prgm.current_cell().value = Cell.create_default();
+    } else {
+      prgm.current_cell().value = f;
+    }
+  },
+  "¡": function(tkn,prgm) {
+    var f = tkn.inputs.front();
+    if(f === undefined) {
+      prgm.current_cell().value = Cell.create_default();
+    } else {
+      prgm.current_cell().value = f.copy(undefined,tkn,prgm);
+      tkn.inputs.front(f);
+    }
   },
   "f": function(tkn,prgm) { prgm.flip_dim(); },
   "'": function(tkn,prgm) {
@@ -434,6 +448,7 @@ parser.Symbols["e"] = new parser.Pipe();
 parser.Symbols["E"] = new parser.Pipe();
 parser.Symbols["&"] = new parser.Pipe();
 parser.Symbols["!"] = new parser.Pipe();
+parser.Symbols["¡"] = new parser.Pipe();
 
 parser.Symbols["&"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -443,6 +458,11 @@ parser.Symbols["&"].front(function(cmd) {
 parser.Symbols["!"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
   cmd.execute = parser.Command.base["!"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
+parser.Symbols["¡"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["¡"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
 parser.Symbols["+"].front(function(cmd) {
