@@ -187,7 +187,8 @@ parser.Command.base = {
     } else if(f.type === "NUMBER") {
       var cell = prgm.current_cell();
       if(cell.has()) {
-        tkn.outputs.back(cell.index(tkn,prgm,f.value));
+        tkn.outputs.back(cell.index(tkn,prgm,f.integerify(undefined,tkn,prgm).value));
+        tkn.outputs.back(f);
       } else {
         tkn.outputs.back(f.arrayify(tkn,prgm));
       }
@@ -229,7 +230,8 @@ parser.Command.base = {
       if(f.type === "NUMBER") {
         var cell = prgm.current_cell();
         if(cell.has()) {
-          tkn.outputs.back(cell.index(tkn,prgm,f.value));
+          tkn.outputs.back(cell.index(tkn,prgm,f.integerify(undefined,tkn,prgm).value));
+          tkn.outputs.back(f);
         } else {
           tkn.outputs.back(f.arrayify(tkn,prgm));
         }
@@ -263,7 +265,9 @@ parser.Command.base = {
       }
     // f and g have been provided, therein we got a lot of work to do...
     } else if(f.type === "NUMBER" && g.type !== "NUMBER") {
-      tkn.outputs.back(g.index(undefined,tkn,prgm,f.value));
+      tkn.outputs.back(g.index(undefined,tkn,prgm,f.integerify(undefined,tkn,prgm).value));
+      tkn.outputs.back(f);
+      tkn.outputs.back(g);
     } else if(f.type === "NUMBER" && g.type === "NUMBER") {
       // Handle case for if it is a range.
       var a = [];
