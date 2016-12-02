@@ -99,10 +99,27 @@
         try { window.location.href = $("#output").val(); } catch (err) {}
       });
       
-      $("#char-selector").css({
+      var $selector = $("#char-selector").copy();
+      
+      var $container = $('<div class="container"></div>');
+      var $backdrop = $('<div class="backdrop"></div>');
+      $container.append($backdrop.append($selector));
+      
+      $selector.css({
         width:"500px",
         height:"55px"
       });
+      $backdrop.css({
+        width:"500px",
+        height:"55px"
+      });
+      $container.css({
+        width:"500px",
+        height:"55px"
+      });
+      
+      $("#char-selector").replaceWith($container);
+      
       $(".char").each(function() {
         var $this = $(this);
         var text = $this.text();
