@@ -67,39 +67,44 @@ mark {
 mark.bg-grey {
   background-color: #dddddd;
 }
+mark.fg-grey {
+  color: #dddddd;
+}
 mark.bg-red {
-  background-color: #e5b1d5;
-}
-mark.bg-purple {
-  background-color: #9999ff;
-}
-mark.fg-purple {
-  color: #9999ff;
-}
-mark.bg-orange {
-  background-color: #ffd7b3;
-}
-mark.fg-orange {
-  color: #ffd7b3;
-}
-mark.bg-yellow {
-  background-color: #ffff4d;
+  background-color: rgb(255, 51, 51);
 }
 mark.fg-red {
-  color: #e5b1d5;
+  color: rgb(255, 51, 51);
+}
+mark.bg-purple {
+  background-color: rgb(188, 126, 204);
+}
+mark.fg-purple {
+  color: rgb(188, 126, 204);
+}
+mark.bg-orange {
+  background-color: rgb(255, 204, 102);
+}
+mark.fg-orange {
+  color: rgb(255, 204, 102);
+}
+mark.bg-yellow {
+  background-color: rgb(251, 255, 0);
+}
+mark.fg-yellow {
+  background-color: rgb(251, 255, 0);
 }
 mark.bg-blue {
-  background-color: #b1d5e5;
+  background-color: rgb(158, 222, 250);
+}
+mark.fg-blue {
+  background-color: rgb(158, 222, 250);
 }
 mark.bg-green {
-  background-color: #90d4b3;
+  background-color: rgb(117, 240, 117);
 }
 mark.fg-green {
-  color: #90d4b3;
-}
-mark.fg-green.bg-blue {
-  color: green;
-  background-color: #b1d5e5;
+  color: rgb(117, 240, 117);
 }
 
 button {
