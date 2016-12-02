@@ -112,7 +112,9 @@
       });
       $backdrop.css({
         width:"500px",
-        height:"55px"
+        height:"55px",
+        "pointer-events": "default",
+        "cursor": "pointer"
       });
       $container.css({
         width:"500px",
@@ -131,6 +133,7 @@
           e.preventDefault();
           var $code = $("#code");
           if(!$code.prop("readonly")) {
+            $(this).effects("shake",{},20);
             $code.val($code.val()+text).trigger("input");
           }
         });
