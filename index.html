@@ -29,7 +29,7 @@
           // Complex and basic commands.
           .mark(/\@\,\,|\@\,|\'\,|\#\,|[\I\#\@\']/g, ["fg-red"])
           // Inline Pipe commands.
-          .mark(/\+\,|\-\,|\.\,/g, ["fg-purple"])
+          .mark(/\+\,|\-\,/g, ["fg-purple"])
           // Calculate length of items.
           .mark(/(l\,|[l])/g, ["fg-orange"])
           // Integer literal.
