@@ -99,6 +99,7 @@
         try { window.location.href = $("#output").val(); } catch (err) {}
       });
       
+      // Char selector.
       var $selector = $("#char-selector").copy();
       
       var $container = $('<div class="container"></div>');
@@ -119,6 +120,7 @@
       });
       
       $("#char-selector").replaceWith($container);
+      console.log($container);
       
       $(".char").each(function() {
         var $this = $(this);
