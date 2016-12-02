@@ -133,7 +133,11 @@
           var $code = $("#code");
           if(!$code.prop("readonly")) {
             $(this).effect("shake",{distance:2,times:2},20);
-            $code.val($code.val()+text).trigger("input");
+            if(text === "bs") {
+              $code.val($code.val().slice(0,$code.val().length-1));
+            } else {
+              $code.val($code.val()+text).trigger("input");
+            }
           }
         });
       });
@@ -178,9 +182,10 @@
 <body>
   <div id="my-content">
     <div id="char-selector">
+      <a class="char">bs</a>
       <a class="char">\s</a>
       <a class="char">\n</a>
-      <a class="char">A</a>
+      <a class="char">&lt;</a>
     </div>
     <button id="run">RUN</button>
     <textarea id="code" cols="100" rows="30"></textarea>
