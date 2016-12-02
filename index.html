@@ -132,7 +132,7 @@
           e.preventDefault();
           var $code = $("#code");
           if(!$code.prop("readonly")) {
-            $(this).effect("shake",{},20);
+            $(this).effect("shake",{distance:2,times:2},20);
             $code.val($code.val()+text).trigger("input");
           }
         });
