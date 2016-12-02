@@ -100,7 +100,7 @@
       });
       
       // Char selector.
-      var $selector = $("#char-selector").copy();
+      var $selector = $("#char-selector").clone();
       
       var $container = $('<div class="container"></div>');
       var $backdrop = $('<div class="backdrop"></div>');
@@ -120,7 +120,6 @@
       });
       
       $("#char-selector").replaceWith($container);
-      console.log($container);
       
       $(".char").each(function() {
         var $this = $(this);
