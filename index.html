@@ -98,11 +98,52 @@
         //try { document.execCommand('copy'); } catch (err) {}
         try { window.location.href = $("#output").val(); } catch (err) {}
       });
+      
+      $("#char-selector").css({
+        width:"500px",
+        height:"55px"
+      });
+      $(".char").each(function() {
+        var $this = $(this);
+        var text = $this.text();
+        if(text === "\\s") text = " ";
+        else if(text === "\\n") text = "\n";
+        
+        $this.click(function(e) {
+          e.preventDefault();
+          var $code = $("#code");
+          if(!$code.prop("readonly")) {
+            $code.val($code.val()+text).trigger("input");
+          }
+        });
+      });
     });
   </script>
+  <style>
+    #char-selector {
+      padding: 10px;
+      font: 20px/28px monospace;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      word-wrap: none;
+      color: #444;
+    }
+    #char-selector:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #c6aada;
+    }
+    a.char {
+      padding: 5px
+    }
+  </style>
 </head>
 <body>
   <div id="my-content">
+    <div id="char-selector">
+      <a class="char">\s</a>
+      <a class="char">\n</a>
+      <a class="char">A</a>
+    </div>
     <button id="run">RUN</button>
     <textarea id="code" cols="100" rows="30"></textarea>
     <textarea id="input" cols="100" rows="11"></textarea>
