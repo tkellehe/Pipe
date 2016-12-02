@@ -134,7 +134,7 @@
           if(!$code.prop("readonly")) {
             $(this).effect("shake",{distance:2,times:2},20);
             if(text === "bs") {
-              $code.val($code.val().slice(0,$code.val().length-1));
+              $code.val($code.val().slice(0,$code.val().length-1)).trigger("input");
             } else {
               $code.val($code.val()+text).trigger("input");
             }
