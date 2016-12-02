@@ -103,14 +103,11 @@
       var $selector = $("#char-selector").clone();
       
       var $container = $('<div class="container"></div>');
-      var $backdrop = $('<div class="backdrop" style="pointer-events:default;"></div>');
+      // Inlined css because "pointer-events" does not work with jQuery?
+      var $backdrop = $('<div class="backdrop" style="pointer-events:default; width: 500px; height: 55px"></div>');
       $container.append($backdrop.append($selector));
       
       $selector.css({
-        width:"500px",
-        height:"55px"
-      });
-      $backdrop.css({
         width:"500px",
         height:"55px"
       });
