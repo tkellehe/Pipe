@@ -125,7 +125,7 @@
       $(".char").each(function() {
         var $this = $(this);
         var text = $this.text();
-        if(text === "\u021B5") text = "\n";
+        if(text === "↵") text = "\n";
         
         $this.click(function(e) {
           e.preventDefault();
