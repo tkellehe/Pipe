@@ -125,8 +125,7 @@
       $(".char").each(function() {
         var $this = $(this);
         var text = $this.text();
-        if(text === "\\s") text = " ";
-        else if(text === "\\n") text = "\n";
+        if(text === "&#8629;") text = "\n";
         
         $this.click(function(e) {
           e.preventDefault();
@@ -184,8 +183,8 @@
   <div id="my-content">
     <div id="char-selector">
       <a class="char">bs</a>
-      <a class="char">\s</a>
-      <a class="char">\n</a>
+      <a class="char">&nbsp;</a>
+      <a class="char">&#8629;</a>
       <a class="char">&lt;</a>
       <a class="char">&gt;</a>
       <a class="char">[</a>
