@@ -104,7 +104,11 @@ Syntaxer.prototype.fixIOS = function() {
   });
 }
 Syntaxer.prototype.handleInput = function() {
-  this.$highlights.html(this.applyParse(this.$textarea.val()));
+  var t = this.$textarea.val();
+  var h = this.applyParse(t);
+  alert(t.replace(" ","_");
+  alert(h.replace(" ","_");
+  this.$highlights.html(h);
 }
 Syntaxer.prototype.handleScroll = function() {
   this.$backdrop.scrollTop(this.$textarea.scrollTop());
