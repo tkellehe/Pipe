@@ -106,8 +106,8 @@ Syntaxer.prototype.fixIOS = function() {
 Syntaxer.prototype.handleInput = function() {
   var t = this.$textarea.val();
   var h = this.applyParse(t);
-  alert(t.replace(" ","_");
-  alert(h.replace(" ","_");
+  alert(t.replace(" ","_"));
+  alert(h.replace(" ","_"));
   this.$highlights.html(h);
 }
 Syntaxer.prototype.handleScroll = function() {
