@@ -14,10 +14,18 @@
         return results[1] || "";
       }
     }
-    $.urlParamDecode = function(name) {
-      var result = $.urlParam(name);
-      if(result !== undefined) return decodeURIComponent(result)
-      return "";
+    if(Syntaxer.isIOS) {
+      $.urlParamDecode = function(name) {
+        var result = $.urlParam(name);
+        if(result !== undefined) return decodeURIComponent(result)
+        return "";
+      }
+    } else {
+      $.urlParamDecode = function(name) {
+        var result = $.urlParam(name);
+        if(result !== undefined) return decodeURIComponent(result).replace(" ", String.fromCharCode(160));
+        return "";
+      }
     }
     
     $(function(){
@@ -66,9 +74,10 @@
         $("#code").prop("readonly",true);
         $("#url").prop("disable",true);
         var script = $("#code").val();
-        script = script.replace(new RegExp(String.fromCharCode(160),"g")," ")
+        script = script.replace(new RegExp(String.fromCharCode(160),"g")," ");
         prgm = pipe(script);
         var value = $("#input").val();
+        value = value.replace(new RegExp(String.fromCharCode(160),"g")," ");
         if(value.length > 0) prgm.addArg(new pipe.Cell.types.STRING(value));
         prgm.exec(function() {
           $("#output").val(this.outputs+"").trigger("input");
