@@ -66,7 +66,7 @@
         $("#code").prop("readonly",true);
         $("#url").prop("disable",true);
         var script = $("#code").val();
-        
+        script = script.replace(new RegExp(String.fromCharCode(160),"g")," ")
         prgm = pipe(script);
         var value = $("#input").val();
         if(value.length > 0) prgm.addArg(new pipe.Cell.types.STRING(value));
@@ -94,8 +94,11 @@
       $("#output").prop("readonly",true);
       
       $("#url").click(function() {
+        var i = $("#input").val(), c = $("#code").val();
+        i = i.replace(new RegExp(String.fromCharCode(160),"g")," ")
+        c = c.replace(new RegExp(String.fromCharCode(160),"g")," ")
         $("#output").val(window.location.href.replace(window.location.search,'') + "?"
-                         + $.param({input:$("#input").val(),code:$("#code").val()})).trigger("input").select();
+                         + $.param({input:i,code:c})).trigger("input").select();
         // Not really a need to copy.
         //try { document.execCommand('copy'); } catch (err) {}
         try { window.location.href = $("#output").val(); } catch (err) {}
