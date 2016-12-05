@@ -105,8 +105,6 @@ Syntaxer.prototype.fixIOS = function() {
 }
 Syntaxer.prototype.handleInput = function() {
   var t = this.$textarea.val();
-  this.$textarea.val(t.replace(new RegExp(String.fromCharCode(160),"g")," "));
-  t = this.$textarea.val();
   var h = this.applyParse(t);
   this.$highlights.html(h);
 }
