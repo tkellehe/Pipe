@@ -14,18 +14,10 @@
         return results[1] || "";
       }
     }
-    if(Syntaxer.isIOS) {
-      $.urlParamDecode = function(name) {
-        var result = $.urlParam(name);
-        if(result !== undefined) return decodeURIComponent(result)
-        return "";
-      }
-    } else {
-      $.urlParamDecode = function(name) {
-        var result = $.urlParam(name);
-        if(result !== undefined) return decodeURIComponent(result).replace(" ", String.fromCharCode(160));
-        return "";
-      }
+    $.urlParamDecode = function(name) {
+      var result = $.urlParam(name);
+      if(result !== undefined) return decodeURIComponent(result).replace(new RegExp(" ", "g"), String.fromCharCode(160));
+      return "";
     }
     
     $(function(){
