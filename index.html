@@ -65,7 +65,9 @@
         $("#input").prop("readonly",true);
         $("#code").prop("readonly",true);
         $("#url").prop("disable",true);
-        prgm = pipe($("#code").val());
+        var script = $("#code").val();
+        script = scrpt.replace(String.fromCharCode(160)," ");
+        prgm = pipe(script);
         var value = $("#input").val();
         if(value.length > 0) prgm.addArg(new pipe.Cell.types.STRING(value));
         prgm.exec(function() {
