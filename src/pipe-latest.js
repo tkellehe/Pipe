@@ -6,7 +6,7 @@ var version = "1.00.00.00";
 parser.Command.internal = {
   pipe_oi: function(tkn,prgm) {
     if(tkn.parent === undefined) {
-      tkn.inputs.pipe(prgm.inputs.copy());
+      tkn.inputs.pipe(prgm.inputs);
     } else {
       tkn.inputs.pipe(tkn.parent.outputs);
     }
