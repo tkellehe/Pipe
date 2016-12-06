@@ -17,26 +17,24 @@ parser.Command.internal = {
 }
 parser.Command.base = {
   "+": function(tkn,prgm) {
-    var v = prgm.current_cell().increment(tkn,prgm);
-    prgm.current_cell().value = v;
+    prgm.current_cell().increment(tkn,prgm);
   },
   "-": function(tkn,prgm) {
-    var v = prgm.current_cell().decrement(tkn,prgm);
-    prgm.current_cell().value = v;
+    prgm.current_cell().decrement(tkn,prgm);
   },
   "+,": function(tkn,prgm) {
     var f = tkn.inputs.front();
     if(f === undefined) {
       f = Cell.create_default();
     }
-    tkn.outputs.back(f.increment(undefined,tkn,prgm));
+    tkn.outputs.back(f.increment(tkn,prgm));
   },
   "-,": function(tkn,prgm) {
     var f = tkn.inputs.front();
     if(f === undefined) {
       f = Cell.create_default();
     }
-    tkn.outputs.back(f.decrement(undefined,tkn,prgm));
+    tkn.outputs.back(f.decrement(tkn,prgm));
   },
   ">": function(tkn,prgm) { prgm.move_right() },
   "<": function(tkn,prgm) { prgm.move_left() },
@@ -60,7 +58,7 @@ parser.Command.base = {
     var end = tkn.branches.at(1);
     tkn.inputs.pipe(end.outputs);
     var f = tkn.inputs.front();
-    if(f !== undefined && f.is_non_zero(undefined,tkn,prgm)) {
+    if(f !== undefined && f.is_non_zero(tkn,prgm)) {
       tkn.next_token = tkn.branches.at(0);
       // Puts the item back into the pipe.
       tkn.inputs.front(f);
@@ -79,7 +77,7 @@ parser.Command.base = {
   ":": function(tkn,prgm) {
     var cell = prgm.current_cell();
     if(cell.has()) {
-      prgm.outputs.back(cell.copy(tkn,prgm));
+      prgm.outputs.back(cell.copy());
     } else {
       prgm.outputs.back(Cell.create_default());
     }
@@ -87,7 +85,7 @@ parser.Command.base = {
   ".": function(tkn,prgm) {
     var cell = prgm.current_cell();
     if(cell.has()) {
-      tkn.outputs.back(cell.copy(tkn,prgm));
+      tkn.outputs.back(cell.copy());
     } else {
       tkn.outputs.back(Cell.create_default());
     }
@@ -97,7 +95,7 @@ parser.Command.base = {
     if(f === undefined) {
       tkn.outputs.back(Cell.create_default());
     } else {
-      tkn.outputs.back(f.copy(undefined,tkn,prgm));
+      tkn.outputs.back(f.copy());
       tkn.inputs.front(f);
     }
   },
@@ -106,24 +104,24 @@ parser.Command.base = {
     if(f === undefined) {
       prgm.outputs.back(Cell.create_default());
     } else {
-      prgm.outputs.back(f.copy(undefined,tkn,prgm));
+      prgm.outputs.back(f.copy());
       tkn.inputs.front(f);
     }
   },
   ",": function(tkn,prgm) {
     var f = tkn.inputs.front();
     if(f === undefined) {
-      prgm.current_cell().value = Cell.create_default();
+      prgm.current_cell().content(Cell.create_default());
     } else {
-      prgm.current_cell().value = f;
+      prgm.current_cell().content(f);
     }
   },
   "¡": function(tkn,prgm) {
     var f = tkn.inputs.front();
     if(f === undefined) {
-      prgm.current_cell().value = Cell.create_default();
+      prgm.current_cell().content(Cell.create_default());
     } else {
-      prgm.current_cell().value = f.copy(undefined,tkn,prgm);
+      prgm.current_cell().content(f.copy());
       tkn.inputs.front(f);
     }
   },
@@ -132,9 +130,9 @@ parser.Command.base = {
     if(tkn.content === undefined) {
       var cell = prgm.current_cell();
       if(cell.has()) {
-        cell.value = cell.stringify(tkn,prgm);
+        cell.content(cell.stringify());
       } else {
-        cell.value = new Cell.types.STRING();
+        cell.content(new Cell.types.STRING());
       }
     } else {
       tkn.outputs.back(new Cell.types.STRING(tkn.content));
@@ -145,7 +143,7 @@ parser.Command.base = {
     if(f === undefined) {
       f = new Cell.types.STRING();
     } else {
-      f = f.stringify(tkn,prgm);
+      f = f.stringify();
     }
     tkn.outputs.back(f);
   },
@@ -153,9 +151,9 @@ parser.Command.base = {
     if(tkn.content === undefined) {
       var cell = prgm.current_cell();
       if(cell.has()) {
-        cell.value = cell.numberify(tkn,prgm);
+        cell.content(cell.numberify());
       } else {
-        cell.value = new Cell.types.NUMBER();
+        cell.content(new Cell.types.NUMBER());
       }
     } else {
       tkn.outputs.back(new Cell.types.NUMBER(tkn.content));
@@ -166,7 +164,7 @@ parser.Command.base = {
     if(f === undefined) {
       f = new Cell.type.NUMBER();
     } else {
-      f = f.numberify(tkn,prgm);
+      f = f.numberify();
     }
     tkn.outputs.back(f);
   },
@@ -174,7 +172,7 @@ parser.Command.base = {
     if(tkn.content === undefined) {
       var cell = prgm.current_cell();
       if(cell.has()) {
-        cell.value = cell.arrayify(tkn,prgm);
+        cell.content(cell.arrayify());
       } else {
         cell.value = new Cell.types.ARRAY();
       }
@@ -207,32 +205,32 @@ parser.Command.base = {
     } else if(f.type === "NUMBER") {
       var cell = prgm.current_cell();
       if(cell.has()) {
-        tkn.outputs.back(cell.index(tkn,prgm,f.integerify(undefined,tkn,prgm).value));
+        tkn.outputs.back(cell.index(tkn,prgm,f.integerify().value()));
         tkn.outputs.back(f);
       } else {
-        tkn.outputs.back(f.arrayify(tkn,prgm));
+        tkn.outputs.back(f.arrayify());
       }
     } else if(f.type === "STRING") {
-      tkn.outputs.back(f.arrayify(tkn,prgm));
+      tkn.outputs.back(f.arrayify());
     } else if(f.type === "ARRAY") {
       // Must be a range of numbers.
-      var temp = f.integerify(undefined,tkn,prgm);
+      var temp = f.integerify();
       var cell = prgm.current_cell();
       if(cell.has()) {
         (function loop0(array) {
-          for(var i = 0; i < array.value.length; ++i) {
-            if(array.value[i].type === "ARRAY") {
-              loop0(array.value[i]);
+          for(var i = 0; i < array.value().length; ++i) {
+            if(array.value()[i].type === "ARRAY") {
+              loop0(array.value()[i]);
             } else {
-              tkn.outputs.back(cell.index(tkn,prgm,array.value[i]));
+              tkn.outputs.back(cell.index(tkn,prgm,array.value()[i]));
             }
           }
         })(temp);
       } else {
         (function loop1(array) {
-          for(var i = 0; i < array.value.length; ++i) {
-            if(array.value[i].type === "ARRAY") {
-              loop1(array.value[i]);
+          for(var i = 0; i < array.value().length; ++i) {
+            if(array.value()[i].type === "ARRAY") {
+              loop1(array.value()[i]);
             } else {
               tkn.outputs.back(new Cell.types.ARRAY());
             }
@@ -250,32 +248,32 @@ parser.Command.base = {
       if(f.type === "NUMBER") {
         var cell = prgm.current_cell();
         if(cell.has()) {
-          tkn.outputs.back(cell.index(tkn,prgm,f.integerify(undefined,tkn,prgm).value));
+          tkn.outputs.back(cell.index(tkn,prgm,f.integerify().value()));
           tkn.outputs.back(f);
         } else {
-          tkn.outputs.back(f.arrayify(tkn,prgm));
+          tkn.outputs.back(f.arrayify());
         }
       } else if(f.type === "STRING") {
-        tkn.outputs.back(f.arrayify(tkn,prgm));
+        tkn.outputs.back(f.arrayify());
       } else if(f.type === "ARRAY") {
         // Must be a range of numbers.
-        var temp = f.integerify(undefined,tkn,prgm);
+        var temp = f.integerify();
         var cell = prgm.current_cell();
         if(cell.has()) {
           (function loop0(array) {
-            for(var i = 0; i < array.value.length; ++i) {
-              if(array.value[i].type === "ARRAY") {
-                loop0(array.value[i]);
+            for(var i = 0; i < array.value().length; ++i) {
+              if(array.value()[i].type === "ARRAY") {
+                loop0(array.value()[i]);
               } else {
-                tkn.outputs.back(cell.index(tkn,prgm,array.value[i]));
+                tkn.outputs.back(cell.index(tkn,prgm,array.value()[i]));
               }
             }
           })(temp);
         } else {
           (function loop1(array) {
-            for(var i = 0; i < array.value.length; ++i) {
-              if(array.value[i].type === "ARRAY") {
-                loop1(array.value[i]);
+            for(var i = 0; i < array.value().length; ++i) {
+              if(array.value()[i].type === "ARRAY") {
+                loop1(array.value()[i]);
               } else {
                 tkn.outputs.back(new Cell.types.ARRAY());
               }
@@ -285,17 +283,17 @@ parser.Command.base = {
       }
     // f and g have been provided, therein we got a lot of work to do...
     } else if(f.type === "NUMBER" && g.type !== "NUMBER") {
-      tkn.outputs.back(g.index(undefined,tkn,prgm,f.integerify(undefined,tkn,prgm).value));
+      tkn.outputs.back(g.index(tkn,prgm,f.integerify().value()));
       tkn.outputs.back(f);
       tkn.outputs.back(g);
     } else if(f.type === "NUMBER" && g.type === "NUMBER") {
       // Handle case for if it is a range.
       var a = [];
       // f is left and g is right.
-      if(f.value < g.value) {
-        for(var i = f.value; i <= g.value; ++i) a.push(i);
+      if(f.value() < g.value()) {
+        for(var i = f.value(); i <= g.value(); ++i) a.push(i);
       } else {
-        for(var i = f.value; g.value <= i; --i) a.push(i);
+        for(var i = f.value(); g.value() <= i; --i) a.push(i);
       }
       var cell = prgm.current_cell();
       if(cell.has()) {
@@ -308,37 +306,37 @@ parser.Command.base = {
       }
     } else if(f.type === "ARRAY") {
       // Must be a range of numbers.
-      var temp = f.integerify(undefined,tkn,prgm);
+      var temp = f.integerify();
       (function loop(array) {
-        for(var i = 0; i < array.value.length; ++i) {
-          if(array.value[i].type === "ARRAY") {
-            loop(array.value[i]);
+        for(var i = 0; i < array.value().length; ++i) {
+          if(array.value()[i].type === "ARRAY") {
+            loop(array.value()[i]);
           } else {
-            tkn.outputs.back(g.index(undefined,tkn,prgm,array.value[i]));
+            tkn.outputs.back(g.index(tkn,prgm,array.value()[i]));
           }
         }
       })(temp);
     } else {
       // Final case is to arrayify both then concat.
-      f = f.arrayify(undefined,tkn,prgm);
-      g = g.arrayify(undefined,tkn,prgm);
-      tkn.outputs.back(new Cell.types.ARRAY(f.value.concat(g.value)));
+      f = f.arrayify();
+      g = g.arrayify();
+      tkn.outputs.back(new Cell.types.ARRAY(f.value().concat(g.value())));
     }
   },
   "I": function(tkn,prgm) {
     if(tkn.content === undefined) {
       var cell = prgm.current_cell();
       if(cell.has()) {
-        cell.value = cell.integerify(tkn,prgm);
+        cell.content(cell.integerify());
       } else {
-        cell.value = new Cell.types.NUMBER();
+        cell.content(new Cell.types.NUMBER());
       }
     } else {
       tkn.outputs.back(new Cell.types.NUMBER(tkn.content));
     }
   },
   "c": function(tkn,prgm) {
-    delete prgm.current_cell().value;
+    prgm.current_cell().content(undefined);
   },
   '"': function(tkn,prgm) {
     tkn.outputs.back(new Cell.types.STRING(tkn.content));
@@ -361,7 +359,7 @@ parser.Command.base = {
   "l,": function(tkn,prgm) {
     var f = tkn.inputs.front();
     if(f !== undefined) {
-      tkn.outputs.back(f.length(undefined,tkn,prgm));
+      tkn.outputs.back(f.length(tkn,prgm));
       tkn.inputs.front(f);
     } else {
       tkn.outputs.back(new Cell.types.NUMBER());
@@ -404,7 +402,7 @@ parser.Command.base = {
   "&": function(tkn,prgm) {
     var cell = prgm.current_cell();
     cell.content();
-    cell.value = new Cell.types.REFERENCE(cell.value);
+    cell.content(new Cell.types.REFERENCE(cell.value()));
   },
   "\n": function(tkn,prgm) { },
   " ": function(tkn,prgm) { }
@@ -864,7 +862,20 @@ parser.Symbols["E"].front(function(cmd) {
 function Cell(x,y) {
   this.x = x;
   this.y = y;
-  this.value = undefined;
+  var value = undefined;
+  this.value = function(v) {
+    if(arguments.length === 0) return value.value();
+    return value.value(v);
+  }
+  this.has = function() { return value === undefined }
+  this.content = function(v) {
+    if(arguments.length === 0) {
+      if(!this.has()) value = Cell.create_default();
+      return value;
+    } else {
+      value = v;
+    }
+  }
 }
 Cell.defaults = new parser.Pipe();
 Cell.create_default = function() {
@@ -906,53 +917,53 @@ Cell.characters = [
     Cell.values[Cell.characters[i]] = i;
   }
 })()
-Cell.prototype.has = function() {
-  return this.value !== undefined;
-}
-Cell.prototype.content = function() {
-  if(!this.has()) this.value = Cell.create_default();
-  return this.value;
-}
 Cell.prototype.increment = function(tkn,prgm) {
-  return this.content().increment(this,tkn,prgm);
+  return this.content().increment(tkn,prgm);
 }
 Cell.prototype.decrement = function(tkn,prgm) {
-  return this.content().decrement(this,tkn,prgm);
+  return this.content().decrement(tkn,prgm);
 }
 Cell.prototype.is_non_zero = function(tkn,prgm) {
-  return this.content().is_non_zero(this,tkn,prgm);
+  return this.content().is_non_zero(tkn,prgm);
 }
-Cell.prototype.copy = function(tkn,prgm) {
-  return this.content().copy(this,tkn,prgm);
+Cell.prototype.copy = function() {
+  return this.content().copy();
 }
-Cell.prototype.stringify = function(tkn,prgm) {
-  return this.content().stringify(this,tkn,prgm);
+Cell.prototype.stringify = function() {
+  return this.content().stringify();
 }
-Cell.prototype.numberify = function(tkn,prgm) {
-  return this.content().numberify(this,tkn,prgm);
+Cell.prototype.numberify = function() {
+  return this.content().numberify();
 }
-Cell.prototype.integerify = function(tkn,prgm) {
-  return this.content().numberify(this,tkn,prgm);
+Cell.prototype.integerify = function() {
+  return this.content().numberify();
 }
-Cell.prototype.arrayify = function(tkn,prgm) {
-  return this.content().arrayify(this,tkn,prgm);
+Cell.prototype.arrayify = function() {
+  return this.content().arrayify();
 }
 Cell.prototype.length = function(tkn,prgm) {
-  return this.content().length(this,tkn,prgm);
+  return this.content().length(tkn,prgm);
 }
 Cell.prototype.index = function(tkn,prgm,i) {
-  return this.content().index(this,tkn,prgm,i);
+  return this.content().index(tkn,prgm,i);
 }
 Cell.prototype.range = function(tkn,prgm,r) {
-  return this.content().range(this,tkn,prgm,r);
+  return this.content().range(tkn,prgm,r);
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Cell.types.NUMBER = function(v) { this.value = v || 0; }
+Cell.types.NUMBER = function(v) {
+  var value = v || 0;
+  this.value = function(v) {
+    if(arguments.length === 0) return value;
+    value = +v || 0;
+    return this;
+  }
+}
 Cell.types.NUMBER.prototype.type = "NUMBER";
 Cell.types.NUMBER.prototype.actual = "NUMBER";
 Cell.defaults.front(Cell.types.NUMBER);
 Cell.types.NUMBER.prototype.toString = function() {
-  return this.stringify().value;
+  return this.stringify().value();
 }
 Cell.types.NUMBER.prototype.smallest_unit = function() {
   var s = this.value+"", i = s.search("\\.");
@@ -967,37 +978,37 @@ Cell.types.NUMBER.prototype.smallest_unit = function() {
   s+="1";
   return +s;
 }
-Cell.types.NUMBER.prototype.increment = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(this.value + this.smallest_unit());
+Cell.types.NUMBER.prototype.increment = function(tkn,prgm) {
+  return this.value(this.value() + this.smallest_unit());
 }
-Cell.types.NUMBER.prototype.decrement = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(this.value - this.smallest_unit());
+Cell.types.NUMBER.prototype.decrement = function(tkn,prgm) {
+  return this.value(this.value() - this.smallest_unit());
 }
-Cell.types.NUMBER.prototype.is_non_zero = function(cell,tkn,prgm) {
-  return !!this.value;
+Cell.types.NUMBER.prototype.is_non_zero = function(tkn,prgm) {
+  return !!this.value();
 }
-Cell.types.NUMBER.prototype.copy = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(this.value);
+Cell.types.NUMBER.prototype.copy = function() {
+  return new Cell.types.NUMBER(this.value());
 }
-Cell.types.NUMBER.prototype.stringify = function(cell,tkn,prgm) {
-  return new Cell.types.STRING(this.value+"");
+Cell.types.NUMBER.prototype.stringify = function() {
+  return new Cell.types.STRING(this.value()+"");
 }
-Cell.types.NUMBER.prototype.numberify = function(cell,tkn,prgm) {
-  return this.copy(cell,tkn,prgm);
+Cell.types.NUMBER.prototype.numberify = function() {
+  return this.copy();
 }
-Cell.types.NUMBER.prototype.integerify = function(cell,tkn,prgm) {
-  var copy = this.copy(cell,tkn,prgm);
-  copy.value = Math.floor(copy.value);
+Cell.types.NUMBER.prototype.integerify = function() {
+  var copy = this.copy();
+  copy.value(Math.floor(copy.value()));
   return copy;
 }
-Cell.types.NUMBER.prototype.arrayify = function(cell,tkn,prgm) {
-  return new Cell.types.ARRAY([this.copy(cell,tkn,prgm)]);
+Cell.types.NUMBER.prototype.arrayify = function() {
+  return new Cell.types.ARRAY([this.copy()]);
 }
-Cell.types.NUMBER.prototype.length = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER((this.value+"").replace(".","").length);
+Cell.types.NUMBER.prototype.length = function() {
+  return new Cell.types.NUMBER((this.value()+"").replace(".","").length);
 }
-Cell.types.NUMBER.prototype.index = function(cell,tkn,prgm,i) {
-  var s = this.value + "",
+Cell.types.NUMBER.prototype.index = function(tkn,prgm,i) {
+  var s = this.value() + "",
   // Finds the decimal location.
       d = s.search("\\.");
   // Removes the decimal from the lookup.
@@ -1009,123 +1020,136 @@ Cell.types.NUMBER.prototype.index = function(cell,tkn,prgm,i) {
   var c = s[l - (i + d) - 1];
   return new Cell.types.NUMBER((c === undefined) ? 0 : (+c * Math.pow(10,i)));
 }
-Cell.types.NUMBER.prototype.range = function(cell,tkn,prgm,r) {
+Cell.types.NUMBER.prototype.range = function(tkn,prgm,r) {
   var d = 0;
-  for(var i = 0; i < r.length; ++i) d += this.index(cell,tkn,prgm,r[i]).value;
+  for(var i = 0; i < r.length; ++i) d += this.index(tkn,prgm,r[i]).value;
   return [new Cell.types.NUMBER(d)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Cell.types.STRING = function(s) { this.value = s || ""; }
+Cell.types.STRING = function(s) {
+  var value = s || "";
+  this.value = function(v) {
+    if(arguments.length === 0) return value;
+    value = v;
+    return this;
+  }
+}
 Cell.types.STRING.prototype.type = "STRING";
 Cell.types.STRING.prototype.actual = "STRING";
 Cell.types.STRING.prototype.toString = function() {
-  return this.stringify().value;
+  return this.value();
 }
-Cell.types.STRING.prototype.increment = function(cell,tkn,prgm) {
+Cell.types.STRING.prototype.increment = function(tkn,prgm) {
   var obj = tkn.inputs.front();
-  var value = this.value;
+  var value = this.value();
   if(obj) {
-    obj = obj.stringify(cell,tkn,prgm);
+    obj = obj.stringify(tkn,prgm);
     if(obj.type === "ARRAY") {
       for(var i = 0,l = obj.value.length;i < l;++i)
-        value += obj.value[i].value;
+        value += obj.value[i].value();
     } else if(obj.type === "STRING") {
-      value += obj.value;
+      value += obj.value();
     }
   }
-  return new Cell.types.STRING(value);
+  return this.value(value);
 }
-Cell.types.STRING.prototype.decrement = function(cell,tkn,prgm) {
-  tkn.outputs.front(new Cell.types.STRING(this.value[0]));
-  return new Cell.types.STRING(this.value.slice(1,this.value.length));
+Cell.types.STRING.prototype.decrement = function(tkn,prgm) {
+  tkn.outputs.front(new Cell.types.STRING(this.value()[0]));
+  return this.value(this.value().slice(1,this.value.length));
 }
-Cell.types.STRING.prototype.is_non_zero = function(cell,tkn,prgm) {
-  return !!this.value.length;
+Cell.types.STRING.prototype.is_non_zero = function(tkn,prgm) {
+  return !!this.value().length;
 }
-Cell.types.STRING.prototype.copy = function(cell,tkn,prgm) {
-  return new Cell.types.STRING(this.value);
+Cell.types.STRING.prototype.copy = function() {
+  return new Cell.types.STRING(this.value());
 }
-Cell.types.STRING.prototype.stringify = function(cell,tkn,prgm) {
-  return this.copy(cell,tkn,prgm);
+Cell.types.STRING.prototype.stringify = function() {
+  return this.copy();
 }
-Cell.types.STRING.prototype.numberify = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(+this.value);
+Cell.types.STRING.prototype.numberify = function() {
+  return new Cell.types.NUMBER(+this.value());
 }
-Cell.types.STRING.prototype.integerify = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(Math.floor(+this.value));
+Cell.types.STRING.prototype.integerify = function() {
+  return new Cell.types.NUMBER(Math.floor(+this.value()));
 }
-Cell.types.STRING.prototype.arrayify = function(cell,tkn,prgm) {
-  return new Cell.types.ARRAY([this.copy(cell,tkn,prgm)]);
+Cell.types.STRING.prototype.arrayify = function() {
+  return new Cell.types.ARRAY([this.copy()]);
 }
-Cell.types.STRING.prototype.length = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(this.value.length);
+Cell.types.STRING.prototype.length = function(tkn,prgm) {
+  return new Cell.types.NUMBER(this.value().length);
 }
-Cell.types.STRING.prototype.index = function(cell,tkn,prgm,i) {
-  return new Cell.types.STRING(this.value[i]);
+Cell.types.STRING.prototype.index = function(tkn,prgm,i) {
+  return new Cell.types.STRING(this.value()[i]);
 }
-Cell.types.STRING.prototype.range = function(cell,tkn,prgm,r) {
+Cell.types.STRING.prototype.range = function(tkn,prgm,r) {
   var s = "";
-  for(var i = 0; i < r.length; ++i) s += this.index(cell,tkn,prgm,r[i]).value;
+  for(var i = 0; i < r.length; ++i) s += this.index(tkn,prgm,r[i]).value();
   return [new Cell.types.STRING(s)];
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Cell.types.ARRAY = function(a) { this.value = a || []; }
+Cell.types.ARRAY = function(a) {
+  var value = a || [];
+  this.value = function(v) {
+    if(arguments.length === 0) return value;
+    value = v;
+    return this;
+  }
+}
 Cell.types.ARRAY.prototype.type = "ARRAY";
 Cell.types.ARRAY.prototype.actual = "ARRAY";
 Cell.types.ARRAY.prototype.toString = function() {
   var a = this.stringify(), v = "";
-  for(var i = 0, l = a.value.length; i < l; ++i) v += a.value[i].value;
+  for(var i = 0, l = a.value.length; i < l; ++i) v += a.value[i].value();
   return v;
 }
-Cell.types.ARRAY.prototype.increment = function(cell,tkn,prgm) {
+Cell.types.ARRAY.prototype.increment = function(tkn,prgm) {
   var obj = tkn.inputs.front();
-  var value = this.copy();
   if(obj) {
-    value.value.push(obj);
+    this.value().push(obj);
   }
-  return value;
+  return this;
 }
-Cell.types.ARRAY.prototype.decrement = function(cell,tkn,prgm) {
-  tkn.outputs.front(this.value[0].copy(cell,tkn,prgm));
-  return new Cell.types.ARRAY(this.value.slice(1,this.value.length));
+Cell.types.ARRAY.prototype.decrement = function(tkn,prgm) {
+  tkn.outputs.front(this.value()[0].copy());
+  return new Cell.types.ARRAY(this.value().slice(1,this.value().length));
 }
-Cell.types.ARRAY.prototype.is_non_zero = function(cell,tkn,prgm) {
-  return !!this.value.length;
+Cell.types.ARRAY.prototype.is_non_zero = function(tkn,prgm) {
+  return !!this.value().length;
 }
-Cell.types.ARRAY.prototype.copy = function(cell,tkn,prgm) {
+Cell.types.ARRAY.prototype.copy = function() {
   var a = [];
-  for(var i = this.value.length;i--;) a.unshift(this.value[i].copy(cell,tkn,prgm));
+  for(var i = this.value.length;i--;) a.unshift(this.value[i].copy());
   return new Cell.types.ARRAY(a);
 }
-Cell.types.ARRAY.prototype.stringify = function(cell,tkn,prgm) {
+Cell.types.ARRAY.prototype.stringify = function(tkn,prgm) {
   var a = [];
-  for(var i = this.value.length;i--;) a.unshift(this.value[i].stringify(cell,tkn,prgm));
+  for(var i = this.value.length;i--;) a.unshift(this.value[i].stringify());
   return new Cell.types.ARRAY(a);
 }
-Cell.types.ARRAY.prototype.numberify = function(cell,tkn,prgm) {
+Cell.types.ARRAY.prototype.numberify = function(tkn,prgm) {
   var a = [];
-  for(var i = this.value.length;i--;) a.unshift(this.value[i].numberify(cell,tkn,prgm));
+  for(var i = this.value.length;i--;) a.unshift(this.value[i].numberify());
   return new Cell.types.ARRAY(a);
 }
-Cell.types.ARRAY.prototype.integerify = function(cell,tkn,prgm) {
+Cell.types.ARRAY.prototype.integerify = function(tkn,prgm) {
   var a = [];
-  for(var i = this.value.length;i--;) a.unshift(this.value[i].integerify(cell,tkn,prgm));
+  for(var i = this.value.length;i--;) a.unshift(this.value[i].integerify());
   return new Cell.types.ARRAY(a);
 }
-Cell.types.ARRAY.prototype.arrayify = function(cell,tkn,prgm) {
+Cell.types.ARRAY.prototype.arrayify = function(tkn,prgm) {
   return this.copy(cell,tkn,prgm);
 }
-Cell.types.ARRAY.prototype.length = function(cell,tkn,prgm) {
-  return new Cell.types.NUMBER(this.value.length);
+Cell.types.ARRAY.prototype.length = function(tkn,prgm) {
+  return new Cell.types.NUMBER(this.value().length);
 }
-Cell.types.ARRAY.prototype.index = function(cell,tkn,prgm,i) {
-  var v = this.value[i];
+Cell.types.ARRAY.prototype.index = function(tkn,prgm,i) {
+  var v = this.value()[i];
   if(v === undefined) return new Cell.types.ARRAY();
-  return v.copy(cell,tkn,prgm);
+  return v.copy();
 }
-Cell.types.ARRAY.prototype.range = function(cell,tkn,prgm,r) {
+Cell.types.ARRAY.prototype.range = function(tkn,prgm,r) {
   var a = [];
-  for(var i = 0; i < r.length; ++i) a.push(this.index(cell,tkn,prgm,r[i]));
+  for(var i = 0; i < r.length; ++i) a.push(this.index(tkn,prgm,r[i]));
   return a;
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1136,15 +1160,11 @@ Cell.types.REFERENCE = function(o) {
   this.type = o.type;
   this.object = o;
   
-  Object.defineProperty(this,"value",{
-    get: function() {
-      return this.object.value;
-    },
-    set: function(v) {
-      this.object.value = v;
-    },
-    enumerable: true
-  });
+  this.value = function(v) {
+    if(arguments.length === 0) return this.object.value();
+    this.object.value(v);
+    return this;
+  }
 }
 Cell.types.REFERENCE.prototype.actual = "REFERENCE";
 Cell.types.REFERENCE.prototype.toString = function() {
@@ -1153,44 +1173,44 @@ Cell.types.REFERENCE.prototype.toString = function() {
 Cell.types.REFERENCE.prototype.smallest_unit = function() {
   return this.object.smallest_unit();
 }
-Cell.types.REFERENCE.prototype.increment = function(cell,tkn,prgm) {
-  this.object = this.object.increment(cell,tkn,prgm);
+Cell.types.REFERENCE.prototype.increment = function(tkn,prgm) {
+  this.object.increment(tkn,prgm);
   return this;
 }
-Cell.types.REFERENCE.prototype.decrement = function(cell,tkn,prgm) {
-  this.object = this.object.decrement(cell,tkn,prgm);
+Cell.types.REFERENCE.prototype.decrement = function(tkn,prgm) {
+  this.object.decrement(tkn,prgm);
   return this;
 }
-Cell.types.REFERENCE.prototype.is_non_zero = function(cell,tkn,prgm) {
-  return this.object.is_non_zero(cell,tkn,prgm);
+Cell.types.REFERENCE.prototype.is_non_zero = function(tkn,prgm) {
+  return this.object.is_non_zero(tkn,prgm);
 }
-Cell.types.REFERENCE.prototype.copy = function(cell,tkn,prgm) {
+Cell.types.REFERENCE.prototype.copy = function() {
   return new Cell.types.REFERENCE(this);
 }
-Cell.types.REFERENCE.prototype.stringify = function(cell,tkn,prgm) {
-  this.object = this.object.stringify(cell,tkn,prgm);
+Cell.types.REFERENCE.prototype.stringify = function() {
+  this.object = this.object.stringify();
   return this;
 }
-Cell.types.REFERENCE.prototype.numberify = function(cell,tkn,prgm) {
-  this.object = this.object.numberify(cell,tkn,prgm);
+Cell.types.REFERENCE.prototype.numberify = function() {
+  this.object = this.object.numberify();
   return this;
 }
-Cell.types.REFERENCE.prototype.integerify = function(cell,tkn,prgm) {
-  this.object = this.object.integerify(cell,tkn,prgm);
+Cell.types.REFERENCE.prototype.integerify = function() {
+  this.object = this.object.integerify();
   return this;
 }
-Cell.types.REFERENCE.prototype.arrayify = function(cell,tkn,prgm) {
-  this.object = this.object.arrayify(cell,tkn,prgm);
+Cell.types.REFERENCE.prototype.arrayify = function() {
+  this.object = this.object.arrayify();
   return this;
 }
-Cell.types.REFERENCE.prototype.length = function(cell,tkn,prgm) {
-  return this.object.length(cell,tkn,prgm);
+Cell.types.REFERENCE.prototype.length = function(tkn,prgm) {
+  return this.object.length(tkn,prgm);
 }
-Cell.types.REFERENCE.prototype.index = function(cell,tkn,prgm,i) {
-  return this.object.index(cell,tkn,prgm,i);
+Cell.types.REFERENCE.prototype.index = function(tkn,prgm,i) {
+  return this.object.index(tkn,prgm,i);
 }
-Cell.types.REFERENCE.prototype.range = function(cell,tkn,prgm,r) {
-  return this.object.range(cell,tkn,prgm,r);
+Cell.types.REFERENCE.prototype.range = function(tkn,prgm,r) {
+  return this.object.range(tkn,prgm,r);
 }
 
 //-----------------------------------------------------------------------------
