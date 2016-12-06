@@ -27,10 +27,10 @@ With those commands we can create a simple program:
 ```
 +++[.-]
 ```
-__OUTPUT:__
-```
-321
-```
+> __OUTPUT:__
+> ```
+> 321
+> ```
 
 A further break down of the program:
 ```
@@ -47,10 +47,10 @@ Now, let us try to use `,` to take in a three which will look like:
 ```
 ,[.-]
 ```
-__OUTPUT:__
-```
-33
-```
+> __OUTPUT:__
+> ```
+> 33
+> ```
 
 Well that did not work... Essentially, _Pipe_ has data types which are currently `NUMBER`, `STRING`, and `ARRAY`.
 What we just did was place a `STRING` into the current cell from the pipe which came from the stdin. Then the `[` evaluated
@@ -72,10 +72,10 @@ it directly into a `NUMBER`.
 ```
 ,#[.-]
 ```
-__OUTPUT:__
-```
-321
-```
+> __OUTPUT:__
+> ```
+> 321
+> ```
 
 ---
 
@@ -89,10 +89,10 @@ are merely _"What you put, is literally what you get"_. When a _literal_ is crea
 ```
 #321
 ```
-__OUTPUT:__
-```
-321
-```
+> __OUTPUT:__
+> ```
+> 321
+> ```
 
 For `STRING`s we have two options. The first is `'` which will make the _literal_ everything following it that is `[a-zA-Z0-9_ ]` (There is a space character following the underscore). This command by itself will also `stringify` the current cell which for a `NUMBER` turns it into a `STRING`. This is enough for us to have a `Hello World`:
 
@@ -101,10 +101,10 @@ For `STRING`s we have two options. The first is `'` which will make the _literal
 ```
 'Hello World
 ```
-__OUTPUT:__
-```
-Hello World
-```
+> __OUTPUT:__
+> ```
+> Hello World
+> ```
 
 The second is `"` which will make the _literal_ everything up to the end of that line. This command if by itself creates an empty `STRING` and places it into the pipe.
 
@@ -113,7 +113,7 @@ The second is `"` which will make the _literal_ everything up to the end of that
 ```
 "Hello World!
 ```
-__OUTPUT:__
-```
-Hello World!
-```
+> __OUTPUT:__
+> ```
+> Hello World!
+> ```
