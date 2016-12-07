@@ -1118,22 +1118,22 @@ Cell.types.ARRAY.prototype.is_non_zero = function(tkn,prgm) {
 }
 Cell.types.ARRAY.prototype.copy = function() {
   var a = [];
-  for(var i = this.value.length;i--;) a.unshift(this.value[i].copy());
+  for(var i = this.value().length;i--;) a.unshift(this.value()[i].copy());
   return new Cell.types.ARRAY(a);
 }
 Cell.types.ARRAY.prototype.stringify = function(tkn,prgm) {
   var a = [];
-  for(var i = this.value.length;i--;) a.unshift(this.value[i].stringify());
+  for(var i = this.value().length;i--;) a.unshift(this.value()[i].stringify());
   return new Cell.types.ARRAY(a);
 }
 Cell.types.ARRAY.prototype.numberify = function(tkn,prgm) {
   var a = [];
-  for(var i = this.value.length;i--;) a.unshift(this.value[i].numberify());
+  for(var i = this.value().length;i--;) a.unshift(this.value()[i].numberify());
   return new Cell.types.ARRAY(a);
 }
 Cell.types.ARRAY.prototype.integerify = function(tkn,prgm) {
   var a = [];
-  for(var i = this.value.length;i--;) a.unshift(this.value[i].integerify());
+  for(var i = this.value().length;i--;) a.unshift(this.value()[i].integerify());
   return new Cell.types.ARRAY(a);
 }
 Cell.types.ARRAY.prototype.arrayify = function(tkn,prgm) {
