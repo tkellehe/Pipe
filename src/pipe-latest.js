@@ -1045,8 +1045,8 @@ Cell.types.STRING.prototype.increment = function(tkn,prgm) {
   if(obj) {
     obj = obj.stringify(tkn,prgm);
     if(obj.type === "ARRAY") {
-      for(var i = 0,l = obj.value.length;i < l;++i)
-        value += obj.value[i].value();
+      for(var i = 0,l = obj.value().length;i < l;++i)
+        value += obj.value()[i].value();
     } else if(obj.type === "STRING") {
       value += obj.value();
     }
@@ -1055,7 +1055,7 @@ Cell.types.STRING.prototype.increment = function(tkn,prgm) {
 }
 Cell.types.STRING.prototype.decrement = function(tkn,prgm) {
   tkn.outputs.front(new Cell.types.STRING(this.value()[0]));
-  return this.value(this.value().slice(1,this.value.length));
+  return this.value(this.value().slice(1,this.value().length));
 }
 Cell.types.STRING.prototype.is_non_zero = function(tkn,prgm) {
   return !!this.value().length;
