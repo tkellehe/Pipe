@@ -874,6 +874,7 @@ function Cell(x,y) {
       return value;
     } else {
       value = v;
+      console.log(value);
     }
   }
 }
