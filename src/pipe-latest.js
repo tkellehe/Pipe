@@ -867,7 +867,7 @@ function Cell(x,y) {
     if(arguments.length === 0) return this._value.value();
     return this._value.value(v);
   }
-  this.has = function() { return this._value === undefined }
+  this.has = function() { return this._value !== undefined }
   this.content = function(v) {
     if(arguments.length === 0) {
       if(!this.has()) this._value = Cell.create_default();
