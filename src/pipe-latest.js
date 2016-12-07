@@ -398,6 +398,9 @@ parser.Command.base = {
       tkn.inputs.front(g);
     }
   },
+  "D": function(tkn,prgm) {
+    prgm.remove_cell();
+  },
   "//": function(tkn,prgm) { },
   "&": function(tkn,prgm) {
     var cell = prgm.current_cell();
@@ -447,6 +450,7 @@ parser.Symbols["E"] = new parser.Pipe();
 parser.Symbols["&"] = new parser.Pipe();
 parser.Symbols["!"] = new parser.Pipe();
 parser.Symbols["¡"] = new parser.Pipe();
+parser.Symbols["D"] = new parser.Pipe();
 
 parser.Symbols["&"].front(function(cmd) {
   cmd.execute = parser.Command.internal.pipe_oi;
@@ -857,6 +861,11 @@ parser.Symbols["E"].front(function(cmd) {
   cmd.execute = parser.Command.base["E"];
   cmd.execute = parser.Command.internal.pipe_io;
 });
+parser.Symbols["D"].front(function(cmd) {
+  cmd.execute = parser.Command.internal.pipe_oi;
+  cmd.execute = parser.Command.base["D"];
+  cmd.execute = parser.Command.internal.pipe_io;
+});
 
 //-----------------------------------------------------------------------------
 function Cell(x,y) {
@@ -1228,7 +1237,7 @@ Memory.prototype.access = function(pos) {
 }
 Memory.prototype.remove = function(pos) {
   var temp = this.__arrays__[pos.x];
-  this.__arrays__[pos.x] = temp.slice(0,pos.y).concat(temp.slice(pos.y,temp.length));
+  this.__arrays__[pos.x] = temp.slice(0,pos.y).concat(temp.slice(pos.y+1,temp.length));
   return temp[pos.y];
 }
 
@@ -1271,6 +1280,9 @@ Program.prototype.flip_dim = function() {
 }
 Program.prototype.current_cell = function() {
   return this.memory.access(this.pos)
+}
+Program.prototype.remove_cell = function() {
+  return this.memory.remove(this.pos);
 }
 
 //-----------------------------------------------------------------------------
