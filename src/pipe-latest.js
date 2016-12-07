@@ -1099,7 +1099,7 @@ Cell.types.ARRAY.prototype.type = "ARRAY";
 Cell.types.ARRAY.prototype.actual = "ARRAY";
 Cell.types.ARRAY.prototype.toString = function() {
   var a = this.stringify(), v = "";
-  for(var i = 0, l = a.value.length; i < l; ++i) v += a.value[i].value();
+  for(var i = 0, l = a.value().length; i < l; ++i) v += a.value()[i].value();
   return v;
 }
 Cell.types.ARRAY.prototype.increment = function(tkn,prgm) {
