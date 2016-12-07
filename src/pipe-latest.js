@@ -1226,6 +1226,11 @@ Memory.prototype.access = function(pos) {
   }
   return this.__arrays__[pos.x][pos.y];
 }
+Memory.prototype.remove = function(pos) {
+  var temp = this.__arrays__[pos.x];
+  this.__arrays__[pos.x] = temp.slice(0,pos.y).concat(temp.slice(pos.y,temp.length));
+  return temp[pos.y];
+}
 
 //-----------------------------------------------------------------------------
 // The main class for starting the program.
