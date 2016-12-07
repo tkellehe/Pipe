@@ -966,7 +966,7 @@ Cell.types.NUMBER.prototype.toString = function() {
   return this.stringify().value();
 }
 Cell.types.NUMBER.prototype.smallest_unit = function() {
-  var s = this.value+"", i = s.search("\\.");
+  var s = this.value()+"", i = s.search("\\.");
   if(i === -1) return 1;
   var l = i;
   for(var j = i+1;j<s.length;++j) {
