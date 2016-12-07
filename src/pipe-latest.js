@@ -862,20 +862,20 @@ parser.Symbols["E"].front(function(cmd) {
 function Cell(x,y) {
   this.x = x;
   this.y = y;
-  var value = undefined;
+  this._value = undefined;
   this.value = function(v) {
-    if(arguments.length === 0) return value.value();
-    return value.value(v);
+    if(arguments.length === 0) return this._value.value();
+    return this._value.value(v);
   }
-  this.has = function() { console.log("1",value); return value === undefined }
+  this.has = function() { console.log("1",this._value); return this._value === undefined }
   this.content = function(v) {
     if(arguments.length === 0) {
-      if(!this.has()) value = Cell.create_default();
-      return value;
+      if(!this.has()) this._value = Cell.create_default();
+      return this._value;
     } else {
-      console.log("0.0",value);
-      value = v;
-      console.log("0.1",value);
+      console.log("0.0",this._value);
+      this._value = v;
+      console.log("0.1",this._value);
     }
   }
 }
@@ -954,10 +954,10 @@ Cell.prototype.range = function(tkn,prgm,r) {
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.NUMBER = function(v) {
-  var value = v || 0;
+  this._value = v || 0;
   this.value = function(v) {
-    if(arguments.length === 0) return value;
-    value = +v || 0;
+    if(arguments.length === 0) return this._value;
+    this._value = +v || 0;
     return this;
   }
 }
@@ -1029,10 +1029,10 @@ Cell.types.NUMBER.prototype.range = function(tkn,prgm,r) {
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.STRING = function(s) {
-  var value = s || "";
+  this._value = s || "";
   this.value = function(v) {
-    if(arguments.length === 0) return value;
-    value = v;
+    if(arguments.length === 0) return this._value;
+    this._value = v;
     return this;
   }
 }
@@ -1090,10 +1090,10 @@ Cell.types.STRING.prototype.range = function(tkn,prgm,r) {
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cell.types.ARRAY = function(a) {
-  var value = a || [];
+  this._value = a || [];
   this.value = function(v) {
-    if(arguments.length === 0) return value;
-    value = v;
+    if(arguments.length === 0) return this._value;
+    this._value = v;
     return this;
   }
 }
