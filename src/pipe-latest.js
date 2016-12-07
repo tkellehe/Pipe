@@ -867,14 +867,15 @@ function Cell(x,y) {
     if(arguments.length === 0) return value.value();
     return value.value(v);
   }
-  this.has = function() { return value === undefined }
+  this.has = function() { console.log("1",value); return value === undefined }
   this.content = function(v) {
     if(arguments.length === 0) {
       if(!this.has()) value = Cell.create_default();
       return value;
     } else {
+      console.log("0.0",value);
       value = v;
-      console.log(value);
+      console.log("0.1",value);
     }
   }
 }
