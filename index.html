@@ -23,7 +23,7 @@
     $(function(){
       var code = new Syntaxer($("#code"));
       code.parse = function(text) {
-        text = text.replace(new RegExp(" ", "g"), String.fromCharCode(160));
+        text = text.replace(new RegExp(String.fromCharCode(160), "g"), " ");
         return text
           // Make all white space grey.
           .mark(/\s/g, ["bg-grey"])
